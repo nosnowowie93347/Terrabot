@@ -1,0 +1,12 @@
+discord.py
+pyfiglet
+wikipedia
+mtranslate
+speedtest-cli
+giphypop
+wavelink
+pillow
+pymongo
+geopy
+psutil
+pyparsing
