@@ -1,9 +1,10 @@
-import discord, random, asyncio, config, secrets, urllib, aiohttp, time, sys, importlib
+import discord, random, aiohttp, json, time, datetime, urllib, math, requests, asyncio, re, config, secrets, urllib, aiohttp, time, sys, importlib
 from discord import ext
 from random import choice
+from Cogs import Settings
 from io import BytesIO
 from discord.ext import commands
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, has_permissions, MissingPermissions
 from utils import lists, permissions, http, default, argparser, dataIO
 coinsides = ['Heads', 'Tails']
 random_word = random.choice("words.txt")
@@ -14,11 +15,16 @@ dabs = [
 ]
 punlist = open("Punlist.txt", encoding='utf8').read().splitlines()
 compliments = open("Compliments.txt", encoding='utf8').read().splitlines()
+
+def setup(bot):
+	settings = bot.get_cog("Settings")
+	bot.add_cog(Fun(bot, settings))
+
 class Fun(commands.Cog):
 
-	def __init__(self, bot):
+	def __init__(self, bot, settings):
 		self.bot = bot
-
+		self.settings = settings
 	@commands.command()
 	async def groot(self, ctx):
 		"""Who... who are you?"""
@@ -186,5 +192,190 @@ class Fun(commands.Cog):
 			await ctx.send(f"✉️ Sent a DM to **{user_id}**")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
-def setup(bot):
-	bot.add_cog(Fun(bot))
+	@commands.command()
+	async def emojify(self, ctx, *, text: str):
+		'''
+		Converts the alphabet and spaces into emoji
+		'''
+		author = ctx.message.author
+		emojified = '⬇ Copy and paste this: ⬇\n'
+		formatted = re.sub(r'[^A-Za-z ]+', "", text).lower()
+		if text == '':
+			await ctx.send('Remember to say what you want to convert!')
+		else:
+			for i in formatted:
+				if i == ' ':
+					emojified += '     '
+				else:
+					emojified += ':regional_indicator_{}: '.format(i)
+			if len(emojified) + 2 >= 2000:
+				await ctx.send('Your message in emojis exceeds 2000 characters!')
+			if len(emojified) <= 25:
+				await ctx.send('Your message could not be converted!')
+			else:
+				await ctx.send('`'+emojified+'`')
+	@commands.command()
+	async def spoilify(self, ctx, *, text: str):
+		'''
+		Converts the alphabet and spaces into hidden secrets
+		'''
+		author = ctx.message.author
+		spoilified = '⬇ Copy and paste this: ⬇\n'
+		if text == '':
+			await ctx.send('Remember to say what you want to convert!')
+		else:
+			for i in text:
+				spoilified += '||{}||'.format(i)
+			if len(spoilified) + 2 >= 2000:
+				await ctx.send('Your message in spoilers exceeds 2000 characters!')
+			if len(spoilified) <= 4:
+				await ctx.send('Your message could not be converted!')
+			else:
+				await ctx.message.delete()
+				await author.send('`'+spoilified+'`')
+	@commands.command()
+	async def clone(self, ctx):
+		'''
+		Creates a webhook, that says what you say. Like echo.
+		'''
+		await ctx.message.delete()
+		name="Terrabot updates all the time!"
+		pfp = requests.get(ctx.author.avatar_url_as(format='png', size=256)).content
+		hook = await ctx.channel.create_webhook(name=ctx.message.author,
+												avatar=pfp)
+		embed = discord.Embed(title="Message from Bot Owner", color=0x663399)
+		embed.add_field(name="Terrabot updates all the time!", value=name)
+		await hook.send(embed=embed)
+		await hook.delete()
+	@commands.command()
+	async def updatenotice(self, ctx, role:discord.Role, *version:str):
+		await ctx.message.delete()
+		pfp = requests.get(ctx.author.avatar_url_as(format="png", size=256)).content
+		hook = await ctx.channel.create_webhook(name="Terrabot Updater", avatar=pfp)
+		embed = discord.Embed(title="Terrabot Updater", color=0x663399)
+		embed.add_field(name="Terrabot has been updated to ", value=f"{version}")
+		await hook.send(embed=embed)
+		await hook.delete()
+	@commands.command(aliases=["profile", "mcinfo"])
+	async def minecraft(self, ctx, username):
+		'''
+		Shows MC account info, skin and username history
+		'''
+		import base64
+		try:
+			uuid = requests.get('https://api.mojang.com/users/profiles/minecraft/{}'
+								.format(username)).json()['id']
+
+			url = json.loads(base64.b64decode(requests.get(
+				'https://sessionserver.mojang.com/session/minecraft/profile/{}'
+				.format(uuid)).json()['properties'][0]['value'])
+							 .decode('utf-8'))['textures']['SKIN']['url']
+			
+			names = requests.get('https://api.mojang.com/user/profiles/{}/names'
+								.format(uuid)).json()
+			history = "**Name History:**\n"
+			for name in reversed(names):
+				history += name['name']+"\n"
+
+			await ctx.send('**Username: `{}`**\n**Skin: {}**\n**UUID: {}**'.format(username, url, uuid))
+			await ctx.send(history)
+		except ValueError as e:
+			await ctx.send(e)
+			await asyncio.sleep(2)
+			await ctx.send("This means the profile wasn't found...")
+
+	@commands.command()
+	async def wikipedia(self, ctx, *, query: str):
+		'''
+		Uses Wikipedia APIs to summarise search
+		'''
+		sea = requests.get(
+			('https://en.wikipedia.org//w/api.php?action=query'
+			 '&format=json&list=search&utf8=1&srsearch={}&srlimit=5&srprop='
+			).format(query)).json()['query']
+
+		if sea['searchinfo']['totalhits'] == 0:
+			await ctx.send('Sorry, your search could not be found.')
+		else:
+			for x in range(len(sea['search'])):
+				article = sea['search'][x]['title']
+				req = requests.get('https://en.wikipedia.org//w/api.php?action=query'
+								   '&utf8=1&redirects&format=json&prop=info|images'
+								   '&inprop=url&titles={}'.format(article)).json()['query']['pages']
+				if str(list(req)[0]) != "-1":
+					break
+			else:
+				await ctx.send('Sorry, your search could not be found.')
+				return
+			article = req[list(req)[0]]['title']
+			arturl = req[list(req)[0]]['fullurl']
+			artdesc = requests.get('https://en.wikipedia.org/api/rest_v1/page/summary/'+article).json()['extract']
+			lastedited = datetime.datetime.strptime(req[list(req)[0]]['touched'], "%Y-%m-%dT%H:%M:%SZ")
+			embed = discord.Embed(title='**'+article+'**', url=arturl, description=artdesc, color=0x3FCAFF)
+			embed.set_footer(text='Wiki entry last modified',
+							 icon_url='https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png')
+			embed.set_author(name='Wikipedia', url='https://en.wikipedia.org/',
+							 icon_url='https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png')
+			embed.timestamp = lastedited
+			await ctx.send('**Search result for:** ***"{}"***:'.format(query), embed=embed)
+	@commands.command(pass_context=True)
+	async def listmuted(self, ctx):
+		"""Lists the names of those that are muted."""
+		role = discord.utils.get(ctx.guild.roles, name='Muted')
+		muteList = role.members
+
+		if not len(muteList):
+			await ctx.send("No one is currently muted.")
+			return
+
+		# We have at least one member muted
+		msg = 'Currently muted:\n\n'
+		msg += ', '.join([member.name for member in muteList])
+
+		await ctx.send(msg)
+	@commands.command()
+	async def rolecall(self, ctx, role:discord.Role):
+		role_embed = discord.Embed(color=role.color)
+		role_embed.set_author(name='{}'.format(role.name))
+		# We have a role
+		members = [x for x in ctx.guild.members if role in x.roles]
+		memberCount = len(members)
+		memberOnline = len([x for x in members if x.status != discord.Status.offline])
+		role_embed.add_field(name="Members", value='{:,} of {:,} online.'.format(memberOnline, memberCount), inline=True)
+		await ctx.send(embed=role_embed)
+	@commands.command(pass_context=True)
+	@has_permissions(attach_files=True)
+	async def log(self, ctx, messages : int = 25, *, chan : discord.TextChannel = None):
+		
+		logFile = 'discord.log'
+
+		if not chan:
+			chan = ctx
+
+		# Remove original message
+		await ctx.message.delete()
+
+		mess = await ctx.send('Saving logs to *{}*...'.format(logFile))
+
+		# Use logs_from instead of purge
+		counter = 0
+		msg = ''
+		async for message in chan.history(limit=messages):
+			counter += 1
+			msg += message.content + "\n"
+			msg += '----Sent-By: ' + message.author.name + '#' + message.author.discriminator + "\n"
+			msg += '---------At: ' + message.created_at.strftime("%Y-%m-%d %H.%M") + "\n"
+			if message.edited_at:
+				msg += '--Edited-At: ' + message.edited_at.strftime("%Y-%m-%d %H.%M") + "\n"
+			msg += '\n'
+
+		msg = msg[:-2].encode("utf-8")
+
+		with open(logFile, "wb") as myfile:
+			myfile.write(msg)
+		
+		await mess.edit(content='Uploading *{}*...'.format(logFile))
+		await ctx.author.send(file=discord.File(fp=logFile))
+		await mess.edit(content='Uploaded *{}!*'.format(logFile))
+		#os.remove(logFile)
+

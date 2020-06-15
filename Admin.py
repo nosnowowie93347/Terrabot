@@ -64,8 +64,6 @@ class Admin(commands.Cog):
 	async def mute_cmd(self, ctx, member: discord.Member):
 		"""Mute ppl who break the rules"""
 		role = discord.utils.get(ctx.guild.roles, name='Muted')
-		staff = discord.utils.get(ctx.guild.roles, name="Staff")
-		devsadmins = staff = discord.utils.get(ctx.guild.roles, name="Devs/admins")
 		if not role:
 			return await ctx.send(f'Unable to Mute {ctx.author} - No Role was Found')
 		if role in member.roles:
@@ -82,8 +80,6 @@ class Admin(commands.Cog):
 			msg = 'How about we don\'t, and *pretend* we did...'
 			return await ctx.send(msg)
 		await member.add_roles(role)
-		await member.remove_roles(devsadmins)
-		await member.remove_roles(staff)
 		embed = discord.Embed(title = 'User Muted',color = 0xff00f6,description = f'{member.mention} was muted by {ctx.author.mention}')
 		return await ctx.send(embed=embed)
 		logger.info("Muted {} for {}".format(member, reason))
@@ -187,6 +183,11 @@ class Admin(commands.Cog):
 			rate_amount = 98.88
 		
 		await ctx.send(f"I'd rate `{thing}` a **{round(rate_amount, 4)} / 100**")
-	
+	@commands.command(name="botnick")
+	async def changebotnick(self, ctx, *, name : str):
+		# Let's get the bot's member in the current server
+		botName = "{}#{}".format(self.bot.user.name, self.bot.user.discriminator)
+		botMember = ctx.message.guild.get_member_named(botName)
+		await botMember.edit(nick=str(name))
 def setup(bot):
 	bot.add_cog(Admin(bot))

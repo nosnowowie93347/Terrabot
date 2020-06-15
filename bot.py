@@ -77,7 +77,7 @@ async def on_ready():
 	print(time.time())
 @bot.event
 async def on_message(message):
-	swearwords = ["shit", "cock", "porn", "dick", "ass", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
+	swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
 	for word in swearwords:
 		if word in message.content:
 			await message.delete()
@@ -94,6 +94,18 @@ async def on_message(message):
 	if bot.user.mentioned_in(message):
 		await message.channel.send("REEEEEE! I don't like being pinged. \npls use prefix instead.")
 	await bot.process_commands(message)
+@bot.event
+async def on_member_join(user):
+	rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
+	rules.add_field(name="1", value="Leave banning the bots to Devs/admins")
+	rules.add_field(name="2", value="No swearing! It will be deleted")
+	rules.add_field(name="3", value="Behave/use common sense")
+	rules.add_field(name="4", value="#broken-commands if a command doesn't work")
+	rules.add_field(name="5", value="#mute-appeal for unfair mutes")
+	rules.add_field(name="6", value="Admins and maybe staff will purge channels. see #purge-notices")
+	rules.add_field(name="7", value="No swearing! It will be deleted")
+	rules.add_field(name="8", value="Only princess luna can add people to the Gues role")
+	await user.send(embed=rules)
 @bot.event
 async def on_reaction_add(reaction, user):
 		bot.dispatch("picklist_reaction", reaction, user)
@@ -274,6 +286,36 @@ async def guildinfo(ctx):
 	embed.add_field(name="Created at: ", value=guild.created_at)
 	await ctx.send(embed=embed)
 	await ctx.send(embed=embed2)
+@bot.command()
+async def oeis(ctx, *, number: str):
+	'''
+	Looks up a sequence of numbers
+	'''
+	req=requests.get('https://oeis.org/search?q={}&fmt=json'.format(number)).json()['results'][0]
+	numid = 'A'+str(req['number']).zfill(6)
+	embed = discord.Embed(title='**'+numid+'**', url='https://oeis.org/{}'.format(numid), description='**'+req['name']+'**', color=0xFF0000)
+	embed.add_field(name="Numbers:", value=str(req['data']), inline=False)
+	embed.set_image(url='https://oeis.org/{}/graph?png=1'.format(numid))
+	embed.set_thumbnail(url='https://oeis.org/oeis_logo.png')
+	embed.set_footer(text='OEIS', icon_url='https://oeis.org/oeis_logo.png')
+	embed.set_author(name='OEIS.org', url='https://oeis.org/', icon_url='https://oeis.org/oeis_logo.png')
+	embed.timestamp = datetime.datetime.utcnow()
+	await ctx.send('**Search result for:** ***{}...***'.format(number), embed=embed)
+@bot.command()
+async def online(ctx):
+	# Set the filter to be a non-offline member, and the member not being a bot.
+	def filterOnlyOnlineMembers(member):
+		return member.status != discord.Status.offline
+	membersInServer = ctx.guild.members
+	onlineMembersInServer = list(filter(filterOnlyOnlineMembers, membersInServer))
+	onlineMembersCount = len(onlineMembersInServer)
+	await ctx.send("There are " + str(onlineMembersCount) + " Members online out of {}".format(len(ctx.guild.members)))
+@bot.command()
+async def kill(ctx, *, member:discord.Member):
+	'''
+	Kills the player, minecraft style
+	'''
+	await ctx.send("{} fell out of the world".format(member.mention))
 @bot.command(aliases=["nickchange", "changenick"])
 async def changenickname(ctx, member : discord.Member, *, message):
 	"""Change a user's nickname"""
@@ -533,5 +575,5 @@ async def heal(ctx, member:discord.Member):
 async def feed(ctx, member:discord.Member, *food):
 	await ctx.send("Fed {} {}".format(member, food))
 
-token = 
+token = ""
 bot.run(token)
