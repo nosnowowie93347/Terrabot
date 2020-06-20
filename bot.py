@@ -1,6 +1,7 @@
-import discord, platform, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, re, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
 import config
+
 from   PIL         import Image
 from pyparsing import (Literal,CaselessLiteral,Word,Combine,Group,Optional,
 					ZeroOrMore,Forward,nums,alphas,oneOf)
@@ -11,27 +12,34 @@ from random import choice, randint, randrange
 from discord.ext import commands
 from discord.ext.commands import Bot
 import discord.utils
+from utils.config import Config
+from utils.tools import *
+from utils.channel_logger import Channel_Logger
 from discord.utils import get
+from utils.language import Language
 from   discord.ext import commands
 from discord.ext.commands import MissingPermissions, has_permissions
 import datetime
-
-
 import pyfiglet, time
 from pyfiglet import figlet_format, FontNotFound
 import datetime as dt
-
+from utils.logger import log
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
+config = Config()
+bot = discord.ext.commands.Bot(command_prefix=config.command_prefix, description="Hello my name is Terrabot")
+channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
+EMOJI_NAME_REGEX = re.compile(r"<a?(:\w{2,32}:)\d{15,}>")
 client = discord.Client()
 today = datetime.date.today()
-bot = discord.ext.commands.Bot(command_prefix='^', description="Hello my name is Terrabot")
 now = datetime.datetime.now()
-
+conn = sqlite3.connect("data/Ruby.db")
+conn.row_factory = sqlite3.Row
+cur = conn.cursor()
 moveoutday = datetime.datetime(now.year, 8, 10) - \
 	datetime.datetime.today()#days till i move out
 diff = datetime.datetime(now.year, 12, 25) - \
@@ -44,7 +52,7 @@ optionsforchristmascountdown = ['%xmas', "%xmascd", '%christmas']
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 cmds = open('commands.py', encoding= 'utf8').read().splitlines()
 choices = ['rock', 'paper', 'scissors']
-
+limit = config.max_nsfw_count
 now_playing = "Playing Convincing Everyone I'm Better than Risabot."
 rockpaperscissors = random.choice(choices)
 random_word = random.choice("words.txt")
@@ -64,7 +72,6 @@ async def on_ready():
 	bot.load_extension("cog2")
 	bot.load_extension("cogs3")
 	bot.load_extension("Fun")
-	bot.load_extension("Encode")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
 	bot.load_extension("Morecogs")
@@ -73,15 +80,16 @@ async def on_ready():
 	bot.load_extension("Admin")
 	bot.load_extension("Translate")
 	bot.load_extension("cogs4")
+	bot.load_extension("music")
 	await bot.change_presence(activity=discord.Game(name="Serving Pinkalicious21902 Forever and Always"), status=discord.Status.online)
 	print(time.time())
 @bot.event
 async def on_message(message):
-	swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
-	for word in swearwords:
-		if word in message.content:
-			await message.delete()
-			await message.channel.send("Hey! watch the language")
+	# swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
+	# for word in swearwords:
+	# 	if word in message.content:
+	# 		await message.delete()
+	# 		await message.channel.send("Hey! watch the language")
 			
 
 	# if message.content.startswith("how dare u disrespect your master"):
@@ -91,29 +99,71 @@ async def on_message(message):
 	# 	embed=discord.Embed(title="Nice try. Ruby's been blocked")
 	# 	await message.channel.send(embed=embed)
 	# 	await message.channel.send("You block mine, I block urs. From Pink.")
-	if bot.user.mentioned_in(message):
-		await message.channel.send("REEEEEE! I don't like being pinged. \npls use prefix instead.")
+	if message.author.bot:
+		return
 	await bot.process_commands(message)
 @bot.event
 async def on_member_join(user):
-	rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
-	rules.add_field(name="1", value="Leave banning the bots to Devs/admins")
-	rules.add_field(name="2", value="No swearing! It will be deleted")
-	rules.add_field(name="3", value="Behave/use common sense")
-	rules.add_field(name="4", value="#broken-commands if a command doesn't work")
-	rules.add_field(name="5", value="#mute-appeal for unfair mutes")
-	rules.add_field(name="6", value="Admins and maybe staff will purge channels. see #purge-notices")
-	rules.add_field(name="7", value="No swearing! It will be deleted")
-	rules.add_field(name="8", value="Only princess luna can add people to the Gues role")
-	await user.send(embed=rules)
+	try:
+		rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
+		rules.add_field(name="1", value="Leave banning the bots to Devs/admins")
+		rules.add_field(name="2", value="No swearing! It will be deleted")
+		rules.add_field(name="3", value="Behave/use common sense")
+		rules.add_field(name="4", value="#broken-commands if a command doesn't work")
+		rules.add_field(name="5", value="#mute-appeal for unfair mutes")
+		rules.add_field(name="6", value="Admins and maybe staff will purge channels. see #purge-notices")
+		rules.add_field(name="7", value="No swearing! It will be deleted")
+		rules.add_field(name="8", value="Only princess luna can add people to the Gues role")
+		await user.send(embed=rules)
+	except discord.errors.Forbidden:
+		return await user.send("Cannot do this. Sorry.")
 @bot.event
 async def on_reaction_add(reaction, user):
 		bot.dispatch("picklist_reaction", reaction, user)
-def eval(num_string,parseAll=True):
-		exprStack=[]
-		results=bnf.parseString(num_string,parseAll)
-		val=evaluateStack(exprStack[:] )
-		return val
+
+
+
+def blacklistuser(id, name, discrim, reason):
+	cur.execute("""INSERT INTO blacklist(id, name, discrim, reason) VALUES (?, ?, ?, ?)""", (id, name, discrim, reason))
+	conn.commit()
+
+def unblacklistuser(id):
+	cur.execute("""DELETE FROM blacklist WHERE id=""" + str(id))
+	conn.commit()
+async def _restart_bot():
+	try:
+	  await aiosession.close()
+	except:
+	   pass
+	await bot.logout()
+	subprocess.call([sys.executable, "bot.py"])
+def getblacklistentry(id):
+	cur.execute("""SELECT id FROM blacklist WHERE id=""" + str(id))
+	id = None
+	name = None
+	discrim = None
+	reason = None
+	try:
+		id = cur.fetchone()[0]
+	except:
+		return None
+	cur.execute("""SELECT name FROM blacklist WHERE id=""" + str(id))
+	name = cur.fetchone()[0]
+	cur.execute("""SELECT discrim FROM blacklist WHERE id=""" + str(id))
+	discrim = cur.fetchone()[0]
+	cur.execute("""SELECT reason FROM blacklist WHERE id=""" + str(id))
+	reason = cur.fetchone()[0]
+	blacklistentry = {"id":id, "name":name, "discrim":discrim, "reason":reason}
+	return blacklistentry
+
+def getblacklist():
+	cur.execute("""SELECT id, name, discrim, reason FROM blacklist""")
+	entries = []
+	rows = cur.fetchall()
+	for row in rows:
+		entry = "ID: \"{}\" Name: \"{}\" Discrim: \"{}\" Reason: \"{}\"".format(row["id"], row["name"], row["discrim"], row["reason"])
+		entries.append(entry)
+	return entries
 
 def buildDilbertURL(date):
 	return "http://dilbert.com/strip/" + str(date['Year']) + "-" + str(date['Month']) + "-" + str(date['Day'])
@@ -138,9 +188,9 @@ async def get_search(ctx, query, service=""):
 		else:
 			msg = '*{}*, you can find your answers here:\n\n<{}>'.format((ctx.message.author), lmgtfyT)
 		return msg
+
 @bot.command(aliases=["wipe", "delete", "clean", "removespam", "deletemsgs"])
 @commands.has_permissions(manage_messages=True)
-@commands.is_owner()
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
 	await ctx.trigger_typing()
@@ -158,7 +208,7 @@ async def getimage(ctx, *, image):
 	await Message.EmbedText(title="Image", file=file_path).edit(ctx, mess)
 	GetImage.remove(file_path)
 
-@bot.command(aliases=["askmeanything", "ass.com"])
+@bot.command()
 async def ask(ctx, *, query = None):
 	"""Jeeves, please answer these questions."""
 
@@ -189,6 +239,12 @@ async def hello(ctx):
 async def goodmorning(ctx):
 	"""It's a good morning"""
 	await ctx.send(f"Good Morning, {ctx.author.mention}!")
+@bot.command(hidden=True)
+async def restart(ctx):
+	"""Restarts the bot"""
+	await ctx.send("Restarting...")
+	log.warning("{} has restarted the bot!".format(ctx.author))
+	await _restart_bot()
 @bot.command(aliases=["makebig", "enlargen", "supersize"])
 async def embiggen(ctx, *, text):
 	"""Embiggens text. Yes that's a word, obviously"""
@@ -252,16 +308,20 @@ async def guildinfo(ctx):
 	guild = ctx.guild
 	total_text_channels = len(guild.text_channels)
 	total_voice_channels = len(guild.voice_channels)
+	categories = len(guild.categories)
 	total_channels = total_text_channels  + total_voice_channels 
 	embed = discord.Embed(title="guild Info: " + str(guild.name), color=0xff00ae)
 	embed2 = discord.Embed(title="guild Info Continued: " + str(guild.name), color=0xff00ae)
 	embed3 = discord.Embed(title="More guild Info: ", color=0xff00ae)
 	embed2.add_field(name="2fa level: ", value=guild.mfa_level)
 	embed2.add_field(name="Verification: ", value=guild.verification_level)
-	embed.add_field(name="Icon: ", value=guild.icon)
-	embed.add_field(name="Icon URL", value=guild.icon_url)
-	embed.add_field(name="ID: ", value=guild.id)
 	embed2.add_field(name="Emojis", value=len(guild.emojis))
+	embed.add_field(name="Icon:", value=guild.icon)
+	embed.add_field(name="Total text channels:", value=total_text_channels)
+	embed.add_field(name="Total voice channels:", value=total_voice_channels)
+	embed.add_field(name="Total channels:", value=total_channels)
+	embed.add_field(name="# of categories:", value=categories)
+	embed.add_field(name="This guild is large", value=guild.large)
 	embed.add_field(name="Icon animated", value=guild.is_icon_animated())
 	embed2.add_field(name="System Channel", value=guild.system_channel)
 	embed2.add_field(name="Rules Channel", value=guild.rules_channel)
@@ -270,18 +330,8 @@ async def guildinfo(ctx):
 	embed2.add_field(name="Region: ", value=guild.region)
 	embed2.add_field(name="# of roles", value=len(guild.roles))
 	embed2.add_field(name="Notify Settings: ", value=guild.default_notifications)
-	embed.add_field(name="Owner's ID: ", value=guild.owner)
-	embed.add_field(name="Max Members: ", value=guild.max_members)
-	embed.add_field(name="Banner: ", value=guild.banner)
 	embed2.add_field(name="Filter", value=guild.explicit_content_filter)
-	embed2.add_field(name="Server Channels: ", value=total_channels )
-	embed2.add_field(name="Server Text Channels: ", value=total_text_channels)
-	embed2.add_field(name="Server Voice Channels: ", value=total_voice_channels)
-	embed.add_field(name="Description: ", value=guild.description)
-	embed2.add_field(name="Splash: ", value=guild.splash)
-	embed.add_field(name="How many boosters? ", value=guild.premium_subscription_count)
 	embed2.add_field(name="Max # of Emojis: ", value=guild.emoji_limit)
-	embed.add_field(name="Filesize: ", value=guild.filesize_limit)
 	embed.add_field(name="# of Members: ", value=guild.member_count)
 	embed.add_field(name="Created at: ", value=guild.created_at)
 	await ctx.send(embed=embed)
@@ -311,17 +361,34 @@ async def online(ctx):
 	onlineMembersCount = len(onlineMembersInServer)
 	await ctx.send("There are " + str(onlineMembersCount) + " Members online out of {}".format(len(ctx.guild.members)))
 @bot.command()
-async def kill(ctx, *, member:discord.Member):
+async def createtc(ctx, name, number : int):
+	await ctx.guild.create_text_channel(name=name, slowmode_delay=number)
+	await ctx.send("A Text Channel Named {} was made.".format(name))
+@bot.command()
+async def edittc(ctx, name):
+	print("here")
+	topic = "This is a channel created by Terrabot"
+	await ctx.channel.edit(name=name, topic=topic)
+	await ctx.send("Success")
+@bot.command()
+async def mutechannelperms(ctx, role:discord.Role):
+	await ctx.channel.set_permissions(role, attach_files=False, send_tts_messages=False, read_message_history=False, manage_messages=False, send_messages=False, read_messages=True, embed_links=False)
+	await ctx.send("Permissions updated for {}".format(role))
+@bot.command()
+async def kill(ctx, member:discord.Member):
 	'''
 	Kills the player, minecraft style
 	'''
-	await ctx.send("{} fell out of the world".format(member.mention))
+	causeofdeath = ["fell out of the world", "watched their innards become outards", "forgot to breath", "watched their legs appear where their head should be", "hit the ground too hard", "was shot by skeleton"]
+	await ctx.send("{}".format(member.mention))
+	await ctx.send(random.choice(causeofdeath))
 @bot.command(aliases=["nickchange", "changenick"])
+@has_permissions(manage_nicknames=True)
 async def changenickname(ctx, member : discord.Member, *, message):
 	"""Change a user's nickname"""
 	await member.edit(nick=message)
 	await ctx.send(f"Success! {member}'s Nickname changed to {message}")
-@bot.command(aliases=["aboutuser", "memberinfo"])
+@bot.command()
 async def userinfo(ctx, member : discord.Member):
 	"""Info about user"""
 	embed = discord.Embed(title="User Info", color=0xff00ae)
@@ -340,6 +407,9 @@ async def userinfo(ctx, member : discord.Member):
 	embed.add_field(name="Discriminator: ", value=member.discriminator)
 	embed.add_field(name="Bot?", value=member.bot)
 	embed.add_field(name="ID: ", value=member.id)
+	embed.add_field(name="Current Activities", value=member.activities)
+	embed.add_field(name="Mentionable String", value=member.mention)
+
 	#embed.add_field(name="Name: ", value=member.name)
 	await ctx.send(embed=embed)
 @bot.command()
@@ -574,6 +644,160 @@ async def heal(ctx, member:discord.Member):
 @bot.command()
 async def feed(ctx, member:discord.Member, *food):
 	await ctx.send("Fed {} {}".format(member, food))
+@bot.command()
+async def sendfile(ctx):
+	logfile = open("discord.log")
+	await ctx.send(file=discord.File(fp="discord.log"))
+	logfile.close()
+@bot.command()
+async def blackandwhite(ctx, user:discord.Member=None):
+	"""Turns your avatar or the specified user's avatar black and white"""
+	await ctx.channel.trigger_typing()
+	if user is None:
+		user = ctx.author
+	download_file(get_avatar(user, animate=False), "data/blackandwhite.png")
+	avatar = Image.open("data/blackandwhite.png").convert("L")
+	avatar.save("data/blackandwhite.png")
+	await ctx.send(file=discord.File("data/blackandwhite.png"))
+@bot.command()
+async def f(ctx):
+	"""Press F to pay your respects"""
+	await ctx.send(Language.get("fun.respects", ctx).format(ctx.author, random.randint(1, 10000)))
+@bot.command()
+async def changelog(ctx):
+	change_log = [
+	"New commands (too many to mention)",
+	"Bug fixes"]
+	"""The latest changelog"""
+	await ctx.send(Language.get("bot.changelog", ctx).format(bot.command_prefix, diff.format("\n".join(map(str, change_log)))))
+@bot.command()
+async def avatar(ctx, *,  avamember : discord.Member=None):
+	userAvatarUrl = avamember.avatar_url
+	await ctx.send(userAvatarUrl)
+@bot.command()
+async def uploadfile(ctx, *, path:str):
+	"""Uploads any file on the system. What is this hackery?"""
+	await ctx.channel.trigger_typing()
+	try:
+		await ctx.send(file=discord.File(path))
+	except FileNotFoundError:
+		await ctx.send("That file does not exist!")
+@bot.command(name="pi")
+async def calculatepi(ctx, n:int):
+	def roundpi(n):
+		return round(math.pi, n)
+	if n > 15:
+		return await ctx.send("the maximum is 15 digits sadly.")
+	await ctx.send(roundpi(n))
+@bot.command()
+@commands.is_nsfw()
+async def rule34(ctx, *, tags:str):
+	await ctx.channel.trigger_typing()
+	try:
+		data = requests.get("http://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}".format(limit, tags), headers=header).json()
+	except json.JSONDecodeError:
+		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+		return
 
-token = ""
+	count = len(data)
+	if count == 0:
+		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+		return
+	image_count = 4
+	if count < 4:
+		image_count = count
+	images = []
+	for i in range(image_count):
+		image = data[random.randint(0, count)]
+		images.append("http://img.rule34.xxx/images/{}/{}".format(image["directory"], image["image"]))
+	await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
+@bot.command()
+@commands.is_nsfw()
+async def danbooru(ctx, *, tags:str):
+	"""Searches danbooru.donmai.us for the specified tagged images"""
+	await ctx.channel.trigger_typing()
+	try:
+		data = requests.get("https://danbooru.donmai.us/post/index.json?limit={}&tags={}".format(limit, tags), headers=header).json()
+	except json.JSONDecodeError:
+		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+		return
+	count = len(data)
+	if count == 0:
+		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+		return
+	image_count = 4
+	if count < 4:
+		image_count = count
+	images = []
+	for i in range(image_count):
+		try:	
+			images.append(data[random.randint(0, count)]["file_url"])
+		except KeyError:
+			await ctx.send("Shit")
+		
+	await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
+@bot.command()
+async def shibe(ctx):
+	"""Sends a random shibe picture."""
+	try:
+		image = requests.get("http://shibe.online/api/shibes?count=1&urls=true").json()
+		print(image[0])
+		
+		embed = discord.Embed()
+		embed.set_image(url=image[0])
+		await ctx.send(embed=embed)
+		
+	except aiohttp.ClientError:
+		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
+
+@bot.command()
+@commands.guild_only()
+@commands.has_permissions(read_message_history=True)
+async def emojinames(ctx):
+	from typing import Set
+	import functools
+	"""Shows the names of recent custom emoji used.
+	Useful for mobile users.
+	"""
+
+	def reducer(emoji: Set[str], message: discord.Message):
+		names = EMOJI_NAME_REGEX.findall(message.content)
+		return emoji | set(names)
+
+	messages = await ctx.history(limit=50).flatten()
+	names: Set[str] = functools.reduce(reducer, messages, set())
+
+	if not names:
+		await ctx.send("No recently used custom emoji were found.")
+	else:
+		formatted = ", ".join(f"`{name}`" for name in names)
+		await ctx.send(formatted)
+@bot.command()
+@has_permissions(send_tts_messages=True)
+async def evaluate(ctx, *, code: str):
+	"""Extremely unsafe eval command."""
+	code = code.strip("` ")
+	result = None
+	try:
+		result = eval(code)
+		
+	except Exception as err:
+		await ctx.send('{}: {}'.format(type(err).__name__, err))
+		return
+
+	await ctx.send(f"```py\n{result}\n```")
+@bot.command()
+async def ron(ctx):
+	"""Get a Ron Swanson quote"""
+	req = requests.get("https://ron-swanson-quotes.herokuapp.com/v2/quotes")
+	quote = req.json()
+	await ctx.send(quote[0])
+@bot.command()
+async def choose(ctx, *, text: str):
+	"""Choose between options (seperated by commas)"""
+	# Remove spaces and white space, split into a list and choose a random element
+	text = text.strip()
+	temp = text.split(",")
+	await ctx.send("I choose... **{}** :thinking:".format(temp[random.randint(0, len(temp) - 1)]))
+token = 
 bot.run(token)

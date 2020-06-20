@@ -1,5 +1,10 @@
 import logging, random, logging, discord, asyncio, secrets
 from io import BytesIO
+from utils.mysql import *
+from utils.channel_logger import Channel_Logger
+from utils.tools import *
+from utils import checks
+from utils.language import Language
 from discord import ext
 from random import randint, choice
 from discord.ext import commands
@@ -14,6 +19,18 @@ class Admin(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
+	@commands.command()
+	async def pin(self, ctx, id:int):
+		"""Pins the message with the specified ID to the channel"""
+		try:
+			message = await ctx.channel.fetch_message(id)
+		except discord.errors.NotFound:
+			await ctx.send(Language.get("bot.no_message_found", ctx).format(id))
+			return
+		try:
+			await message.pin()
+		except discord.errors.Forbidden:
+			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
 	@commands.command(aliases=["bannedusers"])
 	async def getbans(self, ctx):
 		import config
@@ -28,9 +45,14 @@ class Admin(commands.Cog):
 	@commands.command(aliases=["permkick", "permaban"])
 	async def ban(self, ctx, member : discord.Member, *,  reason : str):
 		"""When you're just not having it"""
-		await member.ban(reason = reason)
-		banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
-		await ctx.send(embed=banembed)
+		try:
+			await member.ban(reason = reason)
+			banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
+			dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
+			await ctx.send(embed=banembed)
+			await member.send(embed=dmembed)
+		except discord.errors.Forbidden as e:
+			await ctx.send("You don't have permission to do this!")
 	@commands.command()
 	@has_permissions(ban_members=True)
 	async def hackban(self, ctx, member : discord.Object, *, reason : str):
@@ -45,7 +67,9 @@ class Admin(commands.Cog):
 		await member.kick(reason=reason)
 		description = f"You've been bad, {member.mention}. You've been kicked."
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
+		pmembed = discord.Embed(title="You've been kicked.", description=f"You've been kicked from {ctx.guild} for {reason}")
 		await ctx.send(embed=kickembed)
+		await member.send(pmembed)
 		logger.info(f"You've been bad, {member.mention}. You've been kicked.")
 	@commands.command()
 	@has_permissions(manage_roles=True)
@@ -56,11 +80,14 @@ class Admin(commands.Cog):
 	@commands.command()
 	async def unban(self, ctx, member : discord.Object, *, reason : str):
 		"""Unbans a user"""
-		await ctx.guild.unban(member, reason=reason)
-		description = f"Yay! {member} was unbanned"
-		embed = discord.Embed(title="Member Unbanned", description=description)
+		try:
+			await ctx.guild.unban(member, reason=reason)
+			description = f"Yay! {member} was unbanned"
+			embed = discord.Embed(title="Member Unbanned", description=description)
+			await ctx.send(embed=embed)
+		except discord.errors.Forbidden:
+			await ctx.send("I do not have the `Ban Members` permission.")
 	@commands.command(name='mute')
-	@has_permissions(manage_nicknames=True)
 	async def mute_cmd(self, ctx, member: discord.Member):
 		"""Mute ppl who break the rules"""
 		role = discord.utils.get(ctx.guild.roles, name='Muted')
@@ -79,10 +106,18 @@ class Admin(commands.Cog):
 		if member.id == self.bot.user.id:
 			msg = 'How about we don\'t, and *pretend* we did...'
 			return await ctx.send(msg)
-		await member.add_roles(role)
-		embed = discord.Embed(title = 'User Muted',color = 0xff00f6,description = f'{member.mention} was muted by {ctx.author.mention}')
-		return await ctx.send(embed=embed)
-		logger.info("Muted {} for {}".format(member, reason))
+		try:
+			await member.add_roles(role)
+			embed = discord.Embed(title = 'User Muted',color = 0xff00f6,description = f'{member.mention} was muted by {ctx.author.mention}')
+			return await ctx.send(embed=embed)
+			logger.info("Muted {} for {}".format(member, reason))
+		except discord.errors.Forbidden:
+			if role.position == ctx.me.top_role.position:
+				await ctx.send("I cannot add the mute role to users as it's my highest role")
+			elif mute_role.position > ctx.me.top_role.position:
+				await ctx.send("I cannot add the mute role to users as it's higher than my highest role.")
+			else:
+				await ctx.send("I do not have the `Manage Roles` permission.")
 	@commands.command(name="unmute")
 	@has_permissions(manage_roles=True)
 	async def unmute_command(self, ctx, member : discord.Member):
@@ -189,5 +224,57 @@ class Admin(commands.Cog):
 		botName = "{}#{}".format(self.bot.user.name, self.bot.user.discriminator)
 		botMember = ctx.message.guild.get_member_named(botName)
 		await botMember.edit(nick=str(name))
+	@commands.command()
+	async def massban(self, ctx, *, ids:str):
+		"""Mass bans users by ids (separate ids with spaces)"""
+		await ctx.channel.trigger_typing()
+		ids = ids.split(" ")
+		failed_ids = []
+		success = 0
+		for id in ids:
+			try:
+				await self.bot.http.ban(int(id), ctx.guild.id, delete_message_days=0)
+				success += 1
+			except:
+				failed_ids.append("`{}`".format(id))
+		if len(failed_ids) != 0:
+			await ctx.send(Language.get("moderation.massban_failed_ids", ctx).format(", ".join(ids)))
+		await ctx.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
+	@commands.command()
+	@has_permissions(manage_roles=True)
+	async def editrole(self, ctx, role:discord.Role, value:int, pos:int, hoist:bool):
+		try:
+			perms = discord.Permissions(permissions=int(value))
+		except:
+			await ctx.send(Language.get("moderation.invalid_permission_number", ctx).format(value))
+			return
+		try:
+			await role.edit(permissions=perms, position=pos, hoist=hoist)
+			await ctx.send("Permissions Changed")
+		except discord.errors.Forbidden:
+			await ctx.send("Here")
+			if role.position == ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_editrole_highest_role", ctx))
+			elif role.position > ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_editrole_higher_role", ctx))
+			else:
+				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
+	@commands.guild_only()
+	@commands.command()
+	async def renamerole(self, ctx, role:discord.Role, *, newname:str):
+		"""Renames a role with the specified name, be sure to put double quotes (\") around the name and the new name"""
+		if role is None:
+			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
+			return
+		try:
+			await role.edit(reason=Language.get("moderation.renamerole_reason", ctx).format(ctx.author), name=newname)
+			await ctx.send(Language.get("moderation.renamerole_success", ctx).format(role, newname))
+		except discord.errors.Forbidden:
+			if role.position == ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_renamerole_highest_role", ctx))
+			elif role.position > ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_renamerole_higher_role", ctx))
+			else:
+				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
 def setup(bot):
 	bot.add_cog(Admin(bot))

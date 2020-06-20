@@ -1,7 +1,12 @@
-import discord, platform, random, fnmatch, time, asyncio, os, datetime
+import discord, platform, requests, json, random, fnmatch, time, asyncio, os, datetime
 from discord import ext
 from   Cogs import ReadableTime
 from discord.ext import commands
+from utils.language import Language
+from utils.mysql import *
+from utils.channel_logger import Channel_Logger
+from utils.tools import *
+from utils import checks
 from discord.ext.commands import Bot, has_permissions, MissingPermissions
 
 bot_status = discord.Status.online
@@ -9,17 +14,7 @@ class Botstuff(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.startTime = int(time.time())
-	def get_extensions(path, excl):
-		extensions = []
-		for root, dir, files in os.walk(path):
-			for items in fnmatch.filter(files, "*"):
-				temp_extensions = items.rfind(".")
-				ext = items[temp_extensions+1:]
-				if ext not in extensions:
-					if ext in excl:
-						extensions.append(ext)
-						pass
-		return extensions
+	
 	@commands.command()
 	async def cloc(self, ctx):
 		import os
@@ -32,10 +27,10 @@ class Botstuff(commands.Cog):
 		# Set up some lists
 		extensions = []
 		code_count = []
-		include = ['py','sh','command']
+		include = ['py',"bat", 'sh','command']
 		
 		# Get the extensions - include our include list
-		extensions = get_extensions(path, include)
+		extensions = self.get_extensions(path, include)
 		
 		for run in extensions:
 			extension = "*."+run
@@ -67,6 +62,18 @@ class Botstuff(commands.Cog):
 			pass
 		msg += '```'
 		await ctx.send(msg)
+		
+	def get_extensions(self, path, excl):
+		extensions = []
+		for root, dir, files in os.walk(path):
+			for items in fnmatch.filter(files, "*"):
+				temp_extensions = items.rfind(".")
+				ext = items[temp_extensions+1:]
+				if ext not in extensions:
+					if ext in excl:
+						extensions.append(ext)
+						pass
+		return extensions
 	@commands.command(aliases=["botinfo"])
 	async def about(self, ctx):
 		"""About the Bot"""
@@ -77,7 +84,7 @@ class Botstuff(commands.Cog):
 		embed.add_field(name="Need help on how to use it?", value="You can check the help command by doing \n\n``%help`` \n\n Updates will constantly be pushed out with more features and new commands.")
 
 		await ctx.send(embed=embed)
-	@commands.command(aliases=["whatcomesnext", "thefuture"])
+	@commands.command()
 	async def futurecommands(self, ctx):
 		"""Coming Soon"""
 		comingsoon = "More commands coming soon!"
@@ -113,24 +120,59 @@ class Botstuff(commands.Cog):
 		await ctx.trigger_typing()
 		after_typing = time.monotonic()
 		ms = int((after_typing - before_typing) * 1000)
-		msg = '*{}*, ***PONGY PONG!*** :ping_pong: (~{}ms)'.format(ctx.message.author.mention, ms)
+		msg = '*{}*, ***PONGY PONG!*** :ping_pong:'.format(ctx.author.mention)
+		msg2 = ':hourglass: (~{}ms)'.format(ms)
 		await ctx.send(msg)
+		await ctx.send(msg2)
 	@commands.command()
 	async def idlebot(self, ctx):
 		"""Idles the bot"""
 		await self.bot.change_presence(activity=None, status=discord.Status.idle)
+	@commands.command(hidden=True)
+	async def donotdisturb(self, ctx):
+		'''sets bot status to DND'''
+		await self.bot.change_presence(activity=None, status=discord.Status.dnd)
+		await ctx.send('Successfully changed bot status')
 	@commands.command(aliases=["killme", "logout"])
-	@has_permissions(manage_guild=True)
+	@commands.is_owner()
 	async def shutdown(self, ctx):
 		"""Shuts down the bot."""
 		await ctx.send("logging out...")
 		await self.bot.logout()
-	@commands.command(aliases=["changestatus", "changepresence", "changeactivity"])
+	@commands.command(aliases=["changestatus", "changeactivity"])
 	@has_permissions(change_nickname=True)
 	async def change_status(self, ctx, *, message):
 		"""Changes the bot's status"""
 		playingrn = message
 		await self.bot.change_presence(activity=discord.Game(name=playingrn), status=bot_status)
 		await ctx.send(f"Success! Status changed to {playingrn}")
+	@commands.command()
+	
+	async def unpin(self, ctx, id:int):
+		"""Unpins the message with the specified ID from the channel"""
+		pinned_messages = await ctx.channel.pins()
+		message = discord.utils.get(pinned_messages, id=id)
+		if message is None:
+			await ctx.send(Language.get("moderation.no_pinned_message_found", ctx).format(id))
+			return
+		try:
+			await message.unpin()
+			await ctx.send(Language.get("moderation.unpin_success", ctx))
+		except discord.errors.Forbidden:
+			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
+	@commands.command(hidden=True)
+	async def listwarns(self, ctx):
+		role = discord.utils.get(ctx.guild.roles, name='Warned')
+		warnList = role.members
+
+		if not len(warnList):
+			await ctx.send("No one is currently Warned.")
+			return
+
+		# We have at least one member warned
+		msg = 'Currently Warned:\n\n'
+		msg += ', '.join([member.name for member in warnList])
+
+		await ctx.send(msg)
 def setup(bot):
 	bot.add_cog(Botstuff(bot))

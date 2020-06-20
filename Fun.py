@@ -1,11 +1,23 @@
-import discord, random, aiohttp, json, time, datetime, urllib, math, requests, asyncio, re, config, secrets, urllib, aiohttp, time, sys, importlib
+import discord, random, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, config, secrets, urllib, aiohttp, time, sys, importlib
 from discord import ext
 from random import choice
 from Cogs import Settings
 from io import BytesIO
+from utils.tools import *
+from utils.unicode import *
+from utils.fun.lists import *
+from PIL import Image
+from utils.fun.fortunes import fortunes
+from utils import imagetools
+from utils.language import Language
 from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions, MissingPermissions
-from utils import lists, permissions, http, default, argparser, dataIO
+from utils2 import lists, permissions, http, default, argparser, dataIO
+from utils.config import Config
+from utils.tools import *
+from utils import checks
+config = Config()
+
 coinsides = ['Heads', 'Tails']
 random_word = random.choice("words.txt")
 lines = open('words.txt').read().splitlines()
@@ -20,11 +32,13 @@ def setup(bot):
 	settings = bot.get_cog("Settings")
 	bot.add_cog(Fun(bot, settings))
 
+
 class Fun(commands.Cog):
 
 	def __init__(self, bot, settings):
 		self.bot = bot
 		self.settings = settings
+
 	@commands.command()
 	async def groot(self, ctx):
 		"""Who... who are you?"""
@@ -43,7 +57,7 @@ class Fun(commands.Cog):
 		groot_max = 5
 		groot = " ".join([random.choice(groots) + (random.choice(punct)*random.randint(0, 5)) for x in range(random.randint(1, groot_max))])
 		await ctx.send(groot)
-	@commands.command(aliases=["greet"])
+	@commands.command()
 	async def greeting(self, ctx):
 		greeting = ["Hello! Today is a good day", "Hello! Today is a bad day"]
 		await ctx.send(random.choice(greeting))
@@ -60,20 +74,52 @@ class Fun(commands.Cog):
 		"""Quotes to get you through the day"""
 		Quotes = open("Quotes.txt", encoding='utf8').read().splitlines()
 		await ctx.send(random.choice(Quotes))
-	@commands.command(aliases=["roshambo", "rockpaperscissors"])
-	async def rps(self, ctx, message):
-		"""Rock paper scissors with the bot."""
-		choices = ["rock", "paper", "scissors"]
-		await ctx.send(random.choice(choices))
-	@commands.command(aliases=["revenge", "creeper"])
+	@commands.command()
+	async def rps(self, ctx, choice: str):
+		"""Play rock-paper-scissors"""
+		try:
+			userChoice = choice.lower()
+
+			if userChoice != "rock" and userChoice != "paper" and userChoice != "scissors":
+				await ctx.send("You can only choose from rock, paper or scissors")
+			else:
+				temp = random.randint(1, 3)
+				if temp == 1:
+					botChoice = "rock"
+				elif temp == 2:
+					botChoice = "paper"
+				elif temp == 3:
+					botChoice = "scissors"
+
+				# This is kind of ugly but it works
+				if userChoice == botChoice:
+					await ctx.send("I choose **{}**. The game was a tie!".format(botChoice))
+				elif userChoice == "rock":
+					if botChoice == "paper":
+						await ctx.send("I choose **{}**. I win!".format(botChoice))
+					elif botChoice == "scissors":
+						await ctx.send("I choose **{}**. You win!".format(botChoice))
+				elif userChoice == "paper":
+					if botChoice == "scissors":
+						await ctx.send("I choose **{}**. I win!".format(botChoice))
+					elif botChoice == "rock":
+						await ctx.send("I choose **{}**. You win!".format(botChoice))
+				elif userChoice == "scissors":
+					if botChoice == "rock":
+						await ctx.send("I choose **{}**. I win!".format(botChoice))
+					elif botChoice == "paper":
+						await ctx.send("I choose **{}**. You win!".format(botChoice))
+		except Exception as e:
+			await ctx.send(e)
+	@commands.command()
 	async def Creeper(self, ctx):
 		"""So we back in the mine..."""
 		await ctx.send("Aww man")
-	@commands.command(aliases=["biggerroast"])
+	@commands.command()
 	async def insult(self, ctx):
 		"""Says something mean about you."""
 		await ctx.send(ctx.message.author.mention + " " + random.choice(config.insults))
-	@commands.command(aliases=["roastme", "ineedaroast", "bully"])
+	@commands.command()
 	async def roast(self, ctx, member : discord.Member):
 		"""Less awful version of the insult command"""
 		await ctx.send(random.choice(lines))
@@ -318,7 +364,7 @@ class Fun(commands.Cog):
 							 icon_url='https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png')
 			embed.timestamp = lastedited
 			await ctx.send('**Search result for:** ***"{}"***:'.format(query), embed=embed)
-	@commands.command(pass_context=True)
+	@commands.command(pass_context=True, hidden=True)
 	async def listmuted(self, ctx):
 		"""Lists the names of those that are muted."""
 		role = discord.utils.get(ctx.guild.roles, name='Muted')
@@ -378,4 +424,184 @@ class Fun(commands.Cog):
 		await ctx.author.send(file=discord.File(fp=logFile))
 		await mess.edit(content='Uploaded *{}!*'.format(logFile))
 		#os.remove(logFile)
+	@commands.command()
+	async def owo(self, ctx, *, text:str):
+		"""OwO, owoify something >w<"""
+		await ctx.send(owoify(text))
+	@commands.command()
+	async def spam3(self, ctx):
+		"""SPAM SPAM SPAM"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/spam.png"))
+	@commands.command()
+	async def internetrules(self, ctx):
+		"""The rules of the internet"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/InternetRules.txt"))
+	
+	@commands.command()
+	async def fight(self, ctx, user:str=None, *, weapon:str=None):
+		"""Fight someone with something"""
+		if user is None or user.lower() == ctx.author.mention or user == ctx.author.name.lower() or ctx.guild is not None and ctx.author.nick is not None and user == ctx.author.nick.lower():
+			await ctx.send("{} fought themself but only ended up in a mental hospital!".format(ctx.author.mention))
+			return
+		if weapon is None:
+			await ctx.send("{0} tried to fight {1} with nothing so {1} beat the breaks off of them!".format(ctx.author.mention, user))
+			return
+		await ctx.send("{} used **{}** on **{}** {}".format(ctx.author.mention, weapon, user, random.choice(fight_results).replace("%user%", user).replace("%attacker%", ctx.author.mention)))
+	@commands.command()
+	async def cowsay(self, ctx, type:str, *, message:str):
+		"""moo"""
+		try:
+			cow = cowList[type.lower()]
+		except KeyError:
+			await ctx.send("`{}` is not a usable character type. Run **{}cows** for a list of cows.".format(type, ctx.prefix))
+			return
+		msg = "```{}```".format(cow.milk(message))
+		if len(msg) > 2000:
+			await ctx.send("Sorry, the message length with the cow in it has a total character length of {}. Discord only allows 2000 characters per message.".format(len(msg)))
+			return
+		await ctx.send(msg)
+	@commands.command()
+	async def cows(self, ctx):
+		"""Cow list for the cowsay command"""
+		await ctx.send("Current list of cows:```{}```".format(", ".join(cowList.keys())))
+	@commands.command()
+	async def trigger(self, ctx, *, member:discord.Member=None):
+		"""Triggers a user"""
+		await ctx.channel.trigger_typing()
+		if member is None:
+			member = ctx.author
+		download_file(get_avatar(member, animate=False), "data/trigger.png")
+		avatar = Image.open("data/trigger.png")
+		triggered = imagetools.rescale(Image.open("assets/imgs/pillow/triggered.jpg"), avatar.size)
+		position = 0, avatar.getbbox()[3] - triggered.getbbox()[3]
+		avatar.paste(triggered, position)
+		avatar.save("data/trigger.png")
+		await ctx.send(file=discord.File("data/trigger.png"))
+	@commands.command()
+	async def b1nzy(self, ctx):
+		"""b1nzy pls no ;-;"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/b1nzy_with_banhammer.png"))
+	@commands.command()
+	async def honk(self, ctx):
+		"""Honk honk mother fucka"""
+		await ctx.send(random.choice(honkhonkfgt))
+	@commands.command()
+	async def headpat(self, ctx):
+		"""Posts a random headpat from headp.at"""
+		pats = requests.get("http://headp.at/js/pats.json").json()
+		pat = random.choice(pats)
+		file = url_to_bytes("http://headp.at/pats/{}".format(pat))
+		await ctx.send(file=discord.File(file["content"], file["filename"]))
+	@commands.command()
+	async def twentyoneify(self, ctx, *, input:str):
+		"""EVERYTHING NEEDS TWENTY ØNE PILØTS!"""
+		await ctx.send(input.replace("O", "Ø").replace("o", "ø"))
+	@commands.command()
+	async def md5(self, ctx, *, msg:str):
+		"""Convert something to MD5"""
+		await ctx.send("`{}`".format(hashlib.md5(bytes(msg.encode("utf-8"))).hexdigest()))
+	@commands.command()
+	async def spotify(self, ctx, user:discord.Member=None):
+		"""Get the current song that you or another user is playing"""
+		if user is None:
+			user = ctx.author
+		activity = ctx.author.activity
+		if activity is None:
+			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
+			return
+		if activity.type == discord.ActivityType.listening and activity.name == "Spotify":
+			embed = discord.Embed(description="\u200b")
+			embed.add_field(name="Artists", value=", ".join(activity.artists))
+			embed.add_field(name="Album", value=activity.album)
+			embed.add_field(name="Duration", value=str(activity.duration)[3:].split(".", 1)[0])
+			embed.title = "**{}**".format(activity.title)
+			embed.set_thumbnail(url=activity.album_cover_url)
+			embed.url = "https://open.spotify.com/track/{}".format(activity.track_id)
+			embed.color = activity.color
+			embed.set_footer(text="{} - is currently playing this song".format(ctx.author.display_name), icon_url=get_avatar(ctx.author))
+			await ctx.send(embed=embed)
+		else:
+			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
+			return
+	@commands.command(hidden=True)
+	async def infodebug(self, ctx, *, shit:str):
+		"""This is the part where I make 20,000 typos before I get it right"""
+		# "what the fuck is with your variable naming" - EJH2
+		# seth seriously what the fuck - Robin
+		import asyncio
+		import os
+		import random
+		import re
+		from datetime import datetime, timedelta
+		try:
+			rebug = eval(shit)
+			if asyncio.iscoroutine(rebug):
+				rebug = await rebug
+			await ctx.send(py.format(rebug))
+		except Exception as damnit:
+			await ctx.send(py.format("{}: {}".format(type(damnit).__name__, damnit)))
+	@commands.command()
+	async def tableflip(self, ctx):
+		# I hope this unicode doesn't break
+		"""(╯°□°）╯︵ ┻━┻"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/reactions/tableflip.gif"))
 
+	@commands.command()
+	async def unflip(self, ctx):
+		# I hope this unicode doesn't break
+		"""┬─┬﻿ ノ( ゜-゜ノ)"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/reactions/unflip.gif"))
+	@commands.command()
+	async def actdrunk(self, ctx):
+		"""I got drunk on halloween in 2016 it was great"""
+		await ctx.send(random.choice(drunkaf))
+	@commands.command()
+	async def triggered(self, ctx):
+		"""DID YOU JUST ASSUME MY GENDER? *TRIGGERED*"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/reactions/triggered.gif"))
+	@commands.command()
+	async def nolewding(self, ctx):
+		"""No lewding!"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/reactions/nolewding.jpg"))
+	@commands.command(hidden=True)
+	async def what(self, ctx):
+		"""what?"""
+		await ctx.channel.trigger_typing()
+		await ctx.send(file=discord.File("assets/imgs/reactions/what.gif"))
+	@commands.command()
+	@commands.is_nsfw()
+	async def e621(self, ctx, *, tags:str):
+		limit = config.max_nsfw_count
+
+		"""Searches e621.net for the specified tagged images"""
+		await ctx.channel.trigger_typing()
+		try:
+			data = requests.get("https://e621.net/post/index.json?limit={}&tags={}".format(limit, tags), headers=header).json()
+		except json.JSONDecodeError:
+			await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+			return
+		count = len(data)
+		if count == 0:
+			await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
+			return
+		image_count = 4
+		if count < 4:
+			image_count = count
+		images = []
+		for i in range(image_count):
+			images.append(data[random.randint(0, count)]["file_url"])
+		await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
+	@commands.command()
+	async def cat(self, ctx):
+		cats = open("cats.py").read().splitlines()
+		cat2 = random.choice(cats)
+		
+		await ctx.send(cat2)
+	

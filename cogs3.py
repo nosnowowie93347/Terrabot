@@ -1,6 +1,7 @@
 import discord, random
 from discord import ext
 from discord.ext import commands
+from random import choice, randint
 from discord.ext.commands import Bot
 import platform, asyncio
 class Cog3(commands.Cog):
@@ -49,6 +50,7 @@ class Cog3(commands.Cog):
 		await ctx.send(result)
 	@commands.command()
 	async def dadjoke(self, ctx):
+		import requests
 		"""Really awful jokes. Courtesy of icanhazdadjoke.com"""
 		channel = ctx.message.channel
 		author  = ctx.message.author
@@ -67,7 +69,7 @@ class Cog3(commands.Cog):
 		comic = requests.get('https://xkcd.com/' + str(num) + '/info.0.json').json()
 		await ctx.send(comic['img'])
 		await ctx.send('_' + comic['alt'] + '_')
-	@commands.command(aliases=["areyouworking"])
+	@commands.command()
 	async def test(self, ctx):
 		await ctx.send('This Bot is Working (Dispite what Ruby might tell you)')
 	@commands.command(aliases=["naptime", "sleepytime"])
