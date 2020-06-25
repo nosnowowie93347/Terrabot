@@ -1,10 +1,10 @@
-import discord, random, asyncio, platform, time, os, datetime
+import discord, random, asyncio, platform, time, os, datetime, aiohttp
 from discord import ext
 import re, copy, unicodedata
 from collections import Counter
 from discord.ext import commands
 from discord.ext.commands import Bot
-
+from utils2.EmojiStealer import *
 
 class TimeParser:
 	def __init__(self, argument):
@@ -63,7 +63,7 @@ class YetAnotherCog(commands.Cog):
 		await ctx.send(completed.format(author, message))
 
 	
-	@commands.command(aliases=["characterinfo"])
+	@commands.command()
 	async def charinfo(self, ctx, *, characters: str):
 		"""Shows you information about a number of characters.
 		Only up to 15 characters at a time.
@@ -80,21 +80,7 @@ class YetAnotherCog(commands.Cog):
 																											  name, c)
 
 		await ctx.send('\n'.join(map(to_string, characters)))
-	@commands.command(aliases=["botinvitelink", "invitebot"])
-	async def join(self, ctx):
-		"""Joins a server."""
-		msg = 'It is no longer possible to ask me to join via invite. So use this URL instead.\n\n'
-		perms = discord.Permissions.none()
-		perms.read_messages = True
-		perms.send_messages = True
-		perms.manage_roles = True
-		perms.ban_members = True
-		perms.kick_members = True
-		perms.manage_messages = True
-		perms.embed_links = True
-		perms.read_message_history = True
-		perms.attach_files = True
-		await ctx.send(msg + discord.utils.oauth_url("657372691749273612", perms))
+	
 	@commands.command()
 	async def softban(self, ctx, member: discord.Object, *, reason: str):
 		"""Soft bans a member from the server.
@@ -114,7 +100,40 @@ class YetAnotherCog(commands.Cog):
 			await ctx.send('Banning failed.')
 		else:
 			await ctx.send('\U0001f44c')
+	@commands.command()
+	async def steal_emoji(self, ctx, emoji: EmojiThief, name=None):
+		"""Steals an emoji."""
+		# the converter can return none when cancelled.
+		if not emoji:
+			return
 
+		extension = "gif" if emoji.animated else "png"
+		emoji_url = f"https://cdn.discordapp.com/emojis/{emoji.id}.{extension}"
+
+		if not emoji.name and not name:
+			await ctx.send(
+				"The name of the emoji could not be resolved. Please specify one."
+			)
+			return
+
+		name = emoji.name or name.strip(":")
+		msg = await ctx.send("<:loading:725036771741663272>")
+
+		try:
+			async with aiohttp.ClientSession() as se:
+				async with se.get(emoji_url, raise_for_status=True) as resp:
+					data = await resp.read()
+					emoji = await ctx.guild.create_custom_emoji(name=name, image=data)
+
+					try:
+						await msg.edit(content=str(emoji))
+						await msg.add_reaction(emoji)
+					except discord.HTTPException as fuck:
+						await ctx.send(fuck)
+		except aiohttp.ClientError:
+			await msg.edit(content="Failed to download the emoji.")
+		except discord.HTTPException as exc:
+			await msg.edit(content=f"Failed to upload the emoji: {exc}")
 
 def setup(bot):
 	bot.add_cog(YetAnotherCog(bot))

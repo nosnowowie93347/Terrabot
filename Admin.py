@@ -1,14 +1,15 @@
-import logging, random, logging, discord, asyncio, secrets
+import logging, random, sys, logging, discord, asyncio, secrets, subprocess, aiohttp
 from io import BytesIO
 from utils.mysql import *
 from utils.channel_logger import Channel_Logger
 from utils.tools import *
+from utils.logger import log
 from utils import checks
 from utils.language import Language
 from discord import ext
 from random import randint, choice
 from discord.ext import commands
-from discord.ext.commands import Bot, MissingPermissions, has_permissions
+from discord.ext.commands import Bot, bot_has_permissions, MissingPermissions, has_permissions
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -18,7 +19,6 @@ handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 class Admin(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-
 	@commands.command()
 	async def pin(self, ctx, id:int):
 		"""Pins the message with the specified ID to the channel"""
@@ -31,7 +31,7 @@ class Admin(commands.Cog):
 			await message.pin()
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command(aliases=["bannedusers"])
+	@commands.command()
 	async def getbans(self, ctx):
 		import config
 		"""Lists banned members"""
@@ -42,18 +42,18 @@ class Admin(commands.Cog):
 			await ctx.send(thing3)
 		else:
 			await ctx.send(config.errormessage)
-	@commands.command(aliases=["permkick", "permaban"])
+	@commands.command()
+	@has_permissions(ban_members=True)
+	@bot_has_permissions(ban_members=True)
 	async def ban(self, ctx, member : discord.Member, *,  reason : str):
 		"""When you're just not having it"""
-		try:
-			await member.ban(reason = reason)
-			banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
-			dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
-			await ctx.send(embed=banembed)
-			await member.send(embed=dmembed)
-		except discord.errors.Forbidden as e:
-			await ctx.send("You don't have permission to do this!")
-	@commands.command()
+		await member.ban(reason = reason)
+		banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
+		dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
+		await ctx.send(embed=banembed)
+		await member.send(embed=dmembed)
+	@commands.command(aliases=["idban", "banbyid"])
+	@bot_has_permissions(ban_members=True)
 	@has_permissions(ban_members=True)
 	async def hackban(self, ctx, member : discord.Object, *, reason : str):
 		"""Ban ppl by id"""
@@ -69,10 +69,9 @@ class Admin(commands.Cog):
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
 		pmembed = discord.Embed(title="You've been kicked.", description=f"You've been kicked from {ctx.guild} for {reason}")
 		await ctx.send(embed=kickembed)
-		await member.send(pmembed)
+		await member.send(embed=pmembed)
 		logger.info(f"You've been bad, {member.mention}. You've been kicked.")
 	@commands.command()
-	@has_permissions(manage_roles=True)
 	async def addrole(self, ctx, member: discord.Member, *, role:discord.Role):
 		"""Adds a role to a user"""
 		await member.add_roles(role)
@@ -131,6 +130,7 @@ class Admin(commands.Cog):
 			embed = discord.Embed(title= "User Unmuted", color=0xff00f6,description= f'{member.mention} was unmuted by {ctx.author.mention}')
 			await ctx.send(embed=embed)
 	@commands.command()
+	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
 	async def unwarn(self, ctx, member:discord.Member, *, reason:str):
 		embed=discord.Embed(title="Unwarned User", description="Unwarned {} for {}".format(member.mention, reason))
@@ -139,13 +139,14 @@ class Admin(commands.Cog):
 		await ctx.send(embed=embed)
 		logger.info("Warned {} for {}".format(member, reason))
 	@commands.command()
-	async def warn(self, ctx, member:discord.Member, *, reason:str):
-		"""Step before mute"""
+	@bot_has_permissions(manage_roles=True)
+	async def warn(self, ctx, member:discord.Member):
+		"""I'm Warning You..."""
 		embed = discord.Embed(title="Warned User", color=0xff00f6,description=f'{member.mention} was warned by {ctx.author.mention}')
 		role = discord.utils.get(ctx.guild.roles, name='Warned')
 		await member.add_roles(role)
 		await ctx.send(embed=embed)
-		logger.info("Warned {} for {}".format(member, reason))
+		#logger.info("Warned {} for {}".format(member, reason))
 	@commands.command()
 	@commands.bot_has_permissions(manage_roles=True)
 	@commands.has_permissions(manage_guild=True)
@@ -219,12 +220,14 @@ class Admin(commands.Cog):
 		
 		await ctx.send(f"I'd rate `{thing}` a **{round(rate_amount, 4)} / 100**")
 	@commands.command(name="botnick")
+	@checks.is_owner()
 	async def changebotnick(self, ctx, *, name : str):
 		# Let's get the bot's member in the current server
 		botName = "{}#{}".format(self.bot.user.name, self.bot.user.discriminator)
 		botMember = ctx.message.guild.get_member_named(botName)
 		await botMember.edit(nick=str(name))
 	@commands.command()
+	@bot_has_permissions(ban_members=True)
 	async def massban(self, ctx, *, ids:str):
 		"""Mass bans users by ids (separate ids with spaces)"""
 		await ctx.channel.trigger_typing()
@@ -242,6 +245,7 @@ class Admin(commands.Cog):
 		await ctx.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
 	@commands.command()
 	@has_permissions(manage_roles=True)
+	@bot_has_permissions(manage_roles=True)
 	async def editrole(self, ctx, role:discord.Role, value:int, pos:int, hoist:bool):
 		try:
 			perms = discord.Permissions(permissions=int(value))
@@ -261,6 +265,7 @@ class Admin(commands.Cog):
 				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
 	@commands.guild_only()
 	@commands.command()
+	@has_permissions(manage_roles=True)
 	async def renamerole(self, ctx, role:discord.Role, *, newname:str):
 		"""Renames a role with the specified name, be sure to put double quotes (\") around the name and the new name"""
 		if role is None:
@@ -276,5 +281,42 @@ class Admin(commands.Cog):
 				await ctx.send(Language.get("moderation.no_renamerole_higher_role", ctx))
 			else:
 				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
+	@commands.command()
+	@commands.guild_only()
+	@has_permissions(manage_roles=True)
+	async def delrole(self, ctx, *, role:discord.Role):
+		await role.delete()
+		embed = discord.Embed(title="Role Deleted", description="Deleted the role {}".format(role.name), color=0xff00ae)
+		embed.set_footer(text="Powered by Terrabot")
+		await ctx.send(embed=embed)
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def restart(self, ctx):
+		"""Restarts the bot"""
+		await ctx.send("Restarting...")
+		log.warning("{} has restarted the bot!".format(ctx.author))
+		try:
+		  await aiosession.close()
+		except:
+		   pass
+		await self.bot.logout()
+		subprocess.call([sys.executable, "bot.py"])
+	@commands.command()
+	@has_permissions(manage_channels=True)
+	async def createtc(self, ctx, name, number : int):
+		await ctx.guild.create_text_channel(name=name, slowmode_delay=number)
+		await ctx.send("A Text Channel Named {} was made.".format(name))
+	@commands.command()
+	@has_permissions(manage_channels=True)
+	async def edittc(self, ctx, name):
+		print("here")
+		topic = "This is a channel created by Terrabot"
+		await ctx.channel.edit(name=name, topic=topic)
+		await ctx.send("Success")
+	@commands.command()
+	@has_permissions(manage_channels=True)
+	async def mutechannelperms(self, ctx, role:discord.Role):
+		await ctx.channel.set_permissions(role, attach_files=False, send_tts_messages=False, read_message_history=False, manage_messages=False, send_messages=False, read_messages=True, embed_links=False)
+		await ctx.send("Permissions updated for {}".format(role))
 def setup(bot):
 	bot.add_cog(Admin(bot))

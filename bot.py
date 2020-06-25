@@ -1,4 +1,4 @@
-import discord, re, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
 import config
 
@@ -12,23 +12,23 @@ from random import choice, randint, randrange
 from discord.ext import commands
 from discord.ext.commands import Bot
 import discord.utils
-from utils.config import Config
 from utils.tools import *
 from utils.channel_logger import Channel_Logger
 from discord.utils import get
 from utils.language import Language
 from   discord.ext import commands
-from discord.ext.commands import MissingPermissions, has_permissions
+from discord.ext.commands import MissingPermissions, has_permissions, bot_has_permissions
 import datetime
+from utils import checks
 import pyfiglet, time
 from pyfiglet import figlet_format, FontNotFound
 import datetime as dt
 from utils.logger import log
+lock_status = config.lock_status
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
-config = Config()
-bot = discord.ext.commands.Bot(command_prefix=config.command_prefix, description="Hello my name is Terrabot")
+bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot")
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -53,15 +53,12 @@ dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 cmds = open('commands.py', encoding= 'utf8').read().splitlines()
 choices = ['rock', 'paper', 'scissors']
 limit = config.max_nsfw_count
-now_playing = "Playing Convincing Everyone I'm Better than Risabot."
 rockpaperscissors = random.choice(choices)
 random_word = random.choice("words.txt")
 lines = open('words.txt').read().splitlines()
 startTime = int(time.time())
 compliments = open("Compliments.txt", encoding='utf8').read().splitlines()
 myline = random.choice(lines)
-memes = open("memes2.py", encoding='utf8').read().splitlines()
-meme = random.choice(memes)
 @bot.event
 async def on_ready():
 	print("Hey! I'm Terrabot!")
@@ -74,18 +71,21 @@ async def on_ready():
 	bot.load_extension("Fun")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
+	bot.load_extension("muusic")
+	bot.load_extension("quickpoll")
 	bot.load_extension("Morecogs")
 	bot.load_extension("Morse")
 	bot.load_extension("Botstuff")
 	bot.load_extension("Admin")
 	bot.load_extension("Translate")
 	bot.load_extension("cogs4")
-	bot.load_extension("music")
 	await bot.change_presence(activity=discord.Game(name="Serving Pinkalicious21902 Forever and Always"), status=discord.Status.online)
 	print(time.time())
+	print(len(bot.commands))
+
 @bot.event
 async def on_message(message):
-	# swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
+		# swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
 	# for word in swearwords:
 	# 	if word in message.content:
 	# 		await message.delete()
@@ -103,20 +103,55 @@ async def on_message(message):
 		return
 	await bot.process_commands(message)
 @bot.event
-async def on_member_join(user):
+async def on_command_error(ctx, error):
+	if isinstance(error, commands.CommandNotFound):
+		await ctx.send("Oops! This command doesn't exist. If you think it should, dm the devs with ur suggestion.")
+		return
+	if isinstance(error, commands.DisabledCommand):
+		await ctx.send(Language.get("bot.errors.disabled_command", ctx))
+		return
+	if isinstance(error, checks.owner_only):
+		await ctx.send(Language.get("bot.errors.owner_only", ctx))
+		return
+	if isinstance(error, checks.dev_only):
+		await ctx.send(Language.get("bot.errors.dev_only", ctx))
+		return
+	if isinstance(error, checks.support_only):
+		await ctx.send(Language.get("bot.errors.support_only", ctx))
+		return
+	if isinstance(error, checks.not_nsfw_channel):
+		await ctx.send(Language.get("bot.errors.not_nsfw_channel", ctx))
+		return
+	if isinstance(error, checks.not_guild_owner):
+		await ctx.send(Language.get("bot.errors.not_guild_owner", ctx))
+		return
+	if isinstance(error, checks.no_permission):
+		await ctx.send(Language.get("bot.errors.no_permission", ctx))
+		return
+	if isinstance(error, commands.NoPrivateMessage):
+		await ctx.send(Language.get("bot.errors.no_private_message", ctx))
+		return
+	if isinstance(ctx.channel, discord.DMChannel):
+		await ctx.send(Language.get("bot.errors.command_error_dm_channel", ctx))
+		return
+
+	#In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
+	try:
+		await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
+	except:
+		pass
+	log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
+@bot.event
+async def on_member_join(user): 
 	try:
 		rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
 		rules.add_field(name="1", value="Leave banning the bots to Devs/admins")
-		rules.add_field(name="2", value="No swearing! It will be deleted")
-		rules.add_field(name="3", value="Behave/use common sense")
-		rules.add_field(name="4", value="#broken-commands if a command doesn't work")
-		rules.add_field(name="5", value="#mute-appeal for unfair mutes")
-		rules.add_field(name="6", value="Admins and maybe staff will purge channels. see #purge-notices")
-		rules.add_field(name="7", value="No swearing! It will be deleted")
-		rules.add_field(name="8", value="Only princess luna can add people to the Gues role")
+		rules.add_field(name="2", value="Behave/use common sense")
+		rules.add_field(name="3", value="#mute-appeal for unfair mutes")
+		rules.add_field(name="4", value="Admins and maybe staff will purge channels. see #purge-notices")
 		await user.send(embed=rules)
 	except discord.errors.Forbidden:
-		return await user.send("Cannot do this. Sorry.")
+		return
 @bot.event
 async def on_reaction_add(reaction, user):
 		bot.dispatch("picklist_reaction", reaction, user)
@@ -130,13 +165,7 @@ def blacklistuser(id, name, discrim, reason):
 def unblacklistuser(id):
 	cur.execute("""DELETE FROM blacklist WHERE id=""" + str(id))
 	conn.commit()
-async def _restart_bot():
-	try:
-	  await aiosession.close()
-	except:
-	   pass
-	await bot.logout()
-	subprocess.call([sys.executable, "bot.py"])
+
 def getblacklistentry(id):
 	cur.execute("""SELECT id FROM blacklist WHERE id=""" + str(id))
 	id = None
@@ -189,7 +218,7 @@ async def get_search(ctx, query, service=""):
 			msg = '*{}*, you can find your answers here:\n\n<{}>'.format((ctx.message.author), lmgtfyT)
 		return msg
 
-@bot.command(aliases=["wipe", "delete", "clean", "removespam", "deletemsgs"])
+@bot.command(aliases=["wipe", "delete", "clean", "removespam"])
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
@@ -197,7 +226,7 @@ async def purge(ctx, number: int):
 	deleted = await ctx.channel.purge(limit=number)
 	print('Deleted {} message(s)'.format(len(deleted)))
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
-	await ctx.send("Deleted {} messages, my master.".format(len(deleted)))
+	await ctx.send("Deleted {} messages, my master.".format(len(deleted)), delete_after=5)
 @bot.command(pass_context=True)
 async def getimage(ctx, *, image):
 	"""Tests downloading - owner only"""
@@ -222,6 +251,7 @@ async def ask(ctx, *, query = None):
 	await ctx.send(msg)
 
 @bot.command()
+@checks.is_dev()
 @has_permissions(manage_messages=True)
 async def purgeall(ctx):
 	"""Deletes all messages in a channel"""
@@ -239,12 +269,6 @@ async def hello(ctx):
 async def goodmorning(ctx):
 	"""It's a good morning"""
 	await ctx.send(f"Good Morning, {ctx.author.mention}!")
-@bot.command(hidden=True)
-async def restart(ctx):
-	"""Restarts the bot"""
-	await ctx.send("Restarting...")
-	log.warning("{} has restarted the bot!".format(ctx.author))
-	await _restart_bot()
 @bot.command(aliases=["makebig", "enlargen", "supersize"])
 async def embiggen(ctx, *, text):
 	"""Embiggens text. Yes that's a word, obviously"""
@@ -266,12 +290,6 @@ async def terrariaquotes(ctx):
 	terrariaquote = open("terrariaquotes.py").read().splitlines()
 	terraria = random.choice(terrariaquote)
 	await ctx.send(terraria)
-@bot.command(aliases=["makemelaugh", "memes", "funnies"])
-async def meme(ctx):
-	"""MEMES BOII"""
-	await ctx.send("Here we go! Here comes a meme!")
-	await ctx.send(random.choice(memes))
-
 @bot.command()
 async def highfive(ctx):
 	"""Some people just need a highfive..."""
@@ -281,7 +299,7 @@ async def highfive(ctx):
 async def moveout(ctx):
 	"""How long until I can finally leave my parents"""
 	await ctx.send("**{0}** day(s) left until I FINALLY  move out!! :smile:".format(str(moveoutday.days)))
-@bot.command(aliases=["xmas", "chrimbo", "crimbo", "Christmas"])
+@bot.command(aliases=["xmas", "chrimbo", "crimbo"])
 async def christmas(ctx):
 	"""HOW MUCH LONGER TILL CHRISTMAS, MOMMY?!?!"""
 	await ctx.send("**{0}** day(s) left until Christmas day! :christmas_tree:".format(str(diff.days)))
@@ -337,6 +355,11 @@ async def guildinfo(ctx):
 	await ctx.send(embed=embed)
 	await ctx.send(embed=embed2)
 @bot.command()
+async def botserver(ctx):
+	"""Sends an invite link to the bot's server"""
+	await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", bot.command_prefix))
+	await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", bot.command_prefix))
+@bot.command()
 async def oeis(ctx, *, number: str):
 	'''
 	Looks up a sequence of numbers
@@ -360,20 +383,6 @@ async def online(ctx):
 	onlineMembersInServer = list(filter(filterOnlyOnlineMembers, membersInServer))
 	onlineMembersCount = len(onlineMembersInServer)
 	await ctx.send("There are " + str(onlineMembersCount) + " Members online out of {}".format(len(ctx.guild.members)))
-@bot.command()
-async def createtc(ctx, name, number : int):
-	await ctx.guild.create_text_channel(name=name, slowmode_delay=number)
-	await ctx.send("A Text Channel Named {} was made.".format(name))
-@bot.command()
-async def edittc(ctx, name):
-	print("here")
-	topic = "This is a channel created by Terrabot"
-	await ctx.channel.edit(name=name, topic=topic)
-	await ctx.send("Success")
-@bot.command()
-async def mutechannelperms(ctx, role:discord.Role):
-	await ctx.channel.set_permissions(role, attach_files=False, send_tts_messages=False, read_message_history=False, manage_messages=False, send_messages=False, read_messages=True, embed_links=False)
-	await ctx.send("Permissions updated for {}".format(role))
 @bot.command()
 async def kill(ctx, member:discord.Member):
 	'''
@@ -423,9 +432,9 @@ async def areyoutired(ctx):
 	no = "no"
 	await ctx.send(random.choice([yes, no]))
 @bot.command()
-async def timetravel(ctx, message):
+async def timetravel(ctx, numofminutes:int):
 	"""Just don't mess up the timeline..."""
-	await ctx.send(f"skipping forward {message} minutes")
+	await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
 	await ctx.message.delete()
 @bot.command()
 async def clock(ctx):
@@ -461,12 +470,13 @@ async def google(ctx, *, query = None):
 	msg = await get_search(ctx, query)
 	# Say message
 	await ctx.send(msg)
-@bot.command(name="spam2.0")
+@bot.command(name="spam2.0", enabled=False, hidden=True)
+@checks.is_owner()
 async def spam2point0(ctx, *, message):
 	"""Spams a message"""
 	await ctx.send("usage = %spam2.0 <message>")
 	if message == "@everyone":
-		ctx.send("No")
+		return await ctx.send("No")
 	x = 1
 	while x < 12:
 		await ctx.send(message)
@@ -486,7 +496,7 @@ async def bing(ctx, *, query = None):
 	msg = await get_search(ctx, query,"b")
 	# Say message
 	await ctx.channel.send(msg)
-@bot.command()
+@bot.command(name="speedtest")
 async def speedstest(ctx):
 	"""Internet Speedtest"""
 	message = await ctx.send('Running speed test...')
@@ -507,7 +517,11 @@ async def speedstest(ctx):
 		await message.edit(content=msg)
 	except Exception as e:
 		await message.edit(content="Speedtest Error: {}".format(str(e)))
-@bot.command()
+@bot.command(aliases=["getprefix", "botprefix"])
+async def prefix(ctx):
+	message = discord.Message
+	prefix = await bot.get_prefix(message)
+	await ctx.send(f"My prefixes are {prefix}.")
 async def claptrap(ctx):
 	"""Can I shoot something now? SOMETHING exciting?"""
 	claptraps = open("claptraps.py", encoding="utf8").read().splitlines()
@@ -565,7 +579,8 @@ async def turret(ctx):
 		"""Now you're thinking with - wait... turrets?"""
 		turrets = open("turrets.py").read().splitlines()
 		await ctx.send(random.choice(turrets))
-@bot.command()
+@bot.command(enabled=False, hidden=True)
+@checks.is_dev()
 async def spam(ctx, member:discord.Member):
 	"""Spam pings a user"""
 	x = 1
@@ -575,35 +590,11 @@ async def spam(ctx, member:discord.Member):
 		if x == 17:
 			break
 @bot.command()
-async def swear(ctx):
-	await ctx.send("Fuckin fuck shit bich!")
-	await asyncio.sleep(5)
-	await ctx.send(":disappointed:")
-	await asyncio.sleep(5)
-	await ctx.send("I'm so sorry. I don't know what came over me.")
-@bot.command()
-@commands.is_owner()
-async def announce(ctx, member : discord.Member, *message:str):
-	"""Announces stuff to whoever is pinged"""
-	await ctx.send(message)
-@bot.command()
 @has_permissions(embed_links=True)
 async def Reeeeee(ctx):
 	"""REEEEEEE!"""
 	await ctx.send("https://www.youtube.com/watch?v=m4-IWUfddOE")
-@bot.command()
-async def delrole(ctx, role:discord.Role):
-	await Role.delete(role, reason=None)
-	embed = discord.Embed(title="Role Deleted", description="Deleted the role {}".format(role.name), color=0xff00ae)
-	embed.set_footer(text="Powered by Terrabot")
-	await ctx.send(embed=embed)
-@bot.command()
-@has_permissions(manage_emojis=True)
-async def createemoji(ctx):
-	guild = ctx.guild
-	image = open("4_grande.png", encoding='utf-8')
-	image.read()
-	await guild.create_custom_emoji(name="celebration", image=image)
+
 @bot.command()
 async def beer(ctx, user: discord.Member = None, *, reason: commands.clean_content = ""):
 		""" Give someone a beer! 🍻 """
@@ -635,21 +626,7 @@ async def beer(ctx, user: discord.Member = None, *, reason: commands.clean_conte
 			beer_offer = f"**{user.name}**, you got a 🍺 from **{ctx.author.name}**"
 			beer_offer = beer_offer + f"\n\n**Reason:** {reason}" if reason else beer_offer
 			await msg.edit(content=beer_offer)
-@bot.command()
-async def heal(ctx, member:discord.Member):
-	await ctx.send(f"Attempting to heal {member.mention}")
-	await asyncio.sleep(3)
-	options = ["Healing Failed", "Yay! It worked!"]
-	await ctx.send(random.choice(options))
-@bot.command()
-async def feed(ctx, member:discord.Member, *food):
-	await ctx.send("Fed {} {}".format(member, food))
-@bot.command()
-async def sendfile(ctx):
-	logfile = open("discord.log")
-	await ctx.send(file=discord.File(fp="discord.log"))
-	logfile.close()
-@bot.command()
+@bot.command(aliases=["b&w"])
 async def blackandwhite(ctx, user:discord.Member=None):
 	"""Turns your avatar or the specified user's avatar black and white"""
 	await ctx.channel.trigger_typing()
@@ -663,13 +640,6 @@ async def blackandwhite(ctx, user:discord.Member=None):
 async def f(ctx):
 	"""Press F to pay your respects"""
 	await ctx.send(Language.get("fun.respects", ctx).format(ctx.author, random.randint(1, 10000)))
-@bot.command()
-async def changelog(ctx):
-	change_log = [
-	"New commands (too many to mention)",
-	"Bug fixes"]
-	"""The latest changelog"""
-	await ctx.send(Language.get("bot.changelog", ctx).format(bot.command_prefix, diff.format("\n".join(map(str, change_log)))))
 @bot.command()
 async def avatar(ctx, *,  avamember : discord.Member=None):
 	userAvatarUrl = avamember.avatar_url
@@ -711,32 +681,8 @@ async def rule34(ctx, *, tags:str):
 		image = data[random.randint(0, count)]
 		images.append("http://img.rule34.xxx/images/{}/{}".format(image["directory"], image["image"]))
 	await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
-@bot.command()
-@commands.is_nsfw()
-async def danbooru(ctx, *, tags:str):
-	"""Searches danbooru.donmai.us for the specified tagged images"""
-	await ctx.channel.trigger_typing()
-	try:
-		data = requests.get("https://danbooru.donmai.us/post/index.json?limit={}&tags={}".format(limit, tags), headers=header).json()
-	except json.JSONDecodeError:
-		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
-		return
-	count = len(data)
-	if count == 0:
-		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
-		return
-	image_count = 4
-	if count < 4:
-		image_count = count
-	images = []
-	for i in range(image_count):
-		try:	
-			images.append(data[random.randint(0, count)]["file_url"])
-		except KeyError:
-			await ctx.send("Shit")
-		
-	await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
-@bot.command()
+
+@bot.command(aliases=["cutedog", "randomdog"])
 async def shibe(ctx):
 	"""Sends a random shibe picture."""
 	try:
@@ -750,10 +696,10 @@ async def shibe(ctx):
 	except aiohttp.ClientError:
 		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
 
-@bot.command()
+@bot.command(name="emojinames")
 @commands.guild_only()
 @commands.has_permissions(read_message_history=True)
-async def emojinames(ctx):
+async def namesofemojis(ctx):
 	from typing import Set
 	import functools
 	"""Shows the names of recent custom emoji used.
@@ -773,25 +719,24 @@ async def emojinames(ctx):
 		formatted = ", ".join(f"`{name}`" for name in names)
 		await ctx.send(formatted)
 @bot.command()
-@has_permissions(send_tts_messages=True)
-async def evaluate(ctx, *, code: str):
-	"""Extremely unsafe eval command."""
-	code = code.strip("` ")
-	result = None
-	try:
-		result = eval(code)
-		
-	except Exception as err:
-		await ctx.send('{}: {}'.format(type(err).__name__, err))
-		return
-
-	await ctx.send(f"```py\n{result}\n```")
+async def quoteaf(ctx):
+	"""Don't quote me on that"""
+	await ctx.channel.trigger_typing()
+	await ctx.send(file=discord.File("assets/imgs/quotes/{}.png".format(random.randint(1, len([file for file in os.listdir("assets/imgs/quotes")])))))		
 @bot.command()
 async def ron(ctx):
 	"""Get a Ron Swanson quote"""
 	req = requests.get("https://ron-swanson-quotes.herokuapp.com/v2/quotes")
 	quote = req.json()
 	await ctx.send(quote[0])
+@bot.command(aliases=["memes", "memey", "memer"])
+async def meme(ctx):
+	embed = discord.Embed(title="Meme", description="Here comes a meme!!")
+	async with aiohttp.ClientSession() as cs:
+		async with cs.get('https://www.reddit.com/r/dankmemes/new.json?sort=hot') as r:
+			res = await r.json()
+			embed.set_image(url=res['data']['children'] [random.randint(0, 25)]['data']['url'])
+			await ctx.send(embed=embed)
 @bot.command()
 async def choose(ctx, *, text: str):
 	"""Choose between options (seperated by commas)"""
@@ -799,5 +744,76 @@ async def choose(ctx, *, text: str):
 	text = text.strip()
 	temp = text.split(",")
 	await ctx.send("I choose... **{}** :thinking:".format(temp[random.randint(0, len(temp) - 1)]))
-token = 
+
+@bot.command(aliases=["change_stream"])
+async def stream(ctx, *, name:str):
+	"""Sets the streaming status with the specified name"""
+	if lock_status:
+		if not ctx.author.id == config.owner_id and not ctx.author.id in config.dev_ids:
+			await ctx.send(Language.get("bot.status_locked", ctx))
+			return
+	await bot.change_presence(activity=discord.Activity(name=name, type=discord.ActivityType.streaming, url="https://www.twitch.tv/ZeroEpoch1969"))
+	await ctx.send(Language.get("bot.now_streaming", ctx).format(name))
+	await channel_logger.log_to_channel(":information_source: `{}`/`{}` has changed the streaming status to `{}`".format(ctx.author.id, ctx.author, name))
+@bot.command()
+async def inviteme(ctx):
+	"""Sends the bot's OAuth2 link"""
+	await ctx.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
+	await ctx.author.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
+@bot.command()
+async def suggest(ctx, *, suggestion:str):
+	"""Sends a suggestion to the developers"""
+	if isinstance(ctx.channel, discord.DMChannel):
+		guild = "`No server! Sent via Private Message!`"
+	else:
+		guild = "`{}` / `{}`".format(ctx.guild.id, ctx.guild.name)
+	msg = make_message_embed(ctx.author, 0xFF0000, suggestion, formatUser=True)
+	owner = bot.get_user(config.owner_id)
+	if owner:
+		await owner.send("You have received a new suggestion! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
+	for id in config.dev_ids:
+		dev = bot.get_user(id)
+		if dev:
+			await dev.send("You have received a new suggestion! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
+@bot.command(hidden=True)
+async def botserverids(ctx):
+	await ctx.send(bot.guilds)
+	await ctx.send(len(bot.guilds))
+@bot.command(hidden=True)
+@commands.is_owner()
+async def delguild(ctx, guild_id):
+	guildtodelete = await bot.fetch_guild(guild_id)
+	await guildtodelete.delete()
+	await ctx.send(f"The guild {guild_id} was successfully deleted.")
+@bot.command(aliases=["report", "notifydevs"])
+async def notifydev(ctx, *, message:str):
+	"""Sends a message to the developers"""
+	if isinstance(ctx.channel, discord.DMChannel):
+		guild = "`No server! Sent via Private Message!`"
+	else:
+		guild = "`{}` / `{}`".format(ctx.guild.id, ctx.guild.name)
+	msg = make_message_embed(ctx.author, 0xFF0000, message, formatUser=True)
+	owner = bot.get_user(config.owner_id)
+	if owner:
+		await owner.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
+	for id in config.dev_ids:
+		dev = bot.get_user(id)
+		if dev:
+			await dev.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
+	
+	await ctx.author.send(Language.get("bot.dev_notify", ctx).format(message))
+@bot.command(hidden=True, aliases=["createguild", "create_guild"])
+@commands.is_owner()
+async def hopethisworks(ctx, name):
+	# VoiceRegion = ctx.guild.region
+	with open('AwOo.png', 'rb') as f:
+		icon = f.read()
+	print("Here!")
+	newserver = await bot.create_guild(name=name, region=VoiceRegion.us_west, icon=icon)
+	await newserver.create_text_channel(name="whatever")
+	invite = await newserver.channels[0].create_invite()
+	await ctx.send(invite)
+	print("And Here!")
+
+token = ""
 bot.run(token)

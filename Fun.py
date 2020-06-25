@@ -13,10 +13,8 @@ from utils.language import Language
 from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions, MissingPermissions
 from utils2 import lists, permissions, http, default, argparser, dataIO
-from utils.config import Config
 from utils.tools import *
 from utils import checks
-config = Config()
 
 coinsides = ['Heads', 'Tails']
 random_word = random.choice("words.txt")
@@ -123,7 +121,7 @@ class Fun(commands.Cog):
 	async def roast(self, ctx, member : discord.Member):
 		"""Less awful version of the insult command"""
 		await ctx.send(random.choice(lines))
-	@commands.command(aliases=["flipacoin", "headsortails", "flippadacoin"])
+	@commands.command()
 	async def coinflip(self, ctx):
 		"""Flip a Frikin Coin"""
 		await ctx.send(random.choice(coinsides))
@@ -207,6 +205,8 @@ class Fun(commands.Cog):
 			bio.seek(0)
 			await ctx.send(content=content, file=discord.File(bio, filename=filename))
 	@commands.command()
+	@checks.is_support()
+	@has_permissions(manage_guild=True)
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -285,15 +285,15 @@ class Fun(commands.Cog):
 		Creates a webhook, that says what you say. Like echo.
 		'''
 		await ctx.message.delete()
-		name="Terrabot updates all the time!"
+		name2= "Spidey Bot"
 		pfp = requests.get(ctx.author.avatar_url_as(format='png', size=256)).content
-		hook = await ctx.channel.create_webhook(name=ctx.message.author,
+		hook = await ctx.channel.create_webhook(name=name2,
 												avatar=pfp)
-		embed = discord.Embed(title="Message from Bot Owner", color=0x663399)
-		embed.add_field(name="Terrabot updates all the time!", value=name)
+		embed = discord.Embed(title="Message from Spidey Bot", color=0x663399)
+		embed.add_field(name="Hello! I'm here", value="Hello, How is everyone today?")
 		await hook.send(embed=embed)
 		await hook.delete()
-	@commands.command()
+	@commands.command(hidden=True, enabled=False)
 	async def updatenotice(self, ctx, role:discord.Role, *version:str):
 		await ctx.message.delete()
 		pfp = requests.get(ctx.author.avatar_url_as(format="png", size=256)).content
@@ -496,14 +496,6 @@ class Fun(commands.Cog):
 		file = url_to_bytes("http://headp.at/pats/{}".format(pat))
 		await ctx.send(file=discord.File(file["content"], file["filename"]))
 	@commands.command()
-	async def twentyoneify(self, ctx, *, input:str):
-		"""EVERYTHING NEEDS TWENTY ØNE PILØTS!"""
-		await ctx.send(input.replace("O", "Ø").replace("o", "ø"))
-	@commands.command()
-	async def md5(self, ctx, *, msg:str):
-		"""Convert something to MD5"""
-		await ctx.send("`{}`".format(hashlib.md5(bytes(msg.encode("utf-8"))).hexdigest()))
-	@commands.command()
 	async def spotify(self, ctx, user:discord.Member=None):
 		"""Get the current song that you or another user is playing"""
 		if user is None:
@@ -599,9 +591,19 @@ class Fun(commands.Cog):
 			images.append(data[random.randint(0, count)]["file_url"])
 		await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
 	@commands.command()
+	@checks.is_support()
 	async def cat(self, ctx):
 		cats = open("cats.py").read().splitlines()
 		cat2 = random.choice(cats)
 		
 		await ctx.send(cat2)
-	
+	@commands.command()
+	async def heal(self, ctx, member:discord.Member):
+		await ctx.send(f"Attempting to heal {member.mention}")
+		await asyncio.sleep(3)
+		options = ["Healing Failed", "Yay! It worked!"]
+		await ctx.send(random.choice(options))
+	@commands.command()
+	async def feed(self, ctx, member:discord.Member, *food):
+		await ctx.send("Fed {} {}".format(member, food))
+		

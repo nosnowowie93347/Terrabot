@@ -29,13 +29,13 @@ class Cog3(commands.Cog):
 			elif letter == " ":
 				output += " "
 		await ctx.send(output)
-	@commands.command(aliases=['saytts'])
+	@commands.command()
 	async def echotts(self, ctx, *, message):
 		"""Makes the bot talk, with TTS."""
 		say = message
 		await ctx.message.delete()
 		return await ctx.send(say, tts=True)
-	@commands.command(aliases=['say'])
+	@commands.command()
 	async def echo(self, ctx, *, message):
 		"""Makes the bot talk."""
 		say = message

@@ -1,13 +1,13 @@
 import discord, platform, requests, json, random, fnmatch, time, asyncio, os, datetime
 from discord import ext
-from   Cogs import ReadableTime
+from Cogs import ReadableTime
 from discord.ext import commands
 from utils.language import Language
 from utils.mysql import *
 from utils.channel_logger import Channel_Logger
 from utils.tools import *
 from utils import checks
-from discord.ext.commands import Bot, has_permissions, MissingPermissions
+from discord.ext.commands import Bot, has_permissions, bot_has_permissions, MissingPermissions
 
 bot_status = discord.Status.online
 class Botstuff(commands.Cog):
@@ -74,14 +74,14 @@ class Botstuff(commands.Cog):
 						extensions.append(ext)
 						pass
 		return extensions
-	@commands.command(aliases=["botinfo"])
+	@commands.command()
 	async def about(self, ctx):
 		"""About the Bot"""
 		embed = discord.Embed(color=0x676767)
 		embed.set_author(name="Terrabot", icon_url="https://cdn.discordapp.com/avatars/657372691749273612/67d2caa88aad928296c23b2aa964384d.webp?size=1024")
 		embed.set_footer(text="Terrabot | Created by Pinkalicious21902")
 		embed.add_field(name="What is Terrabot?", value="Terrabot is a general purpose bot built on the discord.py library. The bot began as a fun project and will continue to have updates pushed out as I learn more.")
-		embed.add_field(name="Need help on how to use it?", value="You can check the help command by doing \n\n``%help`` \n\n Updates will constantly be pushed out with more features and new commands.")
+		embed.add_field(name="Need help on how to use it?", value="You can check the help command by doing \n\n``^help`` \n\n Updates will constantly be pushed out with more features and new commands.")
 
 		await ctx.send(embed=embed)
 	@commands.command()
@@ -100,7 +100,7 @@ class Botstuff(commands.Cog):
 	async def platforms(self, ctx):
 		"""Tells the platform the bot's running on"""
 		await ctx.send("The bot is currently running on: ```" + str(platform.platform()) + "```")
-	@commands.command(aliases=["listofservers", "sl"])
+	@commands.command()
 	async def serverlist(self, ctx):
 		"""Lists the servers Terrabot is in"""
 		x = ', '.join([str(server) for server in self.bot.guilds])
@@ -112,7 +112,7 @@ class Botstuff(commands.Cog):
 		elif y < 40:
 			thing2 = "Currently active on " + str(y) + " servers:" + "```json\n" + x + "```"
 			await ctx.send(thing2)
-	@commands.command(aliases=["checklatency", "botping", "serverping"])
+	@commands.command()
 	async def ping(self, ctx):
 		"""Gets bot latency"""
 		print(self.bot.latency)
@@ -124,7 +124,8 @@ class Botstuff(commands.Cog):
 		msg2 = ':hourglass: (~{}ms)'.format(ms)
 		await ctx.send(msg)
 		await ctx.send(msg2)
-	@commands.command()
+	@commands.command(hidden=True)
+	@checks.is_dev()
 	async def idlebot(self, ctx):
 		"""Idles the bot"""
 		await self.bot.change_presence(activity=None, status=discord.Status.idle)
@@ -139,15 +140,17 @@ class Botstuff(commands.Cog):
 		"""Shuts down the bot."""
 		await ctx.send("logging out...")
 		await self.bot.logout()
-	@commands.command(aliases=["changestatus", "changeactivity"])
+	@commands.command(aliases=["changestatus"])
 	@has_permissions(change_nickname=True)
+	@checks.is_support()
 	async def change_status(self, ctx, *, message):
 		"""Changes the bot's status"""
 		playingrn = message
 		await self.bot.change_presence(activity=discord.Game(name=playingrn), status=bot_status)
 		await ctx.send(f"Success! Status changed to {playingrn}")
 	@commands.command()
-	
+	@has_permissions(manage_messages=True)
+	@bot_has_permissions(manage_messages=True)
 	async def unpin(self, ctx, id:int):
 		"""Unpins the message with the specified ID from the channel"""
 		pinned_messages = await ctx.channel.pins()
