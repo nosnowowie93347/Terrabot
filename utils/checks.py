@@ -1,8 +1,6 @@
 from discord.ext import commands
-from utils.config import Config
 from utils.mysql import *
-config = Config()
-
+dev_ids = [492883063542513675, 478267562397007873, 606284419447128064]
 class owner_only(commands.CommandError):
     pass
 
@@ -23,7 +21,7 @@ class no_permission(commands.CommandError):
 
 def is_owner():
     def predicate(ctx):
-        if ctx.author.id == config.owner_id:
+        if ctx.author.id == 466778567905116170:
             return True
         else:
             raise owner_only
@@ -31,7 +29,7 @@ def is_owner():
 
 def is_dev():
     def predicate(ctx):
-        if ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
+        if ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
             return True
         else:
             raise dev_only
@@ -39,7 +37,7 @@ def is_dev():
 
 def is_support():
     def predicate(ctx):
-        if ctx.author.id in config.support_ids or ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
+        if ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
             return True
         else:
             raise support_only
