@@ -269,7 +269,7 @@ class Music(commands.Cog):
         source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False)
         if vc.is_playing():
             return await ctx.send("Hold on! Wait for this song to end.")
-        await player.queue.put(source)
+        await self.loop.call_soon_threadsafe(queue.put_nowait(source))
 
     @commands.command(name='pause')
     async def pause_(self, ctx):
