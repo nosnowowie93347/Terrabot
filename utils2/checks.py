@@ -1,11 +1,12 @@
 from discord.ext import commands
-from utils2.config import Config
 from utils2.mysql import *
-config = Config()
+import config
 
 class owner_only(commands.CommandError):
     pass
-
+class helper_only(commands.CommandError):
+    pass
+    
 class dev_only(commands.CommandError):
     pass
 
@@ -29,6 +30,13 @@ def is_owner():
             raise owner_only
     return commands.check(predicate)
 
+def is_helper():
+    def predicate(ctx):
+        if ctx.author.id in config.helpers or ctx.author.id == config.owner_id or ctx.author.id in config.dev_ids:
+            return True
+        else:
+            raise helper_only
+    return commands.check(predicate)
 def is_dev():
     def predicate(ctx):
         if ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:

