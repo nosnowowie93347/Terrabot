@@ -1,4 +1,4 @@
-import discord, random, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, config, secrets, urllib, aiohttp, time, sys, importlib
+import discord, random, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
 from discord import ext
 from random import choice
 from Cogs import Settings
@@ -8,14 +8,11 @@ from utils.unicode import *
 from utils.fun.lists import *
 from PIL import Image
 from utils.fun.fortunes import fortunes
-from utils import imagetools
+from utils import imagetools, checks, config
 from utils.language import Language
 from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions, MissingPermissions
 from utils2 import lists, permissions, http, default, argparser, dataIO
-from utils.tools import *
-from utils import checks
-
 coinsides = ['Heads', 'Tails']
 random_word = random.choice("words.txt")
 lines = open('words.txt').read().splitlines()
@@ -114,9 +111,9 @@ class Fun(commands.Cog):
 		"""So we back in the mine..."""
 		await ctx.send("Aww man")
 	@commands.command()
-	async def insult(self, ctx):
+	async def insult(self, ctx, member:discord.Member):
 		"""Says something mean about you."""
-		await ctx.send(ctx.message.author.mention + " " + random.choice(config.insults))
+		await ctx.send(member.mention + " " + random.choice(config.insults))
 	@commands.command()
 	async def roast(self, ctx, member : discord.Member):
 		"""Less awful version of the insult command"""
@@ -205,8 +202,12 @@ class Fun(commands.Cog):
 			bio.seek(0)
 			await ctx.send(content=content, file=discord.File(bio, filename=filename))
 	@commands.command()
-	@checks.is_support()
-	@has_permissions(manage_guild=True)
+	async def getbotprefix(self, ctx):
+		message = discord.Message
+		prefix = await self.bot.get_prefix(message)
+		await ctx.send(f"My prefix is {prefix}")
+	@commands.command()
+	@checks.is_helper()
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -227,6 +228,7 @@ class Fun(commands.Cog):
 		except TypeError:
 			await ctx.send("You need to either provide an image URL or upload one with the command")
 	@commands.command()
+	@commands.cooldown(1, 12, commands.BucketType.user)
 	async def dm(self, ctx, user_id: int, *, message: str):
 		""" DM the user of your choice """
 		user = self.bot.get_user(user_id)
@@ -238,6 +240,7 @@ class Fun(commands.Cog):
 			await ctx.send(f"✉️ Sent a DM to **{user_id}**")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
+		await ctx.message.delete()
 	@commands.command()
 	async def emojify(self, ctx, *, text: str):
 		'''
@@ -280,22 +283,23 @@ class Fun(commands.Cog):
 				await ctx.message.delete()
 				await author.send('`'+spoilified+'`')
 	@commands.command()
-	async def clone(self, ctx):
+	async def clone(self, ctx, name, *, message:str):
 		'''
 		Creates a webhook, that says what you say. Like echo.
 		'''
 		await ctx.message.delete()
-		name2= "Spidey Bot"
 		pfp = requests.get(ctx.author.avatar_url_as(format='png', size=256)).content
-		hook = await ctx.channel.create_webhook(name=name2,
+		hook = await ctx.channel.create_webhook(name=name,
 												avatar=pfp)
-		embed = discord.Embed(title="Message from Spidey Bot", color=0x663399)
-		embed.add_field(name="Hello! I'm here", value="Hello, How is everyone today?")
+		embed = discord.Embed(title=name, color=0x663399)
+		embed.add_field(name="Hello! I'm here", value=message)
 		await hook.send(embed=embed)
 		await hook.delete()
-	@commands.command(hidden=True, enabled=False)
-	async def updatenotice(self, ctx, role:discord.Role, *version:str):
+	@commands.command(hidden=True, enabled=True)
+	@checks.is_owner()
+	async def updatenotice(self, ctx, *, version:str):
 		await ctx.message.delete()
+		await ctx.send("@everyone")
 		pfp = requests.get(ctx.author.avatar_url_as(format="png", size=256)).content
 		hook = await ctx.channel.create_webhook(name="Terrabot Updater", avatar=pfp)
 		embed = discord.Embed(title="Terrabot Updater", color=0x663399)
@@ -307,7 +311,6 @@ class Fun(commands.Cog):
 		'''
 		Shows MC account info, skin and username history
 		'''
-		import base64
 		try:
 			uuid = requests.get('https://api.mojang.com/users/profiles/minecraft/{}'
 								.format(username)).json()['id']
@@ -381,6 +384,7 @@ class Fun(commands.Cog):
 		await ctx.send(msg)
 	@commands.command()
 	async def rolecall(self, ctx, role:discord.Role):
+		"""Number of online members in a role"""
 		role_embed = discord.Embed(color=role.color)
 		role_embed.set_author(name='{}'.format(role.name))
 		# We have a role
@@ -389,41 +393,6 @@ class Fun(commands.Cog):
 		memberOnline = len([x for x in members if x.status != discord.Status.offline])
 		role_embed.add_field(name="Members", value='{:,} of {:,} online.'.format(memberOnline, memberCount), inline=True)
 		await ctx.send(embed=role_embed)
-	@commands.command(pass_context=True)
-	@has_permissions(attach_files=True)
-	async def log(self, ctx, messages : int = 25, *, chan : discord.TextChannel = None):
-		
-		logFile = 'discord.log'
-
-		if not chan:
-			chan = ctx
-
-		# Remove original message
-		await ctx.message.delete()
-
-		mess = await ctx.send('Saving logs to *{}*...'.format(logFile))
-
-		# Use logs_from instead of purge
-		counter = 0
-		msg = ''
-		async for message in chan.history(limit=messages):
-			counter += 1
-			msg += message.content + "\n"
-			msg += '----Sent-By: ' + message.author.name + '#' + message.author.discriminator + "\n"
-			msg += '---------At: ' + message.created_at.strftime("%Y-%m-%d %H.%M") + "\n"
-			if message.edited_at:
-				msg += '--Edited-At: ' + message.edited_at.strftime("%Y-%m-%d %H.%M") + "\n"
-			msg += '\n'
-
-		msg = msg[:-2].encode("utf-8")
-
-		with open(logFile, "wb") as myfile:
-			myfile.write(msg)
-		
-		await mess.edit(content='Uploading *{}*...'.format(logFile))
-		await ctx.author.send(file=discord.File(fp=logFile))
-		await mess.edit(content='Uploaded *{}!*'.format(logFile))
-		#os.remove(logFile)
 	@commands.command()
 	async def owo(self, ctx, *, text:str):
 		"""OwO, owoify something >w<"""
@@ -484,6 +453,11 @@ class Fun(commands.Cog):
 		"""b1nzy pls no ;-;"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/b1nzy_with_banhammer.png"))
+	@commands.command()
+	async def createwebhook(self, ctx, *, name:str):
+		await ctx.message.delete()
+		await ctx.channel.create_webhook(name=name, avatar=None)
+		await ctx.send(f"Created a webhook named {name}")
 	@commands.command()
 	async def honk(self, ctx):
 		"""Honk honk mother fucka"""
@@ -568,42 +542,37 @@ class Fun(commands.Cog):
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/reactions/what.gif"))
 	@commands.command()
-	@commands.is_nsfw()
-	async def e621(self, ctx, *, tags:str):
-		limit = config.max_nsfw_count
-
-		"""Searches e621.net for the specified tagged images"""
-		await ctx.channel.trigger_typing()
-		try:
-			data = requests.get("https://e621.net/post/index.json?limit={}&tags={}".format(limit, tags), headers=header).json()
-		except json.JSONDecodeError:
-			await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
-			return
-		count = len(data)
-		if count == 0:
-			await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
-			return
-		image_count = 4
-		if count < 4:
-			image_count = count
-		images = []
-		for i in range(image_count):
-			images.append(data[random.randint(0, count)]["file_url"])
-		await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
-	@commands.command()
-	@checks.is_support()
 	async def cat(self, ctx):
+		"""Like the shibe command, but with cats."""
 		cats = open("cats.py").read().splitlines()
 		cat2 = random.choice(cats)
 		
 		await ctx.send(cat2)
 	@commands.command()
 	async def heal(self, ctx, member:discord.Member):
+		"""Heals a person. NOTE: Just for fun."""
 		await ctx.send(f"Attempting to heal {member.mention}")
 		await asyncio.sleep(3)
 		options = ["Healing Failed", "Yay! It worked!"]
 		await ctx.send(random.choice(options))
 	@commands.command()
-	async def feed(self, ctx, member:discord.Member, *food):
+	async def feed(self, ctx, member:discord.Member, *, food):
+		"""Feed someone. NOTE: Just for fun"""
 		await ctx.send("Fed {} {}".format(member, food))
-		
+	@commands.command()
+	async def areyoutired(self, ctx):
+		"""Is the bot tired?"""
+		yes = "yes"
+		no = "no"
+		await ctx.send(random.choice([yes, no]))
+	@commands.command()
+	async def timetravel(self, ctx, numofminutes:int):
+		"""Just don't mess up the timeline..."""
+		await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
+		await ctx.message.delete()
+	@commands.command()
+	async def clock(self, ctx):
+		"""What time is it?"""
+		now = datetime.datetime.now()
+		current_time = now.strftime("%H:%M:%S")
+		await ctx.send(f"now = {current_time}")

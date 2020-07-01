@@ -17,7 +17,6 @@ class Botstuff(commands.Cog):
 	
 	@commands.command()
 	async def cloc(self, ctx):
-		import os
 		"""Outputs the total count of lines of code in the currently installed repo."""
 		# Script pulled and edited from https://github.com/kyco/python-count-lines-of-code/blob/python3/cloc.py
 		
@@ -141,10 +140,10 @@ class Botstuff(commands.Cog):
 		await ctx.send("logging out...")
 		await self.bot.logout()
 	@commands.command(aliases=["changestatus"])
-	@has_permissions(change_nickname=True)
-	@checks.is_support()
-	async def change_status(self, ctx, *, message):
+	@has_permissions(manage_guild=True)
+	async def change_status(self, ctx, *, newstatus):
 		"""Changes the bot's status"""
+		message = newstatus
 		playingrn = message
 		await self.bot.change_presence(activity=discord.Game(name=playingrn), status=bot_status)
 		await ctx.send(f"Success! Status changed to {playingrn}")
@@ -163,8 +162,9 @@ class Botstuff(commands.Cog):
 			await ctx.send(Language.get("moderation.unpin_success", ctx))
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command(hidden=True)
+	@commands.command(hidden=True, aliases=["listwarned", "warnedlist"])
 	async def listwarns(self, ctx):
+		"""List every warned user in the guild"""
 		role = discord.utils.get(ctx.guild.roles, name='Warned')
 		warnList = role.members
 
@@ -177,5 +177,17 @@ class Botstuff(commands.Cog):
 		msg += ', '.join([member.name for member in warnList])
 
 		await ctx.send(msg)
+	@commands.command()
+	async def botserver(self, ctx):
+		"""Sends an invite link to the bot's server"""
+		await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
+		await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
+	@commands.command()
+	@commands.guild_only()
+	async def inviteme(self, ctx):
+		"""Sends the bot's OAuth2 link"""
+		await ctx.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
+		await ctx.author.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
+
 def setup(bot):
 	bot.add_cog(Botstuff(bot))

@@ -1,9 +1,12 @@
 from discord.ext import commands
 from utils.mysql import *
-dev_ids = [492883063542513675, 478267562397007873, 606284419447128064]
+import config
+
 class owner_only(commands.CommandError):
     pass
-
+class helper_only(commands.CommandError):
+    pass
+    
 class dev_only(commands.CommandError):
     pass
 
@@ -21,15 +24,23 @@ class no_permission(commands.CommandError):
 
 def is_owner():
     def predicate(ctx):
-        if ctx.author.id == 466778567905116170:
+        if ctx.author.id == config.owner_id:
             return True
         else:
             raise owner_only
     return commands.check(predicate)
 
+def is_helper():
+    def predicate(ctx):
+        helpers = [503066505999679518]
+        if ctx.author.id in helpers or ctx.author.id == config.owner_id or ctx.author.id in config.dev_ids:
+            return True
+        else:
+            raise helper_only
+    return commands.check(predicate)
 def is_dev():
     def predicate(ctx):
-        if ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
+        if ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
             return True
         else:
             raise dev_only
@@ -37,7 +48,7 @@ def is_dev():
 
 def is_support():
     def predicate(ctx):
-        if ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
+        if ctx.author.id in config.support_ids or ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
             return True
         else:
             raise support_only

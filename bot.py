@@ -1,12 +1,11 @@
-import discord, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, math, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
-import config
+from utils import config
 
 from   PIL         import Image
 from pyparsing import (Literal,CaselessLiteral,Word,Combine,Group,Optional,
 					ZeroOrMore,Forward,nums,alphas,oneOf)
-import math
-import operator
+
 from Cogs import TinyURL, Settings, Message, DL, ReadableTime, ProgressBar, GetImage, ComicHelper, Utils, Nullify, DisplayName, UserTime, PickList
 from random import choice, randint, randrange
 from discord.ext import commands
@@ -16,9 +15,12 @@ from utils.tools import *
 from utils.channel_logger import Channel_Logger
 from discord.utils import get
 from utils.language import Language
-from   discord.ext import commands
+from   discord.ext import commands, tasks
 from discord.ext.commands import MissingPermissions, has_permissions, bot_has_permissions
 import datetime
+from discord.ext.tasks import loop
+from asyncio import sleep
+
 from utils import checks
 import pyfiglet, time
 from pyfiglet import figlet_format, FontNotFound
@@ -28,7 +30,7 @@ lock_status = config.lock_status
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
-bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot")
+bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902")
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -40,6 +42,7 @@ now = datetime.datetime.now()
 conn = sqlite3.connect("data/Ruby.db")
 conn.row_factory = sqlite3.Row
 cur = conn.cursor()
+suggestionsssss = []
 moveoutday = datetime.datetime(now.year, 8, 10) - \
 	datetime.datetime.today()#days till i move out
 diff = datetime.datetime(now.year, 12, 25) - \
@@ -68,10 +71,10 @@ async def on_ready():
 	bot.load_extension("Comics")
 	bot.load_extension("cog2")
 	bot.load_extension("cogs3")
+	bot.load_extension("Math")
 	bot.load_extension("Fun")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
-	bot.load_extension("muusic")
 	bot.load_extension("quickpoll")
 	bot.load_extension("Morecogs")
 	bot.load_extension("Morse")
@@ -79,7 +82,6 @@ async def on_ready():
 	bot.load_extension("Admin")
 	bot.load_extension("Translate")
 	bot.load_extension("cogs4")
-	await bot.change_presence(activity=discord.Game(name="Serving Pinkalicious21902 Forever and Always"), status=discord.Status.online)
 	print(time.time())
 	print(len(bot.commands))
 
@@ -104,6 +106,36 @@ async def on_message(message):
 	await bot.process_commands(message)
 @bot.event
 async def on_command_error(ctx, error):
+	if isinstance(error, commands.MissingPermissions):
+		await ctx.send(f"Oof. You don't have permission to use this command. The missing permission is: {error.missing_perms}.")
+		return
+	if isinstance(error, commands.NoEntryPointError):
+		await ctx.send("Oof. The extension {} does not have a valid entry point. This is most likely due to an invalid setup function. Join the support server/contact botowner for more info.")
+		return
+	if isinstance(error, commands.BotMissingPermissions):
+		await ctx.send("Oof. The bot doesn't have permission to do this. Please give the bot the following perms: {}".format(error.missing_perms))
+		return
+	if isinstance(error, commands.ExtensionFailed):
+		await ctx.send("Oof. The extension {} failed due to the following error: {}".format(error.name, error.original))
+		return
+
+	if isinstance(error, commands.ConversionError):
+		await ctx.send("Oops! Command failed due to conversion error. Contact the bot owner and tell him to fix his code")
+		return
+	if isinstance(error, commands.TooManyArguments):
+		await ctx.send("Oops. Too many arguments were given somewhere in the code for this command. Join the support server for help")
+		return
+
+	if isinstance(error, commands.ArgumentParsingError):
+		await ctx.send("Arg parsing failed: Contact the bot owner if u need help.")
+		return
+	if isinstance(error, commands.ExpectedClosingQuoteError):
+		await ctx.send("Oops. Command failed due to the bot developer forgetting a closing quote: {}".format(error.close_quote))
+		return
+
+	if isinstance(error, commands.MissingRequiredArgument):
+		await ctx.send("Whoops. You forgot an argument: {}".format(error.param))
+		return
 	if isinstance(error, commands.CommandNotFound):
 		await ctx.send("Oops! This command doesn't exist. If you think it should, dm the devs with ur suggestion.")
 		return
@@ -125,9 +157,6 @@ async def on_command_error(ctx, error):
 	if isinstance(error, checks.not_guild_owner):
 		await ctx.send(Language.get("bot.errors.not_guild_owner", ctx))
 		return
-	if isinstance(error, checks.no_permission):
-		await ctx.send(Language.get("bot.errors.no_permission", ctx))
-		return
 	if isinstance(error, commands.NoPrivateMessage):
 		await ctx.send(Language.get("bot.errors.no_private_message", ctx))
 		return
@@ -141,14 +170,23 @@ async def on_command_error(ctx, error):
 	except:
 		pass
 	log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
+async def name_change():
+	while not client.is_closed:
+		presences = open("presences.txt").read().splitlines()
+		game = discord.Game(random.choice(presences))
+		await bot.change_presence(activity=game)
+		await asyncio.sleep(45)
+		await bot.chance_presence(activity=game)
+
 @bot.event
 async def on_member_join(user): 
 	try:
 		rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
-		rules.add_field(name="1", value="Leave banning the bots to Devs/admins")
+		rules.add_field(name="1", value="Leave banning the bots to Admins/server owner")
 		rules.add_field(name="2", value="Behave/use common sense")
-		rules.add_field(name="3", value="#mute-appeal for unfair mutes")
-		rules.add_field(name="4", value="Admins and maybe staff will purge channels. see #purge-notices")
+		rules.add_field(name="3", value="Just don't be a jerk. Be your kindest self, follow golden rule")
+		rules.add_field(name="4", value="Admins and maybe staff will purge channels at times")
+		rules.add_field(name="5", value="Absolutely no NSFW content outside of NSFW channels. This will result in automatic kick and if it happens again, ban.")
 		await user.send(embed=rules)
 	except discord.errors.Forbidden:
 		return
@@ -251,7 +289,7 @@ async def ask(ctx, *, query = None):
 	await ctx.send(msg)
 
 @bot.command()
-@checks.is_dev()
+@bot_has_permissions(manage_messages=True)
 @has_permissions(manage_messages=True)
 async def purgeall(ctx):
 	"""Deletes all messages in a channel"""
@@ -287,13 +325,14 @@ async def duck(ctx, *, query = None):
 	await ctx.send(msg)
 @bot.command()
 async def terrariaquotes(ctx):
+	"""Various messages from the game Terraria"""
 	terrariaquote = open("terrariaquotes.py").read().splitlines()
 	terraria = random.choice(terrariaquote)
 	await ctx.send(terraria)
 @bot.command()
-async def highfive(ctx):
+async def highfive(ctx, member:discord.Member):
 	"""Some people just need a highfive..."""
-	await ctx.send(":hand_splayed:" + " " + "You've been highfived.")
+	await ctx.send(f":hand_splayed:" + f" " + f"You've been highfived, {member.mention}.")
 
 @bot.command()
 async def moveout(ctx):
@@ -334,7 +373,7 @@ async def guildinfo(ctx):
 	embed2.add_field(name="2fa level: ", value=guild.mfa_level)
 	embed2.add_field(name="Verification: ", value=guild.verification_level)
 	embed2.add_field(name="Emojis", value=len(guild.emojis))
-	embed.add_field(name="Icon:", value=guild.icon)
+	embed.add_field(name="Icon:", value=guild.icon_url_as(static_format='webp', size=1024))
 	embed.add_field(name="Total text channels:", value=total_text_channels)
 	embed.add_field(name="Total voice channels:", value=total_voice_channels)
 	embed.add_field(name="Total channels:", value=total_channels)
@@ -352,13 +391,9 @@ async def guildinfo(ctx):
 	embed2.add_field(name="Max # of Emojis: ", value=guild.emoji_limit)
 	embed.add_field(name="# of Members: ", value=guild.member_count)
 	embed.add_field(name="Created at: ", value=guild.created_at)
+	embed2.add_field(name="Max Vid Channel Users: ", value=guild.max_video_channel_users)
 	await ctx.send(embed=embed)
 	await ctx.send(embed=embed2)
-@bot.command()
-async def botserver(ctx):
-	"""Sends an invite link to the bot's server"""
-	await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", bot.command_prefix))
-	await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", bot.command_prefix))
 @bot.command()
 async def oeis(ctx, *, number: str):
 	'''
@@ -376,6 +411,7 @@ async def oeis(ctx, *, number: str):
 	await ctx.send('**Search result for:** ***{}...***'.format(number), embed=embed)
 @bot.command()
 async def online(ctx):
+	"""Get # of offline members"""
 	# Set the filter to be a non-offline member, and the member not being a bot.
 	def filterOnlyOnlineMembers(member):
 		return member.status != discord.Status.offline
@@ -393,10 +429,10 @@ async def kill(ctx, member:discord.Member):
 	await ctx.send(random.choice(causeofdeath))
 @bot.command(aliases=["nickchange", "changenick"])
 @has_permissions(manage_nicknames=True)
-async def changenickname(ctx, member : discord.Member, *, message):
+async def changenickname(ctx, member : discord.Member, *, nickname):
 	"""Change a user's nickname"""
-	await member.edit(nick=message)
-	await ctx.send(f"Success! {member}'s Nickname changed to {message}")
+	await member.edit(nick=nickname)
+	await ctx.send(f"Success! {member}'s Nickname changed to {nickname}")
 @bot.command()
 async def userinfo(ctx, member : discord.Member):
 	"""Info about user"""
@@ -425,23 +461,6 @@ async def userinfo(ctx, member : discord.Member):
 async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	await ctx.send(message[::-1])
-@bot.command()
-async def areyoutired(ctx):
-	"""Is the bot tired?"""
-	yes = "yes"
-	no = "no"
-	await ctx.send(random.choice([yes, no]))
-@bot.command()
-async def timetravel(ctx, numofminutes:int):
-	"""Just don't mess up the timeline..."""
-	await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
-	await ctx.message.delete()
-@bot.command()
-async def clock(ctx):
-	"""What time is it?"""
-	now = datetime.datetime.now()
-	current_time = now.strftime("%H:%M:%S")
-	await ctx.send(f"now = {current_time}")
 @bot.command()
 async def recentjoins(ctx):
 	"""Lists the most recent users to join."""
@@ -517,11 +536,7 @@ async def speedstest(ctx):
 		await message.edit(content=msg)
 	except Exception as e:
 		await message.edit(content="Speedtest Error: {}".format(str(e)))
-@bot.command(aliases=["getprefix", "botprefix"])
-async def prefix(ctx):
-	message = discord.Message
-	prefix = await bot.get_prefix(message)
-	await ctx.send(f"My prefixes are {prefix}.")
+@bot.command()
 async def claptrap(ctx):
 	"""Can I shoot something now? SOMETHING exciting?"""
 	claptraps = open("claptraps.py", encoding="utf8").read().splitlines()
@@ -576,9 +591,9 @@ async def hostinfo(ctx):
 	await message.edit(content=msg)
 @bot.command()
 async def turret(ctx):
-		"""Now you're thinking with - wait... turrets?"""
-		turrets = open("turrets.py").read().splitlines()
-		await ctx.send(random.choice(turrets))
+	"""Now you're thinking with - wait... turrets?"""
+	turrets = open("turrets.py").read().splitlines()
+	await ctx.send(random.choice(turrets))
 @bot.command(enabled=False, hidden=True)
 @checks.is_dev()
 async def spam(ctx, member:discord.Member):
@@ -641,8 +656,9 @@ async def f(ctx):
 	"""Press F to pay your respects"""
 	await ctx.send(Language.get("fun.respects", ctx).format(ctx.author, random.randint(1, 10000)))
 @bot.command()
-async def avatar(ctx, *,  avamember : discord.Member=None):
-	userAvatarUrl = avamember.avatar_url
+async def avatar(ctx, *,  user : discord.User=None):
+	"""Gets a user's avatar"""
+	userAvatarUrl = user.avatar_url
 	await ctx.send(userAvatarUrl)
 @bot.command()
 async def uploadfile(ctx, *, path:str):
@@ -654,6 +670,7 @@ async def uploadfile(ctx, *, path:str):
 		await ctx.send("That file does not exist!")
 @bot.command(name="pi")
 async def calculatepi(ctx, n:int):
+	"""Calculate pi to a certain # of digits"""
 	def roundpi(n):
 		return round(math.pi, n)
 	if n > 15:
@@ -662,6 +679,7 @@ async def calculatepi(ctx, n:int):
 @bot.command()
 @commands.is_nsfw()
 async def rule34(ctx, *, tags:str):
+	"""A wonderfun NSFW command"""
 	await ctx.channel.trigger_typing()
 	try:
 		data = requests.get("http://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}".format(limit, tags), headers=header).json()
@@ -673,8 +691,8 @@ async def rule34(ctx, *, tags:str):
 	if count == 0:
 		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
 		return
-	image_count = 4
-	if count < 4:
+	image_count = 8
+	if count < 8:
 		image_count = count
 	images = []
 	for i in range(image_count):
@@ -731,6 +749,7 @@ async def ron(ctx):
 	await ctx.send(quote[0])
 @bot.command(aliases=["memes", "memey", "memer"])
 async def meme(ctx):
+	"""Have a meme, friend!"""
 	embed = discord.Embed(title="Meme", description="Here comes a meme!!")
 	async with aiohttp.ClientSession() as cs:
 		async with cs.get('https://www.reddit.com/r/dankmemes/new.json?sort=hot') as r:
@@ -746,23 +765,19 @@ async def choose(ctx, *, text: str):
 	await ctx.send("I choose... **{}** :thinking:".format(temp[random.randint(0, len(temp) - 1)]))
 
 @bot.command(aliases=["change_stream"])
-async def stream(ctx, *, name:str):
+async def stream(ctx, *, streamname:str):
 	"""Sets the streaming status with the specified name"""
 	if lock_status:
 		if not ctx.author.id == config.owner_id and not ctx.author.id in config.dev_ids:
 			await ctx.send(Language.get("bot.status_locked", ctx))
 			return
-	await bot.change_presence(activity=discord.Activity(name=name, type=discord.ActivityType.streaming, url="https://www.twitch.tv/ZeroEpoch1969"))
-	await ctx.send(Language.get("bot.now_streaming", ctx).format(name))
-	await channel_logger.log_to_channel(":information_source: `{}`/`{}` has changed the streaming status to `{}`".format(ctx.author.id, ctx.author, name))
-@bot.command()
-async def inviteme(ctx):
-	"""Sends the bot's OAuth2 link"""
-	await ctx.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
-	await ctx.author.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
+	await bot.change_presence(activity=discord.Activity(name=streamname, type=discord.ActivityType.streaming, url="https://www.twitch.tv/ZeroEpoch1969"))
+	await ctx.send(Language.get("bot.now_streaming", ctx).format(streamname))
+	await channel_logger.log_to_channel(":information_source: `{}`/`{}` has changed the streaming status to `{}`".format(ctx.author.id, ctx.author, streamname))
 @bot.command()
 async def suggest(ctx, *, suggestion:str):
 	"""Sends a suggestion to the developers"""
+	
 	if isinstance(ctx.channel, discord.DMChannel):
 		guild = "`No server! Sent via Private Message!`"
 	else:
@@ -782,6 +797,7 @@ async def botserverids(ctx):
 @bot.command(hidden=True)
 @commands.is_owner()
 async def delguild(ctx, guild_id):
+	"""del a guild"""
 	guildtodelete = await bot.fetch_guild(guild_id)
 	await guildtodelete.delete()
 	await ctx.send(f"The guild {guild_id} was successfully deleted.")
@@ -801,10 +817,11 @@ async def notifydev(ctx, *, message:str):
 		if dev:
 			await dev.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	
-	await ctx.author.send(Language.get("bot.dev_notify", ctx).format(message))
+	await ctx.send(Language.get("bot.dev_notify", ctx).format(message))
 @bot.command(hidden=True, aliases=["createguild", "create_guild"])
 @commands.is_owner()
-async def hopethisworks(ctx, name):
+async def guildcreate(ctx, name):
+	"""create a guild"""
 	# VoiceRegion = ctx.guild.region
 	with open('AwOo.png', 'rb') as f:
 		icon = f.read()
@@ -814,6 +831,10 @@ async def hopethisworks(ctx, name):
 	invite = await newserver.channels[0].create_invite()
 	await ctx.send(invite)
 	print("And Here!")
-
+@bot.command(aliases=["bunny", "bunnyrabbit"])
+async def rabbit(ctx):
+	rabbitimage = open("rabbits.txt").read().splitlines()
+	image = random.choice(rabbitimage)
+	await ctx.send(image)
 token = ""
 bot.run(token)
