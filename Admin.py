@@ -4,7 +4,7 @@ from utils.mysql import *
 from utils.channel_logger import Channel_Logger
 from utils.tools import *
 from utils.logger import log
-from utils import checks
+from utils import checks, config
 from utils.language import Language
 from discord import ext
 from random import randint, choice
@@ -48,22 +48,25 @@ class Admin(commands.Cog):
 	@commands.bot_has_permissions(ban_members=True)
 	async def ban(self, ctx, member : discord.Member, *,  reason : str):
 		"""When you're just not having it"""
+		if member.id == config.owner_id:
+			return await ctx.send("How dare you try to ban Pink!")
+		
 		banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
 		dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
 		await ctx.send(embed=banembed)
-		await member.send(embed=dmembed)
+		if not member.bot:
+				await member.send(embed=dmembed)
 		await member.ban(reason = reason)
 	@commands.command(aliases=["idban", "banbyid"])
 	@bot_has_permissions(ban_members=True)
 	@has_permissions(ban_members=True)
 	async def hackban(self, ctx, memberid : discord.Object, *, reason : str):
 		"""Ban ppl by id. Bot and user must have ban perms"""
-		member = memberid
-		if memberid == 466778567905116170:
+		if memberid.id == config.owner_id:
 			return await ctx.send("I'm not banning this person.")
-		await ctx.guild.ban(memberid, reason=reason)
-		embed = discord.Embed(title=f"Successfully banned <@!{memberid.id}>", description=f"{memberid.id} banned for {reason}", color=0xff00f6)
+		embed = discord.Embed(title=f"Successfully banned {memberid.id}", description=f"{memberid.id} banned for {reason}", color=0xff00f6)
 		await ctx.send(embed=embed)
+		await ctx.guild.ban(memberid, reason=reason)
 		await ctx.message.delete()
 	@commands.command(name="kick")
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
@@ -86,7 +89,7 @@ class Admin(commands.Cog):
 		member = memberid
 		try:
 			await ctx.guild.unban(member)
-			description = f"Yay! {member} was unbanned"
+			description = f"Yay! {member.id} was unbanned"
 			embed = discord.Embed(title="Member Unbanned", description=description)
 			await ctx.send(embed=embed)
 		except discord.errors.Forbidden:
@@ -141,9 +144,8 @@ class Admin(commands.Cog):
 	@commands.command()
 	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
-	async def unwarn(self, ctx, *, member:discord.Member=None):
+	async def unwarn(self, ctx, member:discord.Member=None, *, reason:str):
 		"""If for whatever reason you want to unwarn someone"""
-		reason = None
 		embed=discord.Embed(title="Unwarned User", description="Unwarned {} for {}".format(member, reason))
 		role = discord.utils.get(ctx.guild.roles, name="Warned")
 		await member.remove_roles(role)
@@ -330,10 +332,10 @@ class Admin(commands.Cog):
 		await ctx.send("A Text Channel Named {} was made.".format(name))
 	@commands.command()
 	@has_permissions(manage_channels=True)
-	async def createvc(self, ctx, name, catagory:discord.CategoryChannel, bitrate:int, user_limit:int):
+	async def createvc(self, ctx, name, bitrate:int, user_limit:int):
 		"""Create a voice channel"""
-		await ctx.guild.create_voice_channel(name=name, catagory=catagory, bitrate=bitrate, user_limit=user_limit)
-		await ctx.send(f"A Voice Channel Named {name} was made under the catagory {catagory}")
+		await ctx.guild.create_voice_channel(name=name, bitrate=bitrate, user_limit=user_limit)
+		await ctx.send(f"A Voice Channel Named {name} was made")
 	@commands.command()
 	@has_permissions(manage_channels=True)
 	async def edittc(self, ctx, newname):
