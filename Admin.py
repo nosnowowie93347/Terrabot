@@ -78,11 +78,24 @@ class Admin(commands.Cog):
 		await member.send(embed=pmembed)
 		await member.kick(reason=reason)
 		logger.info(f"You've been bad, {member.mention}. You've been kicked.")
-	@commands.command()
+	@commands.command(name="addrole")
+	@commands.guild_only()
 	async def addrole(self, ctx, member: discord.Member, *, role:discord.Role):
 		"""Adds a role to a user"""
-		await member.add_roles(role)
-		await ctx.send(f"Added {role} to {member}")
+		user=member
+		if role is None:
+			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
+			return
+		try:
+			await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role.name, ctx.author))
+			await ctx.send(Language.get("moderation.addrole_success", ctx).format(role, user))
+		except discord.errors.Forbidden:
+			if role.position == ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_addrole_highest_role", ctx))
+			elif role.position > ctx.me.top_role.position:
+				await ctx.send(Language.get("moderation.no_addrole_higher_role", ctx))
+			else:
+				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
 	@commands.command()
 	async def unban(self, ctx, memberid : discord.Object):
 		"""Unbans a user"""
@@ -162,7 +175,7 @@ class Admin(commands.Cog):
 			await guild.create_role(name="Warned", hoist=True)
 		await member.add_roles(role)
 		await ctx.send(embed=embed)
-		await member.send("You were warned in {} for {}".format(ctx.guild, reason))
+		await member.send(embed=embed)
 		logger.info("Warned {} for {}".format(member, reason))
 	@commands.command()
 	@commands.bot_has_permissions(manage_roles=True)
@@ -329,7 +342,8 @@ class Admin(commands.Cog):
 	async def createtc(self, ctx, name, slowmodetime : int):
 		"""create a text channel. Args are name, and slowmodetime in seconds"""
 		await ctx.guild.create_text_channel(name=name, slowmode_delay=slowmodetime)
-		await ctx.send("A Text Channel Named {} was made.".format(name))
+		embed=discord.Embed(title="Channel created", description="A Text Channel Named {} was made.".format(name), color=0xffc0cb)
+		await ctx.send(embed=embed)
 	@commands.command()
 	@has_permissions(manage_channels=True)
 	async def createvc(self, ctx, name, bitrate:int, user_limit:int):
@@ -343,7 +357,8 @@ class Admin(commands.Cog):
 		print("here")
 		topic = "This is a channel created by Terrabot"
 		await ctx.channel.edit(name=newname, topic=topic)
-		await ctx.send("Success")
+		embed=discord.Embed(title="Renamed Channel Successfully", description=f"The channel has been renamed to {newname}")
+		await ctx.send(embed=embed)
 	@commands.command()
 	@has_permissions(manage_channels=True)
 	async def mutechannelperms(self, ctx, role:discord.Role):

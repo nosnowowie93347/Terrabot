@@ -35,5 +35,8 @@ class Math(commands.Cog):
 	@calculator.command()
 	async def sin(self, ctx, a: int):
 		await ctx.send(f"The sine of {a} is {math.sin(a)}")
+	@calculator.command()
+	async def cos(self, ctx, a:int):
+		await ctx.send(f"The cosine of {a} is {math.cos(a)}")
 def setup(bot):
 	bot.add_cog(Math(bot))

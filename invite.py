@@ -10,6 +10,7 @@ class invite(commands.Cog):
 
 	@commands.command(aliases=["invitelink", "serverlink", "link"])
 	async def invite(self, ctx):
+		"""Create invite to current server"""
 		invitelinknew = await ctx.channel.create_invite(destination = ctx.message.channel, xkcd = True, max_uses = 100)
 		print(invitelinknew)
 		await ctx.send(invitelinknew)
