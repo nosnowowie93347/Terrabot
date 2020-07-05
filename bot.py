@@ -595,7 +595,7 @@ async def turret(ctx):
 	turrets = open("turrets.py").read().splitlines()
 	await ctx.send(random.choice(turrets))
 @bot.command(enabled=False, hidden=True)
-@checks.is_dev()
+# @checks.is_dev()
 async def spam(ctx, member:discord.Member):
 	"""Spam pings a user"""
 	x = 1
