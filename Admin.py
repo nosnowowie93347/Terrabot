@@ -49,8 +49,7 @@ class Admin(commands.Cog):
 	async def ban(self, ctx, member : discord.Member, *,  reason : str):
 		"""When you're just not having it"""
 		if member.id == config.owner_id:
-			return await ctx.send("How dare you try to ban Pink!")
-		
+			return await ctx.send("How dare you try to ban Pink!")	
 		banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
 		dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
 		await ctx.send(embed=banembed)
@@ -71,6 +70,8 @@ class Admin(commands.Cog):
 	@commands.command(name="kick")
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		"""Kicks a user."""
+		if member.id == config.owner_id:
+			return await ctx.send("I'm not kicking this person.")
 		description = f"You've been bad, {member.mention}. You've been kicked."
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
 		pmembed = discord.Embed(title="You've been kicked.", description=f"You've been kicked from {ctx.guild} for {reason}")

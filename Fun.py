@@ -129,6 +129,7 @@ class Fun(commands.Cog):
 		response = random.choice(dabs)
 		await ctx.send(random.choice(dabs))
 		print(f"Dabbed on behalf of {ctx.author}.")
+		await ctx.send(f"Dabbed on behalf of {ctx.author}.")
 	@commands.command()
 	async def minecraftquotes(self, ctx):
 		"""Amazing quotes from 50 Ways to Die in Minecraft"""
@@ -227,17 +228,34 @@ class Fun(commands.Cog):
 			await ctx.send(err)
 		except TypeError:
 			await ctx.send("You need to either provide an image URL or upload one with the command")
+	# @commands.command()
+	# async def preventdmspam(self, ctx):
+	# 	message = ctx.message
+	# 	guild = ctx.guild
+	# 	await ctx.send("@everyone")
+	# 	msg = await ctx.send("React to get no dm role.")
+	# 	await message.add_reaction(emoji='<:nope:728295107174072432>')
+	# 	Role = discord.utils.get(ctx.guild.roles, name="NODM")
+	# 	for member in guild.members:
+	# 		reaction = discord.utils.get(message.reactions, id="729877325646397570") 
+	# 		if member in reaction.users():
+	# 			await member.add_roles(Role)
 	@commands.command()
-	@commands.cooldown(1, 12, commands.BucketType.user)
-	async def dm(self, ctx, user_id: int, *, message: str):
+	@commands.cooldown(1, 35, commands.BucketType.user)
+	async def dm(self, ctx, member:discord.Member, *, message: str):
 		""" DM the user of your choice """
-		user = self.bot.get_user(user_id)
+		user = member
 		if not user:
 			return await ctx.send(f"Could not find any UserID matching **{user_id}**")
 
 		try:
+			role = discord.utils.get(ctx.guild.roles, name="NODM")
+			# if not role in user.roles:
 			await user.send(message)
-			await ctx.send(f"✉️ Sent a DM to **{user_id}**")
+			# if role in user.roles:
+			# 	return await ctx.send("This user has the no dm role. This means they probably don't want DMs.")
+			await ctx.send(f"✉️ Sent a DM to **{member.name}**")
+			await user.send(f"Message sent by: {ctx.author}")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
 		await ctx.message.delete()

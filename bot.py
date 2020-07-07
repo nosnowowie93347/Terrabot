@@ -84,8 +84,6 @@ async def on_ready():
 	bot.load_extension("cogs4")
 	print(time.time())
 	print(len(bot.commands))
-
-@bot.event
 async def on_message(message):
 		# swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
 	# for word in swearwords:
@@ -93,14 +91,6 @@ async def on_message(message):
 	# 		await message.delete()
 	# 		await message.channel.send("Hey! watch the language")
 			
-
-	# if message.content.startswith("how dare u disrespect your master"):
-	# 	await message.channel.send("I'm NOT sorry")
-	# if message.content.startswith("x&"):
-	# 	await message.delete(delay=None)
-	# 	embed=discord.Embed(title="Nice try. Ruby's been blocked")
-	# 	await message.channel.send(embed=embed)
-	# 	await message.channel.send("You block mine, I block urs. From Pink.")
 	if message.author.bot:
 		return
 	await bot.process_commands(message)
@@ -193,8 +183,6 @@ async def on_member_join(user):
 @bot.event
 async def on_reaction_add(reaction, user):
 		bot.dispatch("picklist_reaction", reaction, user)
-
-
 
 def blacklistuser(id, name, discrim, reason):
 	cur.execute("""INSERT INTO blacklist(id, name, discrim, reason) VALUES (?, ?, ?, ?)""", (id, name, discrim, reason))
@@ -343,6 +331,7 @@ async def christmas(ctx):
 	"""HOW MUCH LONGER TILL CHRISTMAS, MOMMY?!?!"""
 	await ctx.send("**{0}** day(s) left until Christmas day! :christmas_tree:".format(str(diff.days)))
 @bot.command(aliases=["ud", "urbandict", "define"])
+@commands.is_nsfw()
 async def urban(ctx, *msg):
 	"""Define stuff with Urban Dict"""
 	print("hi")
@@ -460,7 +449,8 @@ async def userinfo(ctx, member : discord.Member):
 @bot.command()
 async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
-	await ctx.send(message[::-1])
+	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
+	await ctx.send(embed=embed)
 @bot.command()
 async def recentjoins(ctx):
 	"""Lists the most recent users to join."""
