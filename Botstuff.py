@@ -1,6 +1,5 @@
 import discord, platform, requests, json, random, fnmatch, time, asyncio, os, datetime
 from discord import ext
-from Cogs import ReadableTime
 from discord.ext import commands
 from utils.language import Language
 from utils.mysql import *
@@ -88,13 +87,6 @@ class Botstuff(commands.Cog):
 		"""Coming Soon"""
 		comingsoon = "More commands coming soon!"
 		await ctx.send(comingsoon)
-	@commands.command()
-	async def uptime(self, ctx):
-		"""Lists the bot's uptime."""
-		currentTime = int(time.time())
-		timeString  = ReadableTime.getReadableTimeBetween(self.startTime, currentTime)
-		msg = 'I\'ve been up for *{}*.'.format(timeString)
-		await ctx.send(msg)
 	@commands.command(name="platform")
 	async def platforms(self, ctx):
 		"""Tells the platform the bot's running on"""

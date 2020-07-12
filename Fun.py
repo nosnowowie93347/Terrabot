@@ -1,7 +1,6 @@
 import discord, random, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
 from discord import ext
 from random import choice
-from Cogs import Settings
 from io import BytesIO
 from utils.tools import *
 from utils.unicode import *
@@ -24,15 +23,13 @@ punlist = open("Punlist.txt", encoding='utf8').read().splitlines()
 compliments = open("Compliments.txt", encoding='utf8').read().splitlines()
 
 def setup(bot):
-	settings = bot.get_cog("Settings")
-	bot.add_cog(Fun(bot, settings))
+	bot.add_cog(Fun(bot))
 
 
 class Fun(commands.Cog):
 
-	def __init__(self, bot, settings):
+	def __init__(self, bot):
 		self.bot = bot
-		self.settings = settings
 
 	@commands.command()
 	async def groot(self, ctx):
@@ -228,18 +225,7 @@ class Fun(commands.Cog):
 			await ctx.send(err)
 		except TypeError:
 			await ctx.send("You need to either provide an image URL or upload one with the command")
-	# @commands.command()
-	# async def preventdmspam(self, ctx):
-	# 	message = ctx.message
-	# 	guild = ctx.guild
-	# 	await ctx.send("@everyone")
-	# 	msg = await ctx.send("React to get no dm role.")
-	# 	await message.add_reaction(emoji='<:nope:728295107174072432>')
-	# 	Role = discord.utils.get(ctx.guild.roles, name="NODM")
-	# 	for member in guild.members:
-	# 		reaction = discord.utils.get(message.reactions, id="729877325646397570") 
-	# 		if member in reaction.users():
-	# 			await member.add_roles(Role)
+	
 	@commands.command()
 	@commands.cooldown(1, 35, commands.BucketType.user)
 	async def dm(self, ctx, member:discord.Member, *, message: str):
@@ -478,7 +464,7 @@ class Fun(commands.Cog):
 		await ctx.send(f"Created a webhook named {name}")
 	@commands.command()
 	async def honk(self, ctx):
-		"""Honk honk mother fucka"""
+		"""Honk honk boi"""
 		await ctx.send(random.choice(honkhonkfgt))
 	@commands.command()
 	async def headpat(self, ctx):
@@ -510,23 +496,6 @@ class Fun(commands.Cog):
 		else:
 			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
 			return
-	@commands.command(hidden=True)
-	async def infodebug(self, ctx, *, shit:str):
-		"""This is the part where I make 20,000 typos before I get it right"""
-		# "what the fuck is with your variable naming" - EJH2
-		# seth seriously what the fuck - Robin
-		import asyncio
-		import os
-		import random
-		import re
-		from datetime import datetime, timedelta
-		try:
-			rebug = eval(shit)
-			if asyncio.iscoroutine(rebug):
-				rebug = await rebug
-			await ctx.send(py.format(rebug))
-		except Exception as damnit:
-			await ctx.send(py.format("{}: {}".format(type(damnit).__name__, damnit)))
 	@commands.command()
 	async def tableflip(self, ctx):
 		# I hope this unicode doesn't break

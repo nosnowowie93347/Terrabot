@@ -1,32 +1,26 @@
-import discord, math, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, math, datetime, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
-from utils import config
+from PIL import Image
+from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
 
-from   PIL         import Image
-from pyparsing import (Literal,CaselessLiteral,Word,Combine,Group,Optional,
-					ZeroOrMore,Forward,nums,alphas,oneOf)
-
-from Cogs import TinyURL, Settings, Message, DL, ReadableTime, ProgressBar, GetImage, ComicHelper, Utils, Nullify, DisplayName, UserTime, PickList
 from random import choice, randint, randrange
 from discord.ext import commands
-from discord.ext.commands import Bot
 import discord.utils
 from utils.tools import *
 from utils.channel_logger import Channel_Logger
 from discord.utils import get
 from utils.language import Language
-from   discord.ext import commands, tasks
-from discord.ext.commands import MissingPermissions, has_permissions, bot_has_permissions
-import datetime
+from discord.ext import commands, tasks
+from discord.ext.commands import Bot, MissingPermissions, has_permissions, bot_has_permissions
 from discord.ext.tasks import loop
 from asyncio import sleep
-
+from utils import config
 from utils import checks
 import pyfiglet, time
 from pyfiglet import figlet_format, FontNotFound
 import datetime as dt
 from utils.logger import log
-lock_status = config.lock_status
+
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
@@ -68,29 +62,28 @@ async def on_ready():
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	bot.load_extension("EightBall")
-	bot.load_extension("Comics")
 	bot.load_extension("cog2")
 	bot.load_extension("cogs3")
 	bot.load_extension("Math")
 	bot.load_extension("Fun")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
-	bot.load_extension("quickpoll")
 	bot.load_extension("Morecogs")
 	bot.load_extension("Morse")
+	bot.load_extension("muusic")
 	bot.load_extension("Botstuff")
 	bot.load_extension("Admin")
-	bot.load_extension("Translate")
 	bot.load_extension("cogs4")
 	print(time.time())
 	print(len(bot.commands))
+	statuses = ["Minecraft", "Terraria", "Waiting for Pink to update me", "scanning for rulebreakers", "Trying to convince Iroh to be online more", "Awaiting Approval", "Helping Pink fix me", "Roblox"]
+	running = True
+	while running == True:
+		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+		await asyncio.sleep(25)
+		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+@bot.event
 async def on_message(message):
-		# swearwords = ["shit", "cock", "porn", "dick", "slut", "pussy", "bitch", "cunt", "fuck", "fag", "bastard", "sex", "retard", "vagina"]
-	# for word in swearwords:
-	# 	if word in message.content:
-	# 		await message.delete()
-	# 		await message.channel.send("Hey! watch the language")
-			
 	if message.author.bot:
 		return
 	await bot.process_commands(message)
@@ -102,27 +95,36 @@ async def on_command_error(ctx, error):
 	if isinstance(error, commands.NoEntryPointError):
 		await ctx.send("Oof. The extension {} does not have a valid entry point. This is most likely due to an invalid setup function. Join the support server/contact botowner for more info.")
 		return
+	if isinstance(error, commands.InvalidEndOfQuotedStringError):
+		await ctx.send(f"Oof. A string was ended incorrectly. Here's the invalid character that needs changing: {error.char}")
+		return
 	if isinstance(error, commands.BotMissingPermissions):
 		await ctx.send("Oof. The bot doesn't have permission to do this. Please give the bot the following perms: {}".format(error.missing_perms))
 		return
 	if isinstance(error, commands.ExtensionFailed):
 		await ctx.send("Oof. The extension {} failed due to the following error: {}".format(error.name, error.original))
 		return
-
 	if isinstance(error, commands.ConversionError):
 		await ctx.send("Oops! Command failed due to conversion error. Contact the bot owner and tell him to fix his code")
 		return
 	if isinstance(error, commands.TooManyArguments):
 		await ctx.send("Oops. Too many arguments were given somewhere in the code for this command. Join the support server for help")
 		return
-
+	if isinstance(error, commands.BadArgument):
+		await ctx.send("Oops. A bad argument was given. Join the support server for help.")
+		return
+	if isinstance(error, commands.BadUnionArgument):
+		await ctx.send(f"Something went wrong. Here's a list of errors: {error.errors}")
+		return
 	if isinstance(error, commands.ArgumentParsingError):
 		await ctx.send("Arg parsing failed: Contact the bot owner if u need help.")
 		return
 	if isinstance(error, commands.ExpectedClosingQuoteError):
 		await ctx.send("Oops. Command failed due to the bot developer forgetting a closing quote: {}".format(error.close_quote))
 		return
-
+	if isinstance(error, commands.UnexpectedQuoteError):
+		await ctx.send(f"Oopsies! There's a quotation mark in an invalid spot! Here's the error: {error.quote}")
+		return
 	if isinstance(error, commands.MissingRequiredArgument):
 		await ctx.send("Whoops. You forgot an argument: {}".format(error.param))
 		return
@@ -150,16 +152,20 @@ async def on_command_error(ctx, error):
 	if isinstance(error, commands.NoPrivateMessage):
 		await ctx.send(Language.get("bot.errors.no_private_message", ctx))
 		return
+	if isinstance(error, commands.CommandInvokeError):
+		return await ctx.send(f"Oof. Something went wrong. Here's the exception: {error.original}")
+	if isinstance(error, commands.PrivateMessageOnly):
+		return await ctx.send("Oof. This command is only useable in DMs.")
 	if isinstance(ctx.channel, discord.DMChannel):
 		await ctx.send(Language.get("bot.errors.command_error_dm_channel", ctx))
 		return
 
-	#In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
-	try:
-		await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
-	except:
-		pass
-	log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
+	# #In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
+	# try:
+	# 	await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
+	# except:
+	# 	pass
+	# log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
 async def name_change():
 	while not client.is_closed:
 		presences = open("presences.txt").read().splitlines()
@@ -180,69 +186,10 @@ async def on_member_join(user):
 		await user.send(embed=rules)
 	except discord.errors.Forbidden:
 		return
-@bot.event
-async def on_reaction_add(reaction, user):
-		bot.dispatch("picklist_reaction", reaction, user)
 
-def blacklistuser(id, name, discrim, reason):
-	cur.execute("""INSERT INTO blacklist(id, name, discrim, reason) VALUES (?, ?, ?, ?)""", (id, name, discrim, reason))
-	conn.commit()
-
-def unblacklistuser(id):
-	cur.execute("""DELETE FROM blacklist WHERE id=""" + str(id))
-	conn.commit()
-
-def getblacklistentry(id):
-	cur.execute("""SELECT id FROM blacklist WHERE id=""" + str(id))
-	id = None
-	name = None
-	discrim = None
-	reason = None
-	try:
-		id = cur.fetchone()[0]
-	except:
-		return None
-	cur.execute("""SELECT name FROM blacklist WHERE id=""" + str(id))
-	name = cur.fetchone()[0]
-	cur.execute("""SELECT discrim FROM blacklist WHERE id=""" + str(id))
-	discrim = cur.fetchone()[0]
-	cur.execute("""SELECT reason FROM blacklist WHERE id=""" + str(id))
-	reason = cur.fetchone()[0]
-	blacklistentry = {"id":id, "name":name, "discrim":discrim, "reason":reason}
-	return blacklistentry
-
-def getblacklist():
-	cur.execute("""SELECT id, name, discrim, reason FROM blacklist""")
-	entries = []
-	rows = cur.fetchall()
-	for row in rows:
-		entry = "ID: \"{}\" Name: \"{}\" Discrim: \"{}\" Reason: \"{}\"".format(row["id"], row["name"], row["discrim"], row["reason"])
-		entries.append(entry)
-	return entries
-
-def buildDilbertURL(date):
-	return "http://dilbert.com/strip/" + str(date['Year']) + "-" + str(date['Month']) + "-" + str(date['Day'])
-	
-  # ####### #
- # Dilbert #
-# ####### #
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
-
-	
-async def get_search(ctx, query, service=""):
-		# Searches in the passed service
-		service = "s={}&".format(service) if service else ""
-		lmgtfy = "http://lmgtfy.com/?{}q={}".format(service, quote(query))
-		try:
-			lmgtfyT = await TinyURL.tiny_url(lmgtfy, bot)
-		except Exception as e:
-			print(e)
-			msg = "It looks like I couldn't search for that... :("
-		else:
-			msg = '*{}*, you can find your answers here:\n\n<{}>'.format((ctx.message.author), lmgtfyT)
-		return msg
 
 @bot.command(aliases=["wipe", "delete", "clean", "removespam"])
 @commands.has_permissions(manage_messages=True)
@@ -253,28 +200,14 @@ async def purge(ctx, number: int):
 	print('Deleted {} message(s)'.format(len(deleted)))
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
 	await ctx.send("Deleted {} messages, my master.".format(len(deleted)), delete_after=5)
-@bot.command(pass_context=True)
-async def getimage(ctx, *, image):
-	"""Tests downloading - owner only"""
-	
-	mess = await Message.Embed(title="Test", description="Downloading file...").send(ctx)
-	file_path = await GetImage.download(image)
-	mess = await Message.Embed(title="Test", description="Uploading file...").edit(ctx, mess)
-	await Message.EmbedText(title="Image", file=file_path).edit(ctx, mess)
-	GetImage.remove(file_path)
 
-@bot.command()
-async def ask(ctx, *, query = None):
-	"""Jeeves, please answer these questions."""
-
-	if query == None:
-		msg = 'You need a topic for me to Ask Jeeves.'
-		await ctx.send(msg)
-		return
-
-	msg = await get_search(ctx, query,"k")
-	# Say message
-	await ctx.send(msg)
+@bot.command(hidden=True)
+@commands.is_owner()
+@commands.cooldown(1, 7200, commands.BucketType.user)#only use every 2 hours
+async def rename(ctx, *, name:str):
+    """Renames the bot"""
+    await bot.user.edit(username=name)
+    await ctx.send(f"Hurray! My new name is {name}")
 
 @bot.command()
 @bot_has_permissions(manage_messages=True)
@@ -299,18 +232,7 @@ async def goodmorning(ctx):
 async def embiggen(ctx, *, text):
 	"""Embiggens text. Yes that's a word, obviously"""
 	await ctx.send("```fix\n" + figlet_format(text, font="big") + "```")
-@bot.command(pass_context=True)
-async def duck(ctx, *, query = None):
-	"""Duck Duck... GOOSE."""
 
-	if query == None:
-		msg = 'You need a topic for me to DuckDuckGo.'
-		await ctx.send(msg)
-		return
-
-	msg = await get_search(ctx, query,"d")
-	# Say message
-	await ctx.send(msg)
 @bot.command()
 async def terrariaquotes(ctx):
 	"""Various messages from the game Terraria"""
@@ -420,6 +342,8 @@ async def kill(ctx, member:discord.Member):
 @has_permissions(manage_nicknames=True)
 async def changenickname(ctx, member : discord.Member, *, nickname):
 	"""Change a user's nickname"""
+	if member == ctx.guild.owner:
+		return await ctx.send("Cannot change the nick of the server owner!")
 	await member.edit(nick=nickname)
 	await ctx.send(f"Success! {member}'s Nickname changed to {nickname}")
 @bot.command()
@@ -451,36 +375,8 @@ async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
 	await ctx.send(embed=embed)
-@bot.command()
-async def recentjoins(ctx):
-	"""Lists the most recent users to join."""
-	our_list = []
-	# offset = settings.getGlobalUserStat(ctx.author,"TimeZone",settings.getGlobalUserStat(ctx.author,"UTCOffset",None))
-	for member in ctx.guild.members:
-		our_list.append(
-			{
-				"name":member.name,
-				"value":"{} UTC".format(member.joined_at.strftime("%Y-%m-%d %I:%M %p") if member.joined_at != None else "Unknown"),#UserTime.getUserTime(ctx.author,self.settings,member.joined_at,force=offset)["vanity"],
-				"date":member.joined_at
-			}
-		)
-	our_list = sorted(our_list, key=lambda x:x["date"].timestamp() if x["date"] != None else -1)
-	return await PickList.PagePicker(title="Most Recent Members to Join {} ({:,} total)".format(ctx.guild.name,len(ctx.guild.members)),ctx=ctx,list=[{"name":"{}. {}".format(y+1,x["name"]),"value":x["value"]} for y,x in enumerate(our_list)]).pick()
- 
-@bot.command()
-async def google(ctx, *, query = None):
-	"""Get some searching done."""
-
-	if query == None:
-		msg = 'You need a topic for me to Google.'
-		await ctx.send(msg)
-		return
-
-	msg = await get_search(ctx, query)
-	# Say message
-	await ctx.send(msg)
 @bot.command(name="spam2.0", enabled=False, hidden=True)
-@checks.is_owner()
+@commands.is_owner()
 async def spam2point0(ctx, *, message):
 	"""Spams a message"""
 	await ctx.send("usage = %spam2.0 <message>")
@@ -493,18 +389,6 @@ async def spam2point0(ctx, *, message):
 		if x == 13:
 			break
 
-@bot.command(pass_context=True)
-async def bing(ctx, *, query = None):
-	"""Get some uh... more searching done."""
-
-	if query == None:
-		msg = 'You need a topic for me to Bing.'
-		await ctx.channel.send(msg)
-		return
-
-	msg = await get_search(ctx, query,"b")
-	# Say message
-	await ctx.channel.send(msg)
 @bot.command(name="speedtest")
 async def speedstest(ctx):
 	"""Internet Speedtest"""
@@ -532,53 +416,6 @@ async def claptrap(ctx):
 	claptraps = open("claptraps.py", encoding="utf8").read().splitlines()
 	claptrap = random.choice(claptraps)
 	await ctx.send(claptrap)
-@bot.command(pass_context=True)
-async def hostinfo(ctx):
-	"""Info about the bot's host environment."""
-
-	message = await ctx.channel.send('Gathering info...')
-
-	# cpuCores    = psutil.cpu_count(logical=False)
-	# cpuThred    = psutil.cpu_count()
-	cpuThred      = os.cpu_count()
-	cpuUsage      = psutil.cpu_percent(interval=1)
-	memStats      = psutil.virtual_memory()
-	memPerc       = memStats.percent
-	memUsed       = memStats.used
-	memTotal      = memStats.total
-	memUsedGB     = "{0:.1f}".format(((memUsed / 1024) / 1024) / 1024)
-	memTotalGB    = "{0:.1f}".format(((memTotal/1024)/1024)/1024)
-	currentOS     = platform.platform()
-	system        = platform.system()
-	release       = platform.release()
-	version       = platform.version()
-	processor     = platform.processor()
-	botName       = "Terrabot"
-	currentTime   = int(time.time())
-	timeString    = ReadableTime.getReadableTimeBetween(startTime, currentTime)
-	pythonMajor   = sys.version_info.major
-	pythonMinor   = sys.version_info.minor
-	pythonMicro   = sys.version_info.micro
-	pythonRelease = sys.version_info.releaselevel
-	pyBit         = struct.calcsize("P") * 8
-
-	threadString = 'thread'
-	if not cpuThred == 1:
-		threadString += 's'
-
-	msg = '***{}\'s*** **Home:**\n'.format(botName)
-	msg += '```\n'
-	msg += 'OS       : {}\n'.format(currentOS)
-	msg += 'Hostname : {}\n'.format(platform.node())
-	msg += 'Language : Python {}.{}.{} {} (64 bit)\n'.format(pythonMajor, pythonMinor, pythonMicro, pythonRelease, pyBit)
-	msg += 'Commit   : "idkthispreventserror"'
-	msg += ProgressBar.center('{}% of {} {}'.format(cpuUsage, cpuThred, threadString), 'CPU') + '\n'
-	msg += ProgressBar.makeBar(int(cpuUsage)) + "\n\n"
-	msg += ProgressBar.center('{} ({}%) of {}GB used'.format(memUsedGB, memPerc, memTotalGB), 'RAM') + '\n'
-	msg += ProgressBar.makeBar(int(memPerc)) + "\n\n"
-	msg += '{} uptime```'.format(timeString)
-
-	await message.edit(content=msg)
 @bot.command()
 async def turret(ctx):
 	"""Now you're thinking with - wait... turrets?"""
@@ -651,6 +488,7 @@ async def avatar(ctx, *,  user : discord.User=None):
 	userAvatarUrl = user.avatar_url
 	await ctx.send(userAvatarUrl)
 @bot.command()
+@commands.is_owner()
 async def uploadfile(ctx, *, path:str):
 	"""Uploads any file on the system. What is this hackery?"""
 	await ctx.channel.trigger_typing()
@@ -757,10 +595,7 @@ async def choose(ctx, *, text: str):
 @bot.command(aliases=["change_stream"])
 async def stream(ctx, *, streamname:str):
 	"""Sets the streaming status with the specified name"""
-	if lock_status:
-		if not ctx.author.id == config.owner_id and not ctx.author.id in config.dev_ids:
-			await ctx.send(Language.get("bot.status_locked", ctx))
-			return
+	
 	await bot.change_presence(activity=discord.Activity(name=streamname, type=discord.ActivityType.streaming, url="https://www.twitch.tv/ZeroEpoch1969"))
 	await ctx.send(Language.get("bot.now_streaming", ctx).format(streamname))
 	await channel_logger.log_to_channel(":information_source: `{}`/`{}` has changed the streaming status to `{}`".format(ctx.author.id, ctx.author, streamname))
@@ -773,13 +608,14 @@ async def suggest(ctx, *, suggestion:str):
 	else:
 		guild = "`{}` / `{}`".format(ctx.guild.id, ctx.guild.name)
 	msg = make_message_embed(ctx.author, 0xFF0000, suggestion, formatUser=True)
-	owner = bot.get_user(config.owner_id)
+	owner = bot.get_user(466778567905116170)
 	if owner:
 		await owner.send("You have received a new suggestion! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	for id in config.dev_ids:
 		dev = bot.get_user(id)
 		if dev:
 			await dev.send("You have received a new suggestion! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
+
 @bot.command(hidden=True)
 async def botserverids(ctx):
 	await ctx.send(bot.guilds)
@@ -799,7 +635,7 @@ async def notifydev(ctx, *, message:str):
 	else:
 		guild = "`{}` / `{}`".format(ctx.guild.id, ctx.guild.name)
 	msg = make_message_embed(ctx.author, 0xFF0000, message, formatUser=True)
-	owner = bot.get_user(config.owner_id)
+	owner = bot.get_user(466778567905116170)
 	if owner:
 		await owner.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	for id in config.dev_ids:
@@ -812,7 +648,7 @@ async def notifydev(ctx, *, message:str):
 @commands.is_owner()
 async def guildcreate(ctx, name):
 	"""create a guild"""
-	# VoiceRegion = ctx.guild.region
+	VoiceRegion = ctx.guild.region
 	with open('AwOo.png', 'rb') as f:
 		icon = f.read()
 	print("Here!")

@@ -8,23 +8,26 @@ class Math(commands.Cog):
 
 	@commands.group()
 	async def calculator(self, ctx):
-	    pass
-	    
+		pass
+		
 	@calculator.command(pass_context=True)
 	async def add(self, ctx, a: int, b:int):
-	    await ctx.send(a+b)
-	    
+		await ctx.send(a+b)
+		
 	@calculator.command(pass_context=True)
 	async def subtract(self, ctx, a: int, b:int):
-	    await ctx.send(a-b)
-	    
+		await ctx.send(a-b)
+		
 	@calculator.command(pass_context=True)
 	async def multiply(self, ctx, a: int, b:int):
-	    await ctx.send(a*b)
-	    
+		await ctx.send(a*b)
+		
 	@calculator.command(pass_context=True)
 	async def divide(self, ctx, a: int, b:int):
-	    await ctx.send(a/b)
+		try:
+			await ctx.send(a/b)
+		except ZeroDivisionError as e:
+			return await ctx.send(e)
 	@calculator.command(pass_context=True)
 	async def sqrt(self, ctx, a: int):
 		try:

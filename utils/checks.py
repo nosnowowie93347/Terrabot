@@ -21,10 +21,11 @@ class not_guild_owner(commands.CommandError):
 
 class no_permission(commands.CommandError):
     pass
-
+dev_ids = [492883063542513675, 478267562397007873]
+supporter_ids = [606284419447128064]
 def is_owner():
     def predicate(ctx):
-        if ctx.author.id == config.owner_id:
+        if ctx.author.id == 466778567905116170:
             return True
         else:
             raise owner_only
@@ -33,14 +34,14 @@ def is_owner():
 def is_helper():
     def predicate(ctx):
         helpers = [503066505999679518]
-        if ctx.author.id in helpers or ctx.author.id == config.owner_id or ctx.author.id in config.dev_ids:
+        if ctx.author.id in helpers or ctx.author.id == 466778567905116170 or ctx.author.id in dev_ids:
             return True
         else:
             raise helper_only
     return commands.check(predicate)
 def is_dev():
     def predicate(ctx):
-        if ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
+        if ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
             return True
         else:
             raise dev_only
@@ -48,7 +49,7 @@ def is_dev():
 
 def is_support():
     def predicate(ctx):
-        if ctx.author.id in config.support_ids or ctx.author.id in config.dev_ids or ctx.author.id == config.owner_id:
+        if ctx.author.id in support_ids or ctx.author.id in dev_ids or ctx.author.id == 466778567905116170:
             return True
         else:
             raise support_only

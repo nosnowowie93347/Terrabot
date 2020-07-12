@@ -5,19 +5,16 @@ from   operator import itemgetter
 import base64
 import binascii
 import re
-from   Cogs import Nullify
 
 def setup(bot):
 	# Add the bot and deps
-	settings = bot.get_cog("Settings")
-	bot.add_cog(Morse(bot, settings))
+	bot.add_cog(Morse(bot))
 
 class Morse(commands.Cog):
 
 	# Init with the bot reference
-	def __init__(self, bot, settings):
+	def __init__(self, bot):
 		self.bot = bot
-		self.settings = settings
 		self.to_morse = { 
 			"a" : ".-",
 			"b" : "-...",

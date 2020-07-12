@@ -13,7 +13,6 @@ python-nmap
 random-cat
 pythonwhois
 youtube-dl
-pygame
 wavelink
 pillow
 pymongo

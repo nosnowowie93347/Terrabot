@@ -1,26 +1,18 @@
 import asyncio
 import discord
 from   discord.ext import commands
-from   Cogs import Settings
-from   Cogs import DisplayName
-from   Cogs import Nullify
 
 def setup(bot):
 	# Add the bot and deps
-	settings = bot.get_cog("Settings")
-	bot.add_cog(Face(bot, settings))
+	bot.add_cog(Face(bot))
 
 # This is the Face module. It sends faces.
 
 class Face(commands.Cog):
 
 	# Init with the bot reference, and a reference to the settings var
-	def __init__(self, bot, settings):
+	def __init__(self, bot):
 		self.bot = bot
-		self.settings = settings
-		global Utils, DisplayName
-		Utils = self.bot.get_cog("Utils")
-		DisplayName = self.bot.get_cog("DisplayName")
 
 	@commands.command(pass_context=True)
 	async def lenny(self, ctx, *, message : str = None):
