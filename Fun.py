@@ -153,9 +153,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def supreme(self, ctx, *, text: commands.clean_content(fix_channel_mentions=True)):
 		""" Make a fake Supreme logo
-		Arguments:
-			--dark | Make the background to dark colour
-			--light | Make background to light and text to dark colour
+		
 		"""
 		parser = argparser.Arguments()
 		parser.add_argument('input', nargs="+", default=None)
@@ -201,6 +199,7 @@ class Fun(commands.Cog):
 			await ctx.send(content=content, file=discord.File(bio, filename=filename))
 	@commands.command()
 	async def getbotprefix(self, ctx):
+		"""Gets the prefixes of the bot"""
 		message = discord.Message
 		prefix = await self.bot.get_prefix(message)
 		await ctx.send(f"My prefix is {prefix}")
@@ -235,7 +234,6 @@ class Fun(commands.Cog):
 			return await ctx.send(f"Could not find any UserID matching **{user_id}**")
 
 		try:
-			role = discord.utils.get(ctx.guild.roles, name="NODM")
 			# if not role in user.roles:
 			await user.send(message)
 			# if role in user.roles:
@@ -403,7 +401,7 @@ class Fun(commands.Cog):
 		await ctx.send(owoify(text))
 	@commands.command()
 	async def spam3(self, ctx):
-		"""SPAM SPAM SPAM"""
+		"""Sends an image of Spam"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/spam.png"))
 	@commands.command()
@@ -457,11 +455,6 @@ class Fun(commands.Cog):
 		"""b1nzy pls no ;-;"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/b1nzy_with_banhammer.png"))
-	@commands.command()
-	async def createwebhook(self, ctx, *, name:str):
-		await ctx.message.delete()
-		await ctx.channel.create_webhook(name=name, avatar=None)
-		await ctx.send(f"Created a webhook named {name}")
 	@commands.command()
 	async def honk(self, ctx):
 		"""Honk honk boi"""

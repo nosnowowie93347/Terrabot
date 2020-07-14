@@ -19,7 +19,6 @@ class Botstuff(commands.Cog):
 		"""Outputs the total count of lines of code in the currently installed repo."""
 		# Script pulled and edited from https://github.com/kyco/python-count-lines-of-code/blob/python3/cloc.py
 		
-		# Get our current working directory - should be the bot's home
 		path = os.getcwd()
 		
 		# Set up some lists
@@ -121,18 +120,19 @@ class Botstuff(commands.Cog):
 		"""Idles the bot"""
 		await self.bot.change_presence(activity=None, status=discord.Status.idle)
 	@commands.command(hidden=True)
+	@checks.is_dev()
 	async def donotdisturb(self, ctx):
 		'''sets bot status to DND'''
 		await self.bot.change_presence(activity=None, status=discord.Status.dnd)
 		await ctx.send('Successfully changed bot status')
-	@commands.command(aliases=["killme", "logout"])
+	@commands.command(aliases=["logout"])
 	@commands.is_owner()
 	async def shutdown(self, ctx):
 		"""Shuts down the bot."""
 		await ctx.send("logging out...")
 		await self.bot.logout()
 	@commands.command(aliases=["changestatus"])
-	@has_permissions(manage_guild=True)
+	@checks.is_dev()
 	async def change_status(self, ctx, *, newstatus):
 		"""Changes the bot's status"""
 		message = newstatus

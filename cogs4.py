@@ -3,7 +3,7 @@ from discord import ext
 import re, copy, unicodedata
 from collections import Counter
 from discord.ext import commands
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, has_permissions, bot_has_permissions
 from utils2.EmojiStealer import *
 
 class TimeParser:
@@ -40,10 +40,8 @@ class YetAnotherCog(commands.Cog):
 	@commands.command()
 	async def timer(self, ctx, time: TimeParser, *, message=''):
 		"""Reminds you of something after a certain amount of time.
-		The time can optionally be specified with units such as 'h'
-		for hours, 'm' for minutes and 's' for seconds. If no unit
-		is given then it is assumed to be seconds. You can also combine
-		multiple units together, e.g. 2h4m10s.
+		 The time can optionally be specified with units such as 'h'
+		for hours, 'm' for minutesand 's' for seconds.
 		"""
 
 		author = ctx.message.author
@@ -82,13 +80,14 @@ class YetAnotherCog(commands.Cog):
 		await ctx.send('\n'.join(map(to_string, characters)))
 	
 	@commands.command()
+	@commands.guild_only()
+	@commands.has_permissions(ban_members=True)
+	@commands.bot_has_permissions(ban_members=True)
 	async def softban(self, ctx, member: discord.Object, *, reason: str):
 		"""Soft bans a member from the server.
 		A softban is basically banning the member from the server but
 		then unbanning the member as well. This allows you to essentially
 		kick the member while removing their messages.
-		To use this command you must have Ban Members permissions or have
-		the Bot Admin role. Note that the bot must have the permission as well.
 		"""
 
 		try:
@@ -101,8 +100,10 @@ class YetAnotherCog(commands.Cog):
 		else:
 			await ctx.send('\U0001f44c')
 	@commands.command()
+	@commands.has_permissions(manage_emojis=True)
+	@commands.bot_has_permissions(manage_emojis=True)
 	async def steal_emoji(self, ctx, emoji: EmojiThief, name=None):
-		"""Steals an emoji."""
+		"""Steals an emoji from another server. Args are ID and name."""
 		# the converter can return none when cancelled.
 		if not emoji:
 			return

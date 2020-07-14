@@ -2,8 +2,7 @@ import discord, random, asyncio, math
 from random import choice, randint, randrange
 from discord.ext import commands
 emojilist = open("Emojis.txt", encoding='utf8').read().splitlines()
-emojis = random.choice(emojilist)
-emoji = random.choice(emojis)
+
 
 class Emoji(commands.Cog):
 	def __init__(self, bot):
@@ -24,6 +23,7 @@ class Emoji(commands.Cog):
 		await ctx.send(embed=embed)
 	@commands.command()
 	async def randomemoji(self, ctx):
+		"""get a random emoji"""
 		await ctx.send(random.choice(emojilist))
 
 

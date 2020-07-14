@@ -1,16 +1,15 @@
 import asyncio
 import discord
 from   discord.ext import commands
+from discord.ext.commands import Bot, has_permissions, bot_has_permissions
 
 def setup(bot):
-	# Add the bot and deps
 	bot.add_cog(Face(bot))
 
 # This is the Face module. It sends faces.
 
 class Face(commands.Cog):
 
-	# Init with the bot reference, and a reference to the settings var
 	def __init__(self, bot):
 		self.bot = bot
 

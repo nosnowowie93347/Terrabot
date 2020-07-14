@@ -42,7 +42,9 @@ class Cog3(commands.Cog):
 		await ctx.message.delete()
 		return await ctx.send(say)
 	@commands.command()
+	@commands.guild_only()
 	async def roles(self, ctx):
+		"""Lists the roles for the current guild"""
 		roles = ctx.guild.roles
 		result = "**The roles on this server are: **"
 		for role in roles:
@@ -63,6 +65,7 @@ class Cog3(commands.Cog):
 		await ctx.send('You rolled a ' + str(randint(1,20)))
 	@commands.command(aliases=["comic"])
 	async def xkcd(self, ctx):
+		"""Get ready to laugh... or somethin"""
 		await ctx.send('get ready to laugh... or something')
 		latest = requests.get('https://xkcd.com/info.0.json').json()
 		num = random.randint(1, latest['num'])
@@ -74,6 +77,7 @@ class Cog3(commands.Cog):
 		await ctx.send('This Bot is Working (Dispite what Ruby might tell you)')
 	@commands.command(aliases=["naptime", "sleepytime"])
 	async def sleep(self, ctx):
+		"""Makes the bot take a 5 second nap"""
 		await ctx.send(":sleeping:")
 		await asyncio.sleep(5)
 		await ctx.send('Done sleeping')

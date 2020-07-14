@@ -10,7 +10,7 @@ class Fun(commands.Cog):
     @commands.command()
     async def EightBall(self, ctx, *, question = None):
         if question == None:
-            await ctx.send("ask a question.")
+            return await ctx.send("ask a question.")
         responses = [
         "It is certain",
         "Without a doubt",

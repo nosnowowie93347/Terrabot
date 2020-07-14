@@ -1,6 +1,6 @@
 from discord.ext import commands
 from utils.mysql import *
-import config
+from utils import config
 
 class owner_only(commands.CommandError):
     pass
