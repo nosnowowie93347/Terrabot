@@ -227,7 +227,7 @@ class Fun(commands.Cog):
 	
 	@commands.command()
 	@commands.cooldown(1, 35, commands.BucketType.user)
-	async def dm(self, ctx, member:discord.Member, *, message: str):
+	async def dm(self, ctx, member:discord.User, *, message: str):
 		""" DM the user of your choice """
 		user = member
 		if not user:
@@ -285,6 +285,7 @@ class Fun(commands.Cog):
 				await ctx.message.delete()
 				await author.send('`'+spoilified+'`')
 	@commands.command()
+	@has_permissions(manage_webhooks=True)
 	async def clone(self, ctx, name, *, message:str):
 		'''
 		Creates a webhook, that says what you say. Like echo.

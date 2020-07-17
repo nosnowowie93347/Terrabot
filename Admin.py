@@ -80,7 +80,7 @@ class Admin(commands.Cog):
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		"""Kicks a user."""
 		guild = ctx.guild
-		if member.id == config.owner_id:
+		if member.id == config.owner_id or member == ctx.author:
 			return await ctx.send("I'm not kicking this person.")
 		description = f"You've been bad, {member.mention}. You've been kicked."
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
@@ -103,17 +103,9 @@ class Admin(commands.Cog):
 		if role is None:
 			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
 			return
-		try:
-			name=role
-			await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
-			await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))
-		except discord.errors.Forbidden:
-			if role.position == ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_addrole_highest_role", ctx))
-			elif role.position > ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_addrole_higher_role", ctx))
-			else:
-				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
+		name=role
+		await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
+		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
 	@commands.command()
 	@commands.has_permissions(ban_members=True)
 	async def unban(self, ctx, memberid : discord.Object):
@@ -154,6 +146,7 @@ class Admin(commands.Cog):
 			return await ctx.send(msg)
 		try:
 			await member.add_roles(role)
+
 			embed = discord.Embed(title = 'User Muted',color = 0xff00f6,description = f'{member.mention} was muted by {ctx.author.mention}')
 			mutedmembed = discord.Embed(title="You've been muted.", color=0xff00f6, description=f"You've been muted in {guild} by {ctx.author} for {reason}.")
 			await ctx.send(embed=embed)
@@ -435,5 +428,13 @@ class Admin(commands.Cog):
 		guildtoleave = await self.bot.fetch_guild(guild_id)
 		await guildtoleave.leave()
 		await ctx.send(f"I have left the guild {guildtoleave}")
+	@commands.command()
+	@commands.has_permissions(manage_channels=True)
+	async def deletetc(self, ctx, channelname:discord.TextChannel):
+		await channelname.delete()
+		await ctx.send(f"Channel {channelname} was deleted by {ctx.author}")
+		for channel in ctx.guild.channels:
+			if channel.name == "logs":
+				await channel.send(f"Channel {channelname} was deleted by {ctx.author}")
 def setup(bot):
 	bot.add_cog(Admin(bot))

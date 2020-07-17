@@ -83,12 +83,23 @@ async def on_ready():
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
 @bot.event
 async def on_message(message):
+	if message.guild is None:
+		if message.content.startswith("Hello") or message.content.startswith("hello"):
+			await message.channel.send(f"Hi {message.author}!")
+		if message.content.startswith("help") or message.content.startswith("Help"):
+			await message.channel.send("Use the help command by doing t&help.")
+		if message.content == "Have a nice day":
+			await message.channel.send("You too!")
+
 	if message.author.bot:
 		return
 	
 	await bot.process_commands(message)
 @bot.event
 async def on_command_error(ctx, error):
+	if isinstance(error, commands.CommandOnCooldown):
+		await ctx.send(f"Hold on! This command is on cooldown for another {error.retry_after} seconds.")
+		return
 	if isinstance(error, commands.MissingPermissions):
 		await ctx.send(f"Oof. You don't have permission to use this command. The missing permission is: {error.missing_perms}.")
 		return
@@ -183,7 +194,8 @@ async def on_member_join(user):
 		rules.add_field(name="3", value="Just don't be a jerk. Be your kindest self, follow golden rule")
 		rules.add_field(name="4", value="Admins and maybe staff will purge channels at times")
 		rules.add_field(name="5", value="Absolutely no NSFW content outside of NSFW channels. This will result in automatic kick and if it happens again, ban.")
-		await user.send(embed=rules)
+		if not user.bot:
+			await user.send(embed=rules)
 	except discord.errors.Forbidden:
 		return
 
@@ -191,11 +203,13 @@ def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
 
-@bot.command(aliases=["wipe", "delete", "clean", "removespam"])
+@bot.command(name="wipe", aliases=["delete", "clean", "removespam"])
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
 	await ctx.trigger_typing()
+	if number < 1 or number > 500:
+		return await ctx.send("Please choose a number between 1 and 500")
 	deleted = await ctx.channel.purge(limit=number)
 	print('Deleted {} message(s)'.format(len(deleted)))
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
@@ -260,12 +274,20 @@ async def urban(ctx, *msg):
 	word = ' '.join(msg)
 	api = "http://api.urbandictionary.com/v0/define"
 	logger.info("Making request to " + api)
+	
 	# Send request to the Urban Dictionary API and grab info
 	response = requests.get(api, params=[("term", f"```{word}```")]).json()
 	embed = discord.Embed(description="No results found!", colour=0xFF0000)
 	if len(response["list"]) == 0:
 		return await ctx.send(embed=embed)
 	# Add results to the embed
+	print(word)
+	if word == "Iroh":
+		embed = discord.Embed(title="Word", description=word, color=embed.colour)
+		embed.add_field(name="Top definition:", value="A screeching goblin that like minecraft too much")
+		embed.add_field(name="Examples:", value="Oh that [{}]. Always playing MC.".format(word))
+		return await ctx.send(embed=embed)
+	
 	embed = discord.Embed(title="Word", description=word, colour=embed.colour)
 	embed.add_field(name="Top definition:", value=response['list'][0]['definition'])
 	embed.add_field(name="Examples:", value=response['list'][0]['example'])
@@ -505,7 +527,7 @@ async def calculatepi(ctx, n:int):
 	if n > 15:
 		return await ctx.send("the maximum is 15 digits sadly.")
 	await ctx.send(roundpi(n))
-@bot.command()
+@bot.command(hidden=True, enabled=False)
 @commands.is_nsfw()
 async def rule34(ctx, *, tags:str):
 	"""A wonderfun NSFW command"""
@@ -594,6 +616,7 @@ async def choose(ctx, *, text: str):
 	await ctx.send("I choose... **{}** :thinking:".format(temp[random.randint(0, len(temp) - 1)]))
 
 @bot.command(aliases=["change_stream"])
+@checks.is_dev()
 async def stream(ctx, *, streamname:str):
 	"""Sets the streaming status with the specified name"""
 	
@@ -664,5 +687,6 @@ async def rabbit(ctx):
 	rabbitimage = open("rabbits.txt").read().splitlines()
 	image = random.choice(rabbitimage)
 	await ctx.send(image)
+
 token = ""
 bot.run(token)
