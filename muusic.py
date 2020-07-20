@@ -363,7 +363,10 @@ class MusicPlayer(commands.Cog,name='Music'):
 				self.player[msg.guild.id]['queue'].clear()
 				msg.voice_client.stop()
 				return await msg.voice_client.disconnect(), await msg.message.add_reaction(emoji='✅')
-
+	@command()
+	async def disconnect(self, msg):
+		if msg.author.voice is not None and msg.voice_client is not None:
+			return await msg.voice_client.disconnect(), await msg.message.add_reaction(emoji='✅')
 	@command()
 	async def pause(self,msg):
 		"""Pause playing song"""

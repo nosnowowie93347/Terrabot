@@ -2,7 +2,7 @@ import discord, math, datetime, operator, re, traceback, aiohttp, platform, sqli
 from discord import *
 from PIL import Image
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
-
+from pathlib import Path
 from random import choice, randint, randrange
 from discord.ext import commands
 import discord.utils
@@ -32,6 +32,28 @@ logger.addHandler(handler)
 EMOJI_NAME_REGEX = re.compile(r"<a?(:\w{2,32}:)\d{15,}>")
 client = discord.Client()
 today = datetime.date.today()
+bot.colors = {
+  'WHITE': 0xFFFFFF,
+  'AQUA': 0x1ABC9C,
+  'GREEN': 0x2ECC71,
+  'BLUE': 0x3498DB,
+  'PURPLE': 0x9B59B6,
+  'LUMINOUS_VIVID_PINK': 0xE91E63,
+  'GOLD': 0xF1C40F,
+  'ORANGE': 0xE67E22,
+  'RED': 0xE74C3C,
+  'NAVY': 0x34495E,
+  'DARK_AQUA': 0x11806A,
+  'DARK_GREEN': 0x1F8B4C,
+  'DARK_BLUE': 0x206694,
+  'DARK_PURPLE': 0x71368A,
+  'DARK_VIVID_PINK': 0xAD1457,
+  'DARK_GOLD': 0xC27C0E,
+  'DARK_ORANGE': 0xA84300,
+  'DARK_RED': 0x992D22,
+  'DARK_NAVY': 0x2C3E50
+}
+bot.color_list = [c for c in bot.colors.values()]
 now = datetime.datetime.now()
 conn = sqlite3.connect("data/Ruby.db")
 conn.row_factory = sqlite3.Row
@@ -48,7 +70,10 @@ journeysend = datetime.datetime(now.year, 5, 16) - \
 optionsforchristmascountdown = ['%xmas', "%xmascd", '%christmas']
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 choices = ['rock', 'paper', 'scissors']
+cwd = Path(__file__).parents[0]
+cwd = str(cwd)
 limit = config.max_nsfw_count
+blacklisted_users = []
 rockpaperscissors = random.choice(choices)
 random_word = random.choice("words.txt")
 lines = open('words.txt').read().splitlines()
@@ -61,6 +86,7 @@ async def on_ready():
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	bot.load_extension("EightBall")
+	bot.load_extension("Ownercommands")
 	bot.load_extension("cog2")
 	bot.load_extension("cogs3")
 	bot.load_extension("Math")
@@ -75,6 +101,8 @@ async def on_ready():
 	bot.load_extension("cogs4")
 	print(time.time())
 	print(len(bot.commands))
+	data = read_json("blacklist")
+	blacklisted_users = data["blacklistedUsers"]
 	statuses = ["Minecraft", "Tmodloader", "Terraria", "Waiting for Pink to update me", "scanning for rulebreakers", "Trying to convince Iroh to be online more", "Awaiting Approval", "Helping Pink fix me", "Roblox"]
 	running = True
 	while running == True:
@@ -83,6 +111,9 @@ async def on_ready():
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
 @bot.event
 async def on_message(message):
+	if message.author.id in blacklisted_users:
+		return 
+
 	if message.guild is None:
 		if message.content.startswith("Hello") or message.content.startswith("hello"):
 			await message.channel.send(f"Hi {message.author}!")
@@ -173,9 +204,9 @@ async def on_command_error(ctx, error):
 
 	# #In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
 	# try:
-	# 	await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
+	#   await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
 	# except:
-	# 	pass
+	#   pass
 	# log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
 async def name_change():
 	while not client.is_closed:
@@ -202,7 +233,29 @@ async def on_member_join(user):
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
+def read_json(filename):
+	with open(f"{cwd}/bot_config/{filename}.json", "r") as file:
+		data = json.load(file)
+	return data
+def write_json(data, filename):
+	with open(f"{cwd}/bot_config/{filename}.json", "w") as file:
+		json.dump(data, file, indent=4)
 
+@bot.command(name='perms', aliases=['perms_for', 'permissions', 'userperms'])
+@commands.guild_only()
+async def check_permissions(ctx, member: discord.Member=None):
+	"""A simple command which checks a members Guild Permissions.
+	If member is not provided, the author will be checked."""
+	if not member:
+		member = ctx.author
+	# Here we check if the value of each permission is True.
+	perms = '\n'.join(perm for perm, value in member.guild_permissions if value)
+	# And to make it look nice, we wrap it in an Embed.
+	embed = discord.Embed(title='Permissions for:', description=ctx.guild.name, colour=member.colour)
+	embed.set_author(icon_url=member.avatar_url, name=str(member))
+	# \uFEFF is a Zero-Width Space, which basically allows us to have an empty field name.
+	embed.add_field(name='\uFEFF', value=perms)
+	await ctx.send(content=None, embed=embed)
 @bot.command(name="wipe", aliases=["delete", "clean", "removespam"])
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, number: int):
@@ -214,14 +267,30 @@ async def purge(ctx, number: int):
 	print('Deleted {} message(s)'.format(len(deleted)))
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
 	await ctx.send("Deleted {} messages, my master.".format(len(deleted)), delete_after=5)
+@bot.command(name="hostinfo")
+async def hostinfo(ctx):
+	"""
+	A usefull command that displays bot statistics.
+	"""
+	bot.version = 3.3
+	pythonVersion = platform.python_version()
+	dpyVersion = discord.__version__
+	serverCount = len(bot.guilds)
+	memberCount = len(set(bot.get_all_members()))
 
-@bot.command(hidden=True)
-@commands.is_owner()
-@commands.cooldown(1, 7200, commands.BucketType.user)#only use every 2 hours
-async def rename(ctx, *, name:str):
-    """Renames the bot"""
-    await bot.user.edit(username=name)
-    await ctx.send(f"Hurray! My new name is {name}")
+	embed = discord.Embed(title=f'{bot.user.name} Stats', description='\uFEFF', colour=ctx.author.colour, timestamp=ctx.message.created_at)
+
+	embed.add_field(name='Bot Version:', value=bot.version)
+	embed.add_field(name='Python Version:', value=pythonVersion)
+	embed.add_field(name='Discord.Py Version', value=dpyVersion)
+	embed.add_field(name='Total Guilds:', value=serverCount)
+	embed.add_field(name='Total Users:', value=memberCount)
+	embed.add_field(name='Bot Developers:', value="<@466778567905116170>")
+
+	embed.set_footer(text=f"Made By | {bot.user.name}")
+	embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+
+	await ctx.send(embed=embed)
 
 @bot.command()
 @bot_has_permissions(manage_messages=True)
@@ -398,20 +467,6 @@ async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
 	await ctx.send(embed=embed)
-@bot.command(name="spam2.0", enabled=False, hidden=True)
-@commands.is_owner()
-async def spam2point0(ctx, *, message):
-	"""Spams a message"""
-	await ctx.send("usage = %spam2.0 <message>")
-	if message == "@everyone":
-		return await ctx.send("No")
-	x = 1
-	while x < 12:
-		await ctx.send(message)
-		x += 1
-		if x == 13:
-			break
-
 @bot.command(name="speedtest")
 async def speedstest(ctx):
 	"""Internet Speedtest"""
@@ -510,15 +565,7 @@ async def avatar(ctx, *,  user : discord.User=None):
 	"""Gets a user's avatar"""
 	userAvatarUrl = user.avatar_url
 	await ctx.send(userAvatarUrl)
-@bot.command()
-@commands.is_owner()
-async def uploadfile(ctx, *, path:str):
-	"""Uploads any file on the system. What is this hackery?"""
-	await ctx.channel.trigger_typing()
-	try:
-		await ctx.send(file=discord.File(path))
-	except FileNotFoundError:
-		await ctx.send("That file does not exist!")
+
 @bot.command(name="pi")
 async def calculatepi(ctx, n:int):
 	"""Calculate pi to a certain # of digits"""
@@ -591,7 +638,7 @@ async def namesofemojis(ctx):
 async def quoteaf(ctx):
 	"""Don't quote me on that"""
 	await ctx.channel.trigger_typing()
-	await ctx.send(file=discord.File("assets/imgs/quotes/{}.png".format(random.randint(1, len([file for file in os.listdir("assets/imgs/quotes")])))))		
+	await ctx.send(file=discord.File("assets/imgs/quotes/{}.png".format(random.randint(1, len([file for file in os.listdir("assets/imgs/quotes")])))))      
 @bot.command()
 async def ron(ctx):
 	"""Get a Ron Swanson quote"""
@@ -644,13 +691,6 @@ async def suggest(ctx, *, suggestion:str):
 async def botserverids(ctx):
 	await ctx.send(bot.guilds)
 	await ctx.send(len(bot.guilds))
-@bot.command(hidden=True)
-@commands.is_owner()
-async def delguild(ctx, guild_id):
-	"""del a guild"""
-	guildtodelete = await bot.fetch_guild(guild_id)
-	await guildtodelete.delete()
-	await ctx.send(f"The guild {guild_id} was successfully deleted.")
 @bot.command(aliases=["report", "notifydevs"])
 async def notifydev(ctx, *, message:str):
 	"""Sends a message to the developers"""
@@ -668,25 +708,30 @@ async def notifydev(ctx, *, message:str):
 			await dev.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	
 	await ctx.send(Language.get("bot.dev_notify", ctx).format(message))
-@bot.command(hidden=True, aliases=["createguild", "create_guild"])
-@commands.is_owner()
-async def guildcreate(ctx, name):
-	"""create a guild"""
-	VoiceRegion = ctx.guild.region
-	with open('AwOo.png', 'rb') as f:
-		icon = f.read()
-	print("Here!")
-	newserver = await bot.create_guild(name=name, region=VoiceRegion.us_west, icon=icon)
-	await newserver.create_text_channel(name="whatever")
-	invite = await newserver.channels[0].create_invite()
-	await ctx.send(invite)
-	print("And Here!")
+# @bot.command(hidden=True, aliases=["createguild", "create_guild"])
+# @commands.is_owner()
+# async def guildcreate(ctx, name):
+# 	"""create a guild"""
+# 	VoiceRegion = ctx.guild.region
+# 	with open('AwOo.png', 'rb') as f:
+# 		icon = f.read()
+# 	print("Here!")
+# 	newserver = await bot.create_guild(name=name, region=VoiceRegion.us_west, icon=icon)
+# 	await newserver.create_text_channel(name="whatever")
+# 	invite = await newserver.channels[0].create_invite()
+# 	await ctx.send(invite)
+# 	print("And Here!")
 @bot.command(aliases=["bunny", "bunnyrabbit"])
 async def rabbit(ctx):
 	"""Get a cute rabbit image"""
 	rabbitimage = open("rabbits.txt").read().splitlines()
 	image = random.choice(rabbitimage)
 	await ctx.send(image)
-
+@bot.command()
+async def getinvites(ctx):
+	guild = ctx.guild
+	await ctx.message.delete()
+	invites = await guild.invites()
+	await ctx.send(f"Here are the invites active in this guild: {invites}")
 token = ""
 bot.run(token)

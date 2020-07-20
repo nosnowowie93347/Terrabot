@@ -205,6 +205,7 @@ class Fun(commands.Cog):
 		await ctx.send(f"My prefix is {prefix}")
 	@commands.command()
 	@checks.is_helper()
+	@commands.cooldown(1, 654, commands.BucketType.user)
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -296,17 +297,6 @@ class Fun(commands.Cog):
 												avatar=pfp)
 		embed = discord.Embed(title=name, color=0x663399)
 		embed.add_field(name="Hello! I'm here", value=message)
-		await hook.send(embed=embed)
-		await hook.delete()
-	@commands.command(hidden=True, enabled=True)
-	@checks.is_owner()
-	async def updatenotice(self, ctx, *, version:str):
-		await ctx.message.delete()
-		await ctx.send("@everyone")
-		pfp = requests.get(ctx.author.avatar_url_as(format="png", size=256)).content
-		hook = await ctx.channel.create_webhook(name="Terrabot Updater", avatar=pfp)
-		embed = discord.Embed(title="Terrabot Updater", color=0x663399)
-		embed.add_field(name="Terrabot has been updated to ", value=f"{version}")
 		await hook.send(embed=embed)
 		await hook.delete()
 	@commands.command(aliases=["profile", "mcinfo"])
