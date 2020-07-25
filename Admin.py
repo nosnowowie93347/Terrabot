@@ -26,7 +26,6 @@ class Admin(commands.Cog):
 	async def pin(self, ctx, messageid:int):
 		"""Pins the message with the specified ID to the channel"""
 		try:
-			await ctx.message.delete()
 			message = await ctx.channel.fetch_message(messageid)
 		except discord.errors.NotFound:
 			await ctx.send(Language.get("bot.no_message_found", ctx).format(messageid))
@@ -72,7 +71,6 @@ class Admin(commands.Cog):
 		embed = discord.Embed(title=f"Successfully banned {memberid.id}", description=f"{memberid.id} banned for {reason}", color=0xff00f6)
 		await ctx.send(embed=embed)
 		await ctx.guild.ban(memberid, reason=reason)
-		await ctx.message.delete()
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
@@ -104,6 +102,13 @@ class Admin(commands.Cog):
 			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
 			return
 		name=role
+		if role in member.roles:
+			return await ctx.send("Cannot add this role to this user as they already have it! Nice try tho.")
+		if role.position == ctx.me.top_role.position:
+			return await ctx.send(Language.get("moderation.no_editrole_highest_role", ctx))
+		if role.position > ctx.me.top_role.position:
+			return await ctx.send(Language.get("moderation.no_editrole_higher_role", ctx))
+
 		await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
 		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
 	@commands.command(usage="<userid>", brief="Doesn't need a reason")
@@ -117,7 +122,7 @@ class Admin(commands.Cog):
 			description = f"Yay! {member.id} was unbanned"
 			embed = discord.Embed(title="Member Unbanned", description=description)
 			await ctx.send(embed=embed)
-			await user.send(embed=embed)
+			await member.send(embed=embed)
 			for channel in guild.channels:
 				if channel.name == "logs":
 					await channel.send(embed=embed)
@@ -160,7 +165,7 @@ class Admin(commands.Cog):
 		except discord.errors.Forbidden:
 			if role.position == ctx.me.top_role.position:
 				await ctx.send("I cannot add the mute role to users as it's my highest role")
-			elif mute_role.position > ctx.me.top_role.position:
+			elif role.position > ctx.me.top_role.position:
 				await ctx.send("I cannot add the mute role to users as it's higher than my highest role.")
 			else:
 				await ctx.send("I do not have the `Manage Roles` permission.")
@@ -237,7 +242,6 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
-		await ctx.message.delete()
 	@commands.command()
 	@commands.guild_only()
 	async def mods(self, ctx):

@@ -93,7 +93,7 @@ class Morse(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def morse(self, ctx, *, content = None):
-		"""Converts to morse code. Accepts a-z and 0-9. Each word is separated by 4 spaces."""
+		"""Converts to morse code. """
 
 		if content == None:
 			await ctx.send("Usage `{}morse [content]`".format(ctx.prefix))
@@ -128,7 +128,7 @@ class Morse(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def unmorse(self, ctx, *, content = None):
-		"""Converts morse code to ascii. Each word is separated by 4 spaces."""
+		"""Converts morse code to ascii."""
 
 		if content == None:
 			await ctx.send("Usage `{}unmorse [content]`".format(ctx.prefix))

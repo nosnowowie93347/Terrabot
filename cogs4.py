@@ -79,18 +79,19 @@ class YetAnotherCog(commands.Cog):
 
 		await ctx.send('\n'.join(map(to_string, characters)))
 	
-	@commands.command()
+	@commands.command(usage="<userid> <reason>")
 	@commands.guild_only()
 	@commands.has_permissions(ban_members=True)
 	@commands.bot_has_permissions(ban_members=True)
-	async def softban(self, ctx, member: discord.Object, *, reason: str):
+	async def softban(self, ctx, member: discord.User, *, reason: str):
 		"""Soft bans a member from the server.
 		A softban is basically banning the member from the server but
 		then unbanning the member as well. This allows you to essentially
 		kick the member while removing their messages.
 		"""
-
 		try:
+			guild = ctx.guild
+			await member.send(f"You've been softbanned in {guild} by {ctx.message.author} for {reason}")
 			await ctx.guild.ban(member)
 			await ctx.guild.unban(member, reason=reason)
 		except discord.Forbidden:
@@ -98,7 +99,7 @@ class YetAnotherCog(commands.Cog):
 		except discord.HTTPException:
 			await ctx.send('Banning failed.')
 		else:
-			await ctx.send('\U0001f44c')
+			await ctx.send('\U0001f44c {} banned successfully.'.format(member))
 	@commands.command()
 	@commands.has_permissions(manage_emojis=True)
 	@commands.bot_has_permissions(manage_emojis=True)

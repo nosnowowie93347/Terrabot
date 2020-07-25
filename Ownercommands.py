@@ -36,13 +36,28 @@ class Ownercommands(commands.Cog):
 	@commands.command()
 	@commands.is_owner()
 	async def blacklist(self, ctx, user: discord.Member):
+		if user.id in blacklisted_users:
+			return await ctx.send("Can't blacklist someone twice!")
 		if ctx.author.id == user.id:
 			return await ctx.send("Hey! You can't blacklist yourself!")
+		if user.id in self.bot.owner_ids:
+			return await ctx.send("Nice try. You can't blacklist an owner.")
+		if user.bot:
+			return await ctx.send("Can't blacklist bots!")
 		blacklisted_users.append(user.id)
 		data = read_json("blacklist")
 		data["blacklistedUsers"].append(user.id)
 		write_json(data, "blacklist")
 		await ctx.send(f"Hey, I've blacklisted {user.name} for you.")
+	@commands.command()
+	@commands.is_owner()
+	async def getblacklists(self, ctx):
+		data = read_json("blacklist")
+		blacklisted_users = data["blacklistedUsers"]
+		print(blacklisted_users)
+		for user in blacklisted_users:
+			return await ctx.send("These people are blacklisted from the bot: {}".format(blacklisted_users))
+		await ctx.send("Nobody is blacklisted")
 	@commands.command(hidden=True)
 	@commands.is_owner()
 	@commands.cooldown(1, 7200, commands.BucketType.user)#only use every 2 hours
@@ -71,3 +86,27 @@ class Ownercommands(commands.Cog):
 		   pass
 		await self.bot.logout()
 		subprocess.call([sys.executable, "bot.py"])
+	@commands.command(usage="<channel>")
+	@commands.is_owner()
+	async def lockdown(self, ctx, channel: discord.TextChannel = None):
+		channel = channel or ctx.channel
+		if ctx.guild.default_role not in channel.overwrites:
+			# This is the same as the elif except it handles agaisnt empty overwrites dicts
+			overwrites = {
+				ctx.guild.default_role: discord.PermissionOverwrite(send_messages=False)
+			}
+			await channel.edit(overwrites=overwrites)
+			await ctx.send(f"I have put {channel.name} on lockdown.")
+		elif (
+			channel.overwrites[ctx.guild.default_role].send_messages == True
+			or channel.overwrites[ctx.guild.default_role].send_messages == None
+		):
+			overwrites = channel.overwrites[ctx.guild.default_role]
+			overwrites.send_messages = False
+			await channel.set_permissions(ctx.guild.default_role, overwrite=overwrites)
+			await ctx.send(f"I have put {channel.name} on lockdown.")
+		else:
+			overwrites = channel.overwrites[ctx.guild.default_role]
+			overwrites.send_messages = True
+			await channel.set_permissions(ctx.guild.default_role, overwrite=overwrites)
+			await ctx.send(f"I have removed {channel.name} from lockdown.")

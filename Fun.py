@@ -243,7 +243,6 @@ class Fun(commands.Cog):
 			await user.send(f"Message sent by: {ctx.author}")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
-		await ctx.message.delete()
 	@commands.command()
 	async def emojify(self, ctx, *, text: str):
 		'''
@@ -283,7 +282,6 @@ class Fun(commands.Cog):
 			if len(spoilified) <= 4:
 				await ctx.send('Your message could not be converted!')
 			else:
-				await ctx.message.delete()
 				await author.send('`'+spoilified+'`')
 	@commands.command()
 	@has_permissions(manage_webhooks=True)
@@ -291,7 +289,6 @@ class Fun(commands.Cog):
 		'''
 		Creates a webhook, that says what you say. Like echo.
 		'''
-		await ctx.message.delete()
 		pfp = requests.get(ctx.author.avatar_url_as(format='png', size=256)).content
 		hook = await ctx.channel.create_webhook(name=name,
 												avatar=pfp)
@@ -540,7 +537,6 @@ class Fun(commands.Cog):
 	async def timetravel(self, ctx, numofminutes:int):
 		"""Just don't mess up the timeline..."""
 		await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
-		await ctx.message.delete()
 	@commands.command()
 	async def clock(self, ctx):
 		"""What time is it?"""

@@ -24,7 +24,7 @@ from utils.logger import log
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
-bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902")
+bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735562223883124826, 654133950771363842])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -103,7 +103,7 @@ async def on_ready():
 	print(len(bot.commands))
 	data = read_json("blacklist")
 	blacklisted_users = data["blacklistedUsers"]
-	statuses = ["Minecraft", "Tmodloader", "Terraria", "Waiting for Pink to update me", "scanning for rulebreakers", "Trying to convince Iroh to be online more", "Awaiting Approval", "Helping Pink fix me", "Roblox"]
+	statuses = ["Minecraft", "Tmodloader", "Banning Bowling Pins", "Keeping Pinkalicious21902 safe", "Terraria", "Waiting for Pink to update me", "scanning for rulebreakers", "Trying to convince Iroh to be online more", "Awaiting Approval", "Helping Pink fix me", "Roblox", "Daring raiders to test my skills", "I'm awesome!"]
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
@@ -218,6 +218,23 @@ async def name_change():
 
 @bot.event
 async def on_member_join(user): 
+	member=user
+	nick = member.display_name
+	print(type(nick))
+	print(nick)
+	specialchars = ["$", "%", "^", "!", "&", "*", "(", ")", "{", "}", "/", "?"]
+	newnick = re.sub('[^a-zA-Z0-9\n\.]','b',nick)
+	await member.edit(nick=newnick)
+	print(newnick)
+	channel = discord.utils.get(user.guild.text_channels, name="logs")
+	if channel:
+		embed = discord.Embed(description="Welcome to our guild!", color=random.choice(bot.color_list))
+		embed.set_thumbnail(url=user.avatar_url)
+		embed.set_author(name=user.name, icon_url=user.avatar_url)
+		embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+		embed.timestamp = datetime.datetime.utcnow()
+
+		await channel.send(embed=embed)
 	try:
 		rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
 		rules.add_field(name="1", value="Leave banning the bots to Admins/server owner")
@@ -229,7 +246,17 @@ async def on_member_join(user):
 			await user.send(embed=rules)
 	except discord.errors.Forbidden:
 		return
+@bot.event
+async def on_member_remove(member):
+	channel = discord.utils.get(member.guild.text_channels, name="logs")
+	if channel:
+		embed = discord.Embed(description="Goodbye from each and every one of us...", color=random.choice(bot.color_list))
+		embed.set_thumbnail(url=member.avatar_url)
+		embed.set_author(name=member.name, icon_url=member.avatar_url)
+		embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+		embed.timestamp = datetime.datetime.utcnow()
 
+		await channel.send(embed=embed)
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
@@ -393,7 +420,6 @@ async def guildinfo(ctx):
 	embed2.add_field(name="Max # of Emojis: ", value=guild.emoji_limit)
 	embed.add_field(name="# of Members: ", value=guild.member_count)
 	embed.add_field(name="Created at: ", value=guild.created_at)
-	embed2.add_field(name="Max Vid Channel Users: ", value=guild.max_video_channel_users)
 	await ctx.send(embed=embed)
 	await ctx.send(embed=embed2)
 @bot.command()
@@ -730,8 +756,14 @@ async def rabbit(ctx):
 @bot.command()
 async def getinvites(ctx):
 	guild = ctx.guild
-	await ctx.message.delete()
 	invites = await guild.invites()
 	await ctx.send(f"Here are the invites active in this guild: {invites}")
+@bot.command()
+async def take(ctx, member:discord.Member):
+	roles = member.roles #list of roles, lowest role first
+	roles.reverse() #list of roles, highest role first
+	top_role = roles[0] #first entry of list
+	await member.remove_roles(top_role)
+	await ctx.send("Stuff happened")
 token = ""
 bot.run(token)
