@@ -15,7 +15,7 @@ class Emoji(commands.Cog):
 		embed = discord.Embed(title="Emojis", description="Here are all the emojis available on the servers with Terrabot:", color=0x00ff00)  # setup embed
 		
 		for ej in ctx.message.guild.emojis:
-			output = ej.name, ej.id, ej.managed, ej.guild.name
+			output = ej
 			# Here we need 2 strings to add the backtick styling and avoid "too many arguments" errors
 			output2 = ("```{}```".format(str(output)))
 			# Add info to list (embed)

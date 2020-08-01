@@ -46,7 +46,7 @@ class Cog3(commands.Cog):
 	async def roles(self, ctx):
 		"""Lists the roles for the current guild"""
 		roles = ctx.guild.roles
-		result = "**The roles on this server are: **"
+		result = "```**The roles on this server are: **```"
 		for role in roles:
 			result += role.name + ", "
 		await ctx.send(result)

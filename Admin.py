@@ -26,6 +26,7 @@ class Admin(commands.Cog):
 	async def pin(self, ctx, messageid:int):
 		"""Pins the message with the specified ID to the channel"""
 		try:
+			await ctx.message.delete()
 			message = await ctx.channel.fetch_message(messageid)
 		except discord.errors.NotFound:
 			await ctx.send(Language.get("bot.no_message_found", ctx).format(messageid))
@@ -38,7 +39,7 @@ class Admin(commands.Cog):
 	@commands.command()
 	async def getbans(self, ctx):
 		"""Lists banned members"""
-		from utils import config
+		# from utils import config
 		x = await ctx.guild.bans()
 		x = '\n'.join([str(y.user) for y in x])
 		thing3 = "List of Banned Members\n" + x
@@ -75,12 +76,14 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=embed)
 	@commands.command(name="kick", usage="<user> <reason>")
+	@commands.bot_has_permissions(manage_roles=True, manage_server=True)
+	@commands.has_permissions(manage_server=True)
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		"""Kicks a user."""
 		guild = ctx.guild
-		if member.id == config.owner_id or member == ctx.author:
+		if member.id in bot.owner_ids or member == ctx.author:
 			return await ctx.send("I'm not kicking this person.")
-		description = f"You've been bad, {member.mention}. You've been kicked."
+		description = f"You've been a bad slice of bread, {member.mention}. You've been kicked."
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
 		pmembed = discord.Embed(title="You've been kicked.", description=f"You've been kicked from {ctx.guild} for {reason}")
 		await ctx.send(embed=kickembed)
@@ -113,7 +116,7 @@ class Admin(commands.Cog):
 		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
 	@commands.command(usage="<userid>", brief="Doesn't need a reason")
 	@commands.has_permissions(ban_members=True)
-	async def unban(self, ctx, memberid : discord.User):
+	async def unban(self, ctx, memberid : discord.Object):
 		"""Unbans a user"""
 		member = memberid
 		try:
@@ -122,7 +125,6 @@ class Admin(commands.Cog):
 			description = f"Yay! {member.id} was unbanned"
 			embed = discord.Embed(title="Member Unbanned", description=description)
 			await ctx.send(embed=embed)
-			await member.send(embed=embed)
 			for channel in guild.channels:
 				if channel.name == "logs":
 					await channel.send(embed=embed)
@@ -205,8 +207,8 @@ class Admin(commands.Cog):
 		guild = ctx.guild
 		embed = discord.Embed(title="Warned User", color=0xff00f6,description=f'{member.mention} was warned by {ctx.author.mention}')
 		role = discord.utils.get(ctx.guild.roles, name='Warned')
-		if role not in guild.roles:
-			await guild.create_role(name="Warned", hoist=True)
+		if not role in guild.roles:
+			return await ctx.send("Uhh. You need to create the Warned role first!")
 		await member.add_roles(role)
 		await ctx.send(embed=embed)
 		if not member.bot:
@@ -214,7 +216,6 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
-		logger.info("Warned {} for {}".format(member, reason))
 	@commands.command()
 	@commands.bot_has_permissions(manage_roles=True)
 	@commands.has_permissions(manage_roles=True)

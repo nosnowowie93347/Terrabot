@@ -459,11 +459,11 @@ class Fun(commands.Cog):
 		"""Get the current song that you or another user is playing"""
 		if user is None:
 			user = ctx.author
-		activity = ctx.author.activity
+		activity = user.activity
 		if activity is None:
 			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
 			return
-		if activity.type == discord.ActivityType.listening and activity.name == "Spotify":
+		if activity.type == discord.ActivityType.listening:
 			embed = discord.Embed(description="\u200b")
 			embed.add_field(name="Artists", value=", ".join(activity.artists))
 			embed.add_field(name="Album", value=activity.album)
@@ -472,7 +472,7 @@ class Fun(commands.Cog):
 			embed.set_thumbnail(url=activity.album_cover_url)
 			embed.url = "https://open.spotify.com/track/{}".format(activity.track_id)
 			embed.color = activity.color
-			embed.set_footer(text="{} - is currently playing this song".format(ctx.author.display_name), icon_url=get_avatar(ctx.author))
+			embed.set_footer(text="{} - is currently playing this song".format(user.display_name), icon_url=get_avatar(user))
 			await ctx.send(embed=embed)
 		else:
 			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
