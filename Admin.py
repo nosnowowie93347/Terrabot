@@ -76,8 +76,7 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=embed)
 	@commands.command(name="kick", usage="<user> <reason>")
-	@commands.bot_has_permissions(manage_roles=True, manage_server=True)
-	@commands.has_permissions(manage_server=True)
+	@commands.bot_has_permissions(manage_roles=True)
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		"""Kicks a user."""
 		guild = ctx.guild
