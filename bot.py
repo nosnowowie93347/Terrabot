@@ -24,7 +24,7 @@ from utils.logger import log
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
-bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735562223883124826, 654133950771363842])
+bot = discord.ext.commands.Bot(command_prefix=config.command_prefixes, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735562223883124826, 654133950771363842, 606284419447128064])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -73,7 +73,6 @@ choices = ['rock', 'paper', 'scissors']
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 limit = config.max_nsfw_count
-blacklisted_users = []
 rockpaperscissors = random.choice(choices)
 random_word = random.choice("words.txt")
 lines = open('words.txt').read().splitlines()
@@ -89,8 +88,10 @@ async def on_ready():
 	bot.load_extension("Ownercommands")
 	bot.load_extension("cog2")
 	bot.load_extension("cogs3")
+	#bot.load_extension("Help")
 	bot.load_extension("Math")
 	bot.load_extension("Fun")
+	bot.load_extension("UmmStuff")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
 	bot.load_extension("Morecogs")
@@ -101,18 +102,14 @@ async def on_ready():
 	bot.load_extension("cogs4")
 	print(time.time())
 	print(len(bot.commands))
-	data = read_json("blacklist")
-	blacklisted_users = data["blacklistedUsers"]
-	statuses = ["Minecraft", "Tmodloader", "Banning Bowling Pins", "Keeping Pinkalicious21902 safe", "Terraria", "Waiting for Pink to update me", "scanning for rulebreakers", "Trying to convince Iroh to be online more", "Awaiting Approval", "Helping Pink fix me", "Roblox", "Daring raiders to test my skills", "I'm awesome!"]
+	statuses = ["Minecraft", "Tmodloader", "Banning Bowling Pins", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!"]
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
-		await asyncio.sleep(25)
+		await asyncio.sleep(30)
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
 @bot.event
 async def on_message(message):
-	if message.author.id in blacklisted_users:
-		return 
 
 	if message.guild is None:
 		if message.content.startswith("Hello") or message.content.startswith("hello"):
@@ -143,6 +140,8 @@ async def on_command_error(ctx, error):
 	if isinstance(error, commands.BotMissingPermissions):
 		await ctx.send("Oof. The bot doesn't have permission to do this. Please give the bot the following perms: {}".format(error.missing_perms))
 		return
+	if isinstance(error, commands.MissingAnyRole):
+		return await ctx.send(f"You're missing the role(s) {error.missing_roles}")
 	if isinstance(error, commands.ExtensionFailed):
 		await ctx.send("Oof. The extension {} failed due to the following error: {}".format(error.name, error.original))
 		return
@@ -174,10 +173,10 @@ async def on_command_error(ctx, error):
 		await ctx.send("Oops! This command doesn't exist. If you think it should, dm the devs with ur suggestion.")
 		return
 	if isinstance(error, commands.DisabledCommand):
-		await ctx.send(Language.get("bot.errors.disabled_command", ctx))
+		await ctx.send("This command has been disabled.")
 		return
-	if isinstance(error, checks.owner_only):
-		await ctx.send(Language.get("bot.errors.owner_only", ctx))
+	if isinstance(error, commands.NotOwner):
+		await ctx.send("You need to be the bot owner to use this command!")
 		return
 	if isinstance(error, checks.dev_only):
 		await ctx.send(Language.get("bot.errors.dev_only", ctx))
@@ -188,11 +187,8 @@ async def on_command_error(ctx, error):
 	if isinstance(error, commands.NSFWChannelRequired):
 		await ctx.send(Language.get("bot.errors.not_nsfw_channel", ctx))
 		return
-	if isinstance(error, checks.not_guild_owner):
-		await ctx.send(Language.get("bot.errors.not_guild_owner", ctx))
-		return
 	if isinstance(error, commands.NoPrivateMessage):
-		await ctx.send(Language.get("bot.errors.no_private_message", ctx))
+		await ctx.send("Command cannot be used in DMs try again.")
 		return
 	if isinstance(error, commands.CommandInvokeError):
 		return await ctx.send(f"Oof. Something went wrong. Here's the exception: {error.original}")
@@ -203,29 +199,16 @@ async def on_command_error(ctx, error):
 		return
 
 	# #In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
-	# try:
-	#   await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
-	# except:
-	#   pass
-	# log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
-async def name_change():
-	while not client.is_closed:
-		presences = open("presences.txt").read().splitlines()
-		game = discord.Game(random.choice(presences))
-		await bot.change_presence(activity=game)
-		await asyncio.sleep(45)
-		await bot.chance_presence(activity=game)
+   #ry:
+	#  await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
+	#except:
+	#  pass
+	#  log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
 
 @bot.event
 async def on_member_join(user): 
-	member=user
-	nick = member.display_name
-	print(type(nick))
-	print(nick)
-	specialchars = ["$", "%", "^", "!", "&", "*", "(", ")", "{", "}", "/", "?"]
-	newnick = re.sub('[^a-zA-Z0-9\n\.]','b',nick)
-	await member.edit(nick=newnick)
-	print(newnick)
+	member = user
+	
 	channel = discord.utils.get(user.guild.text_channels, name="logs")
 	if channel:
 		embed = discord.Embed(description="Welcome to our guild!", color=random.choice(bot.color_list))
@@ -268,8 +251,17 @@ def write_json(data, filename):
 	with open(f"{cwd}/bot_config/{filename}.json", "w") as file:
 		json.dump(data, file, indent=4)
 
-@bot.command(name='perms', aliases=['perms_for', 'permissions', 'userperms'])
+@bot.command()
+@commands.is_owner()
+@commands.cooldown(1, 15, commands.BucketType.user)
 @commands.guild_only()
+async def spamtwo(ctx, *, message):
+	x=1
+	await ctx.message.delete()
+	while x<10:
+		x += 1
+		await ctx.send(message)
+@bot.command(name='perms', aliases=['perms_for', 'permissions', 'userperms'])
 async def check_permissions(ctx, member: discord.Member=None):
 	"""A simple command which checks a members Guild Permissions.
 	If member is not provided, the author will be checked."""
@@ -320,6 +312,7 @@ async def hostinfo(ctx):
 	await ctx.send(embed=embed)
 
 @bot.command()
+@commands.cooldown(1, 20,commands.BucketType.guild)
 @bot_has_permissions(manage_messages=True)
 @has_permissions(manage_messages=True)
 async def purgeall(ctx):
@@ -354,10 +347,6 @@ async def highfive(ctx, member:discord.Member):
 	"""Some people just need a highfive..."""
 	await ctx.send(f":hand_splayed:" + f" " + f"You've been highfived, {member.mention}.")
 
-@bot.command()
-async def moveout(ctx):
-	"""How long until I can finally leave my parents"""
-	await ctx.send("**{0}** day(s) left until I FINALLY  move out!! :smile:".format(str(moveoutday.days)))
 @bot.command(aliases=["xmas", "chrimbo", "crimbo"])
 async def christmas(ctx):
 	"""HOW MUCH LONGER TILL CHRISTMAS, MOMMY?!?!"""
@@ -399,8 +388,7 @@ async def guildinfo(ctx):
 	embed = discord.Embed(title="guild Info: " + str(guild.name), color=0xff00ae)
 	embed2 = discord.Embed(title="guild Info Continued: " + str(guild.name), color=0xff00ae)
 	embed3 = discord.Embed(title="More guild Info: ", color=0xff00ae)
-	embed2.add_field(name="2fa level: ", value=guild.mfa_level)
-	embed2.add_field(name="Verification: ", value=guild.verification_level)
+	embed2.add_field(name="Verification: ", value = str(guild.verification_level))
 	embed2.add_field(name="Emojis", value=len(guild.emojis))
 	embed.add_field(name="Icon:", value=guild.icon_url_as(static_format='webp', size=1024))
 	embed.add_field(name="Total text channels:", value=total_text_channels)
@@ -493,27 +481,6 @@ async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
 	await ctx.send(embed=embed)
-@bot.command(name="speedtest")
-async def speedstest(ctx):
-	"""Internet Speedtest"""
-	message = await ctx.send('Running speed test...')
-	try:
-		st = speedtest.Speedtest()
-		st.get_best_server()
-		l = asyncio.get_event_loop()
-		msg = '**Speed Test Results:**\n'
-		msg += '```\n'
-		await message.edit(content="Running speed test...\n- Downloading...")
-		a = bot.loop.run_in_executor(None, st.download)
-		d = await a
-		msg += 'Download: {}Mb/s\n'.format(round(d/1024/1024, 2))
-		await message.edit(content="Running speed test...\n- Downloading...\n- Uploading...")
-		a = bot.loop.run_in_executor(None, st.upload)
-		u = await a
-		msg += '  Upload: {}Mb/s```'.format(round(u/1024/1024, 2))
-		await message.edit(content=msg)
-	except Exception as e:
-		await message.edit(content="Speedtest Error: {}".format(str(e)))
 @bot.command()
 async def claptrap(ctx):
 	"""Can I shoot something now? SOMETHING exciting?"""
@@ -525,16 +492,6 @@ async def turret(ctx):
 	"""Now you're thinking with - wait... turrets?"""
 	turrets = open("turrets.py").read().splitlines()
 	await ctx.send(random.choice(turrets))
-@bot.command(enabled=False, hidden=True)
-# @checks.is_dev()
-async def spam(ctx, member:discord.Member):
-	"""Spam pings a user"""
-	x = 1
-	while x < 16:
-		await ctx.send(f"{member.mention}")
-		x+=1
-		if x == 17:
-			break
 @bot.command()
 @has_permissions(embed_links=True)
 async def Reeeeee(ctx):
@@ -600,7 +557,7 @@ async def calculatepi(ctx, n:int):
 	if n > 15:
 		return await ctx.send("the maximum is 15 digits sadly.")
 	await ctx.send(roundpi(n))
-@bot.command(hidden=True, enabled=False)
+@bot.command(hidden=True, enabled=True)
 @commands.is_nsfw()
 async def rule34(ctx, *, tags:str):
 	"""A wonderfun NSFW command"""
@@ -754,16 +711,12 @@ async def rabbit(ctx):
 	image = random.choice(rabbitimage)
 	await ctx.send(image)
 @bot.command()
+async def rickroll(ctx):
+	await ctx.send("https://youtu.be/dGeEuyG_DIc")
+@bot.command()
 async def getinvites(ctx):
 	guild = ctx.guild
 	invites = await guild.invites()
 	await ctx.send(f"Here are the invites active in this guild: {invites}")
-@bot.command()
-async def take(ctx, member:discord.Member):
-	roles = member.roles #list of roles, lowest role first
-	roles.reverse() #list of roles, highest role first
-	top_role = roles[0] #first entry of list
-	await member.remove_roles(top_role)
-	await ctx.send("Stuff happened")
 token = ""
 bot.run(token)

@@ -1,4 +1,4 @@
-import discord, sys, os, random
+import discord, sys, os, random, pathlib
 from discord import ext
 from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions, bot_has_permissions
@@ -10,6 +10,9 @@ class UmmStuff(commands.Cog):
 
 
 	@commands.command(name="upgradedpurge",aliases=['p'], pass_context=True, no_pm=True)
+	@commands.bot_has_permissions(manage_messages=True)
+	@commands.guild_only()
+	@commands.has_permissions(manage_messages=True)
 	async def betterpurgecommand(self, ctx, msgs: int, members="everyone", *, txt=None):
 		"""Purge last n messages or nmessages with a word. Requires Manage Messages permission. [p]help purge for more info.
 		
@@ -32,7 +35,7 @@ class UmmStuff(commands.Cog):
 				else:
 					member_object = ctx.guild.get_member_named(member)
 				if not member_object:
-					return await ctx.send(self.bot.command_prefix + "Invalid user.")
+					return await ctx.send("Invalid user.")
 				else:
 					member_object_list.append(member_object)
 
@@ -48,8 +51,8 @@ class UmmStuff(commands.Cog):
 
 					await message.delete()
 				except discord.Forbidden:
-					await ctx.send(self.bot.command_prefix + "You do not have permission to delete other users' messages. Use {}delete instead to delete your own messages.".format(self.bot.command_prefix))
+					await ctx.send("You do not have permission to delete other users' messages. Use t%wipe instead to delete your own messages.")
 		else:
-			await ctx.send(self.bot.command_prefix + 'Too many messages to delete. Enter a number < 10000')
+			await ctx.send('Too many messages to delete. Enter a number < 10000')
 def setup(bot):
 	bot.add_cog(UmmStuff(bot))

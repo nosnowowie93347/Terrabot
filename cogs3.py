@@ -9,9 +9,8 @@ class Cog3(commands.Cog):
 		self.bot = bot
 
 
-	@commands.command()
+	@commands.command(description="Make fancy text!")
 	async def fancify(self, ctx, *, text):
-		"""Makes text fancy!"""
 		def strip_non_ascii(string):
 			"""Returns the string without non ASCII characters."""
 			stripped = (c for c in string if 0 < ord(c) < 127)
@@ -30,14 +29,15 @@ class Cog3(commands.Cog):
 				output += " "
 		await ctx.send(output)
 	@commands.command()
+	@commands.guild_only()
 	async def echotts(self, ctx, *, message):
 		"""Makes the bot talk, with TTS."""
 		say = message
 		await ctx.message.delete()
 		return await ctx.send(say, tts=True)
-	@commands.command()
+	@commands.command(description="Make the bot talk")
+	@commands.guild_only()
 	async def echo(self, ctx, *, message):
-		"""Makes the bot talk."""
 		say = message
 		await ctx.message.delete()
 		return await ctx.send(say)
@@ -46,14 +46,13 @@ class Cog3(commands.Cog):
 	async def roles(self, ctx):
 		"""Lists the roles for the current guild"""
 		roles = ctx.guild.roles
-		result = "```**The roles on this server are: **```"
+		embed = discord.Embed(title="**The roles on this server are: **")
 		for role in roles:
-			result += role.name + ", "
-		await ctx.send(result)
-	@commands.command()
+			embed.add_field(name=role.name, value=role.name)
+		await ctx.send(embed=embed)
+	@commands.command(description="Really awful jokes. Courtesy of icanhazdadjoke.com")
 	async def dadjoke(self, ctx):
 		import requests
-		"""Really awful jokes. Courtesy of icanhazdadjoke.com"""
 		channel = ctx.message.channel
 		author  = ctx.message.author
 		server  = ctx.message.guild

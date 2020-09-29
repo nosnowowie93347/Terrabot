@@ -14,50 +14,10 @@ cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 def setup(bot):
 	bot.add_cog(Ownercommands(bot))
-def read_json(filename):
-	with open(f"{cwd}/bot_config/{filename}.json", "r") as file:
-		data = json.load(file)
-	return data
-def write_json(data, filename):
-	with open(f"{cwd}/bot_config/{filename}.json", "w") as file:
-		json.dump(data, file, indent=4)
 
 class Ownercommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-	@commands.command()
-	@commands.is_owner()
-	async def unblacklist(self, ctx, user: discord.Member):
-		blacklisted_users.remove(user.id)
-		data = read_json("blacklist")
-		data["blacklistedUsers"].remove(user.id)
-		write_json(data, "blacklist")
-		await ctx.send(f"Hey, I have unblacklisted {user.name} for you.")
-	@commands.command()
-	@commands.is_owner()
-	async def blacklist(self, ctx, user: discord.Member):
-		if user.id in blacklisted_users:
-			return await ctx.send("Can't blacklist someone twice!")
-		if ctx.author.id == user.id:
-			return await ctx.send("Hey! You can't blacklist yourself!")
-		if user.id in self.bot.owner_ids:
-			return await ctx.send("Nice try. You can't blacklist an owner.")
-		if user.bot:
-			return await ctx.send("Can't blacklist bots!")
-		blacklisted_users.append(user.id)
-		data = read_json("blacklist")
-		data["blacklistedUsers"].append(user.id)
-		write_json(data, "blacklist")
-		await ctx.send(f"Hey, I've blacklisted {user.name} for you.")
-	@commands.command()
-	@commands.is_owner()
-	async def getblacklists(self, ctx):
-		data = read_json("blacklist")
-		blacklisted_users = data["blacklistedUsers"]
-		print(blacklisted_users)
-		for user in blacklisted_users:
-			return await ctx.send("These people are blacklisted from the bot: {}".format(blacklisted_users))
-		await ctx.send("Nobody is blacklisted")
 	@commands.command(hidden=True)
 	@commands.is_owner()
 	@commands.cooldown(1, 7200, commands.BucketType.user)#only use every 2 hours
@@ -65,7 +25,7 @@ class Ownercommands(commands.Cog):
 		"""Renames the bot"""
 		await self.bot.user.edit(username=name)
 		await ctx.send(f"Hurray! My new name is {name}")
-	@commands.command()
+	@commands.command(aliases=["attachfile"])
 	@commands.is_owner()
 	async def uploadfile(self, ctx, *, path:str):
 		"""Uploads any file on the system. What is this hackery?"""
@@ -74,7 +34,7 @@ class Ownercommands(commands.Cog):
 			await ctx.send(file=discord.File(path))
 		except FileNotFoundError:
 			await ctx.send("That file does not exist!")
-	@commands.command(hidden=True)
+	@commands.command(hidden=False)
 	@commands.is_owner()
 	async def restart(self, ctx):
 		"""Restarts the bot"""

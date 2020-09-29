@@ -53,7 +53,7 @@ class Fun(commands.Cog):
 	async def greeting(self, ctx):
 		greeting = ["Hello! Today is a good day", "Hello! Today is a bad day"]
 		await ctx.send(random.choice(greeting))
-	@commands.command()
+	@commands.command(hidden=True)
 	async def compliment(self, ctx, member : discord.Member):
 		"""Says something nice"""
 		await ctx.send(random.choice(compliments))
@@ -127,7 +127,7 @@ class Fun(commands.Cog):
 		await ctx.send(random.choice(dabs))
 		print(f"Dabbed on behalf of {ctx.author}.")
 		await ctx.send(f"Dabbed on behalf of {ctx.author}.")
-	@commands.command()
+	@commands.command(hidden=True)
 	async def minecraftquotes(self, ctx):
 		"""Amazing quotes from 50 Ways to Die in Minecraft"""
 		waystodie = open("waystodie.txt").read().splitlines()
@@ -197,15 +197,14 @@ class Fun(commands.Cog):
 			bio = BytesIO(req)
 			bio.seek(0)
 			await ctx.send(content=content, file=discord.File(bio, filename=filename))
-	@commands.command()
+	@commands.command(hidden=True)
 	async def getbotprefix(self, ctx):
 		"""Gets the prefixes of the bot"""
 		message = discord.Message
 		prefix = await self.bot.get_prefix(message)
 		await ctx.send(f"My prefix is {prefix}")
-	@commands.command()
-	@checks.is_helper()
-	@commands.cooldown(1, 654, commands.BucketType.user)
+	@commands.command(hidden=True, aliases=["changeavatar", "newavatar"])
+	@commands.cooldown(1, 654, commands.BucketType.guild)
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -226,7 +225,7 @@ class Fun(commands.Cog):
 		except TypeError:
 			await ctx.send("You need to either provide an image URL or upload one with the command")
 	
-	@commands.command()
+	@commands.command(aliases=["directmessage", "pm"])
 	@commands.cooldown(1, 35, commands.BucketType.user)
 	async def dm(self, ctx, member:discord.User, *, message: str):
 		""" DM the user of your choice """
@@ -283,20 +282,7 @@ class Fun(commands.Cog):
 				await ctx.send('Your message could not be converted!')
 			else:
 				await author.send('`'+spoilified+'`')
-	@commands.command()
-	@has_permissions(manage_webhooks=True)
-	async def clone(self, ctx, name, *, message:str):
-		'''
-		Creates a webhook, that says what you say. Like echo.
-		'''
-		pfp = requests.get(ctx.author.avatar_url_as(format='png', size=256)).content
-		hook = await ctx.channel.create_webhook(name=name,
-												avatar=pfp)
-		embed = discord.Embed(title=name, color=0x663399)
-		embed.add_field(name="Hello! I'm here", value=message)
-		await hook.send(embed=embed)
-		await hook.delete()
-	@commands.command(aliases=["profile", "mcinfo"])
+	@commands.command(aliases=["mcprofile", "mcinfo"])
 	async def minecraft(self, ctx, username):
 		'''
 		Shows MC account info, skin and username history
@@ -323,7 +309,7 @@ class Fun(commands.Cog):
 			await asyncio.sleep(2)
 			await ctx.send("This means the profile wasn't found...")
 
-	@commands.command()
+	@commands.command(aliases=["wiki"])
 	async def wikipedia(self, ctx, *, query: str):
 		'''
 		Uses Wikipedia APIs to summarise search
@@ -388,17 +374,6 @@ class Fun(commands.Cog):
 		"""OwO, owoify something >w<"""
 		await ctx.send(owoify(text))
 	@commands.command()
-	async def spam3(self, ctx):
-		"""Sends an image of Spam"""
-		await ctx.channel.trigger_typing()
-		await ctx.send(file=discord.File("assets/imgs/spam.png"))
-	@commands.command()
-	async def internetrules(self, ctx):
-		"""The rules of the internet"""
-		await ctx.channel.trigger_typing()
-		await ctx.send(file=discord.File("assets/InternetRules.txt"))
-	
-	@commands.command()
 	async def fight(self, ctx, user:str=None, *, weapon:str=None):
 		"""Fight someone with something"""
 		if user is None or user.lower() == ctx.author.mention or user == ctx.author.name.lower() or ctx.guild is not None and ctx.author.nick is not None and user == ctx.author.nick.lower():
@@ -408,9 +383,8 @@ class Fun(commands.Cog):
 			await ctx.send("{0} tried to fight {1} with nothing so {1} beat the breaks off of them!".format(ctx.author.mention, user))
 			return
 		await ctx.send("{} used **{}** on **{}** {}".format(ctx.author.mention, weapon, user, random.choice(fight_results).replace("%user%", user).replace("%attacker%", ctx.author.mention)))
-	@commands.command()
+	@commands.command(description="moo")
 	async def cowsay(self, ctx, type:str, *, message:str):
-		"""moo"""
 		try:
 			cow = cowList[type.lower()]
 		except KeyError:
@@ -438,22 +412,6 @@ class Fun(commands.Cog):
 		avatar.paste(triggered, position)
 		avatar.save("data/trigger.png")
 		await ctx.send(file=discord.File("data/trigger.png"))
-	@commands.command()
-	async def b1nzy(self, ctx):
-		"""b1nzy pls no ;-;"""
-		await ctx.channel.trigger_typing()
-		await ctx.send(file=discord.File("assets/imgs/b1nzy_with_banhammer.png"))
-	@commands.command()
-	async def honk(self, ctx):
-		"""Honk honk boi"""
-		await ctx.send(random.choice(honkhonkfgt))
-	@commands.command()
-	async def headpat(self, ctx):
-		"""Posts a random headpat from headp.at"""
-		pats = requests.get("http://headp.at/js/pats.json").json()
-		pat = random.choice(pats)
-		file = url_to_bytes("http://headp.at/pats/{}".format(pat))
-		await ctx.send(file=discord.File(file["content"], file["filename"]))
 	@commands.command()
 	async def spotify(self, ctx, user:discord.Member=None):
 		"""Get the current song that you or another user is playing"""
@@ -490,7 +448,7 @@ class Fun(commands.Cog):
 		"""┬─┬﻿ ノ( ゜-゜ノ)"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/reactions/unflip.gif"))
-	@commands.command()
+	@commands.command(enabled=False)
 	async def actdrunk(self, ctx):
 		"""I got drunk on halloween in 2016 it was great"""
 		await ctx.send(random.choice(drunkaf))
@@ -499,16 +457,6 @@ class Fun(commands.Cog):
 		"""DID YOU JUST ASSUME MY GENDER? *TRIGGERED*"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/reactions/triggered.gif"))
-	@commands.command()
-	async def nolewding(self, ctx):
-		"""No lewding!"""
-		await ctx.channel.trigger_typing()
-		await ctx.send(file=discord.File("assets/imgs/reactions/nolewding.jpg"))
-	@commands.command(hidden=True)
-	async def what(self, ctx):
-		"""what?"""
-		await ctx.channel.trigger_typing()
-		await ctx.send(file=discord.File("assets/imgs/reactions/what.gif"))
 	@commands.command()
 	async def cat(self, ctx):
 		"""Like the shibe command, but with cats."""
@@ -537,9 +485,8 @@ class Fun(commands.Cog):
 	async def timetravel(self, ctx, numofminutes:int):
 		"""Just don't mess up the timeline..."""
 		await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
-	@commands.command()
+	@commands.command(description="What time is it?")
 	async def clock(self, ctx):
-		"""What time is it?"""
 		now = datetime.datetime.now()
 		current_time = now.strftime("%H:%M:%S")
 		await ctx.send(f"now = {current_time}")

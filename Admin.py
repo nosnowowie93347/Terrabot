@@ -64,9 +64,11 @@ class Admin(commands.Cog):
 	@commands.command(usage="<userid> <reason>", description="Ban ppl by id. Bot and user must have ban perms", aliases=["idban", "banbyid"])
 	@bot_has_permissions(ban_members=True)
 	@has_permissions(ban_members=True)
+	@commands.guild_only()
 	async def hackban(self, ctx, memberid : discord.Object, *, reason : str):
-		
 		guild = ctx.guild
+		if not memberid:
+			return await ctx.send("Provide an id pls")
 		if memberid.id == config.owner_id:
 			return await ctx.send("I'm not banning this person.")
 		embed = discord.Embed(title=f"Successfully banned {memberid.id}", description=f"{memberid.id} banned for {reason}", color=0xff00f6)
@@ -76,13 +78,14 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=embed)
 	@commands.command(name="kick", usage="<user> <reason>")
+	@commands.guild_only()
 	@commands.bot_has_permissions(manage_roles=True)
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		"""Kicks a user."""
 		guild = ctx.guild
-		if member.id in bot.owner_ids or member == ctx.author:
+		if member.id in self.bot.owner_ids or member == ctx.author:
 			return await ctx.send("I'm not kicking this person.")
-		description = f"You've been a bad slice of bread, {member.mention}. You've been kicked."
+		description = f"You've been a bad boy/girl, {member.mention}. You've been kicked."
 		kickembed = discord.Embed(title="User kicked", description=description, color=0xf6d025, footer="Powered by: Terrabot")
 		pmembed = discord.Embed(title="You've been kicked.", description=f"You've been kicked from {ctx.guild} for {reason}")
 		await ctx.send(embed=kickembed)
@@ -115,6 +118,7 @@ class Admin(commands.Cog):
 		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
 	@commands.command(usage="<userid>", brief="Doesn't need a reason")
 	@commands.has_permissions(ban_members=True)
+	@commands.guild_only()
 	async def unban(self, ctx, memberid : discord.Object):
 		"""Unbans a user"""
 		member = memberid
@@ -131,6 +135,7 @@ class Admin(commands.Cog):
 			await ctx.send("I do not have the `Ban Members` permission.")
 	@commands.command(name='mute', usage="<user> <reason>")
 	@has_permissions(manage_roles=True)
+	@commands.guild_only()
 	@bot_has_permissions(manage_roles=True)
 	async def mute_cmd(self, ctx, member: discord.Member, *, reason:str):
 		"""Mute ppl who break the rules"""
@@ -172,6 +177,7 @@ class Admin(commands.Cog):
 				await ctx.send("I do not have the `Manage Roles` permission.")
 	@commands.command(name="unmute")
 	@has_permissions(manage_roles=True)
+	@commands.guild_only()
 	async def unmute_command(self, ctx, member : discord.Member, *, reason:str):
 		"""Unmute. Just in case."""
 		guild = ctx.guild
@@ -191,6 +197,7 @@ class Admin(commands.Cog):
 	@commands.command(usage="<user> <reason>")
 	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
+	@commands.guild_only()
 	async def unwarn(self, ctx, member:discord.Member=None, *, reason:str):
 		"""If for whatever reason you want to unwarn someone"""
 		embed=discord.Embed(title="Unwarned User", description="Unwarned {} for {}".format(member, reason))
@@ -201,6 +208,7 @@ class Admin(commands.Cog):
 			await member.send(f"You were unwarned in {ctx.guild}.")
 	@commands.command(usage="<user> <reason>")
 	@bot_has_permissions(manage_roles=True)
+	@commands.guild_only()
 	async def warn(self, ctx, member:discord.Member, *, reason:str):
 		"""Warn Someone."""
 		guild = ctx.guild
@@ -216,6 +224,7 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=embed)
 	@commands.command()
+	@commands.guild_only()
 	@commands.bot_has_permissions(manage_roles=True)
 	@commands.has_permissions(manage_roles=True)
 	async def removerole(self, ctx, member:discord.Member, *, rolename:discord.Role):
@@ -228,6 +237,7 @@ class Admin(commands.Cog):
 	@commands.command(aliases=["createrole", "rolecreate"])
 	@commands.bot_has_permissions(manage_roles=True)
 	@commands.has_permissions(manage_roles=True)
+	@commands.guild_only()
 	async def cr(self, ctx, *, rolename):
 		"""Create a role"""
 		r = randint(0, 0xFFFFFF)
@@ -320,6 +330,7 @@ class Admin(commands.Cog):
 				await channel.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
 	@commands.command(usage="<role> <permissionvalue> <pos> <hoist>", brief="Hoist is whether or not to display seperatly")
 	@has_permissions(manage_roles=True)
+	@commands.guild_only()
 	@bot_has_permissions(manage_roles=True)
 	async def editrole(self, ctx, role:discord.Role, permissionvalue:int, pos:int, hoist:bool):
 		value=permissionvalue
@@ -396,6 +407,7 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(f"A Voice Channel Named {name} was made")
 	@commands.command()
+	@commands.guild_only()
 	@has_permissions(manage_channels=True)
 	async def edittc(self, ctx, newname):
 		"""edit a text channel. Args are newname."""
@@ -405,6 +417,7 @@ class Admin(commands.Cog):
 		embed=discord.Embed(title="Renamed Channel Successfully", description=f"The channel has been renamed to {newname}")
 		await ctx.send(embed=embed)
 	@commands.command()
+	@commands.guild_only()
 	@has_permissions(manage_channels=True)
 	async def mutechannelperms(self, ctx, role:discord.Role):
 		"""Make users unable to send messages. Args are role."""
@@ -416,6 +429,7 @@ class Admin(commands.Cog):
 	# 	await ctx.send("Successfully created an integration for YouTube.")
 
 	@commands.command()
+	@commands.guild_only()
 	@commands.has_permissions(manage_channels=True)
 	async def deletetc(self, ctx, channelname:discord.TextChannel):
 		await channelname.delete()

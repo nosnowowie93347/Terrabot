@@ -71,28 +71,20 @@ class Botstuff(commands.Cog):
 						extensions.append(ext)
 						pass
 		return extensions
-	@commands.command()
+	@commands.command(description="About the Bot")
 	async def about(self, ctx):
-		"""About the Bot"""
-		embed = discord.Embed(color=0x676767)
+		embed = discord.Embed(color=0x676767, description=str(len(self.bot.commands)) + " commands")
 		embed.set_author(name="Terrabot", icon_url="https://cdn.discordapp.com/avatars/657372691749273612/67d2caa88aad928296c23b2aa964384d.webp?size=1024")
 		embed.set_footer(text="Terrabot | Created by Pinkalicious21902")
 		embed.add_field(name="What is Terrabot?", value="Terrabot is a general purpose bot built on the discord.py library. The bot began as a fun project and will continue to have updates pushed out as I learn more.")
 		embed.add_field(name="Need help on how to use it?", value="You can check the help command by doing \n\n``^help`` \n\n Updates will constantly be pushed out with more features and new commands.")
-
+		embed.add_field(name="Thanks to Sukuya for inspiration.", value=":smile:")
 		await ctx.send(embed=embed)
-	@commands.command()
-	async def futurecommands(self, ctx):
-		"""Coming Soon"""
-		comingsoon = "More commands coming soon!"
-		await ctx.send(comingsoon)
-	@commands.command(name="platform")
+	@commands.command(name="platform", description="Tells the platform the bot's running on")
 	async def platforms(self, ctx):
-		"""Tells the platform the bot's running on"""
 		await ctx.send("The bot is currently running on: ```" + str(platform.platform()) + "```")
-	@commands.command()
+	@commands.command(description="Lists the servers Terrabot is in")
 	async def serverlist(self, ctx):
-		"""Lists the servers Terrabot is in"""
 		x = ', '.join([str(server) for server in self.bot.guilds])
 		y = len(self.bot.guilds)
 		print("Server list: " + x)
@@ -102,9 +94,8 @@ class Botstuff(commands.Cog):
 		elif y < 40:
 			thing2 = "Currently active on " + str(y) + " servers:" + "```json\n" + x + "```"
 			await ctx.send(thing2)
-	@commands.command()
+	@commands.command(description="Gets bot latency")
 	async def ping(self, ctx):
-		"""Gets bot latency"""
 		print(self.bot.latency)
 		before_typing = time.monotonic()
 		await ctx.trigger_typing()
@@ -115,17 +106,15 @@ class Botstuff(commands.Cog):
 		await ctx.send(msg)
 		await ctx.send(msg2)
 	@commands.command(hidden=True)
-	@checks.is_dev()
 	async def idlebot(self, ctx):
 		"""Idles the bot"""
 		await self.bot.change_presence(activity=None, status=discord.Status.idle)
 	@commands.command(hidden=True)
-	@checks.is_dev()
 	async def donotdisturb(self, ctx):
 		'''sets bot status to DND'''
 		await self.bot.change_presence(activity=None, status=discord.Status.dnd)
 		await ctx.send('Successfully changed bot status')
-	@commands.command(aliases=["logout"])
+	@commands.command(aliases=["logout"], hidden=True)
 	@commands.is_owner()
 	async def shutdown(self, ctx):
 		"""Shuts down the bot."""
@@ -139,11 +128,10 @@ class Botstuff(commands.Cog):
 		playingrn = message
 		await self.bot.change_presence(activity=discord.Game(name=playingrn), status=bot_status)
 		await ctx.send(f"Success! Status changed to {playingrn}")
-	@commands.command()
+	@commands.command(description="Unpins the message with the specified ID")
 	@has_permissions(manage_messages=True)
 	@bot_has_permissions(manage_messages=True)
 	async def unpin(self, ctx, id:int):
-		"""Unpins the message with the specified ID from the channel"""
 		pinned_messages = await ctx.channel.pins()
 		message = discord.utils.get(pinned_messages, id=id)
 		if message is None:
@@ -174,10 +162,9 @@ class Botstuff(commands.Cog):
 		"""Sends an invite link to the bot's server"""
 		await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
 		await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
-	@commands.command()
+	@commands.command(description="Sends the bot's OAuth2 link")
 	@commands.guild_only()
 	async def inviteme(self, ctx):
-		"""Sends the bot's OAuth2 link"""
 		await ctx.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
 		await ctx.author.send(Language.get("bot.joinserver", ctx).format("https://discord.com/oauth2/authorize?client_id=657372691749273612&scope=bot&permissions=2134375927"))
 

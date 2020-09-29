@@ -404,7 +404,7 @@ class MusicPlayer(commands.Cog,name='Music'):
 					emb=discord.Embed(colour=discord.Color.from_rgb(self.random_color(),self.random_color(),self.random_color()), title='queue')
 					emb.set_footer(text=f'Command used by {msg.author.name}',icon_url=msg.author.avatar_url)
 					for i in self.player[msg.guild.id]['queue']:
-						emb.add_field(name=f"**{i['author'].author.name}**",value=i['title'],inline=False)
+						emb.add_field(name=f"```**{i['author'].author.name}**```",value=i['title'],inline=False)
 					return await msg.send(embed=emb,delete_after=120)
 
 		return await msg.send("No songs in queue")

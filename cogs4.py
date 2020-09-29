@@ -59,26 +59,6 @@ class YetAnotherCog(commands.Cog):
 		await ctx.send(reminder.format(author, time, message))
 		await asyncio.sleep(time.seconds)
 		await ctx.send(completed.format(author, message))
-
-	
-	@commands.command()
-	async def charinfo(self, ctx, *, characters: str):
-		"""Shows you information about a number of characters.
-		Only up to 15 characters at a time.
-		"""
-
-		if len(characters) > 15:
-			await ctx.send('Too many characters ({}/15)'.format(len(characters)))
-			return
-
-		def to_string(c):
-			digit = format(ord(c), 'x')
-			name = unicodedata.name(c, 'Name not found.')
-			return '`0x{0}`: {1} - {2} \N{EM DASH} <http://www.fileformat.info/info/unicode/char/{0}>'.format(digit,
-																											  name, c)
-
-		await ctx.send('\n'.join(map(to_string, characters)))
-	
 	@commands.command(usage="<userid> <reason>")
 	@commands.guild_only()
 	@commands.has_permissions(ban_members=True)
@@ -100,6 +80,15 @@ class YetAnotherCog(commands.Cog):
 			await ctx.send('Banning failed.')
 		else:
 			await ctx.send('\U0001f44c {} banned successfully.'.format(member))
+	@commands.command()
+	async def talk(self, ctx, *, message):
+		print(message)
+		choices = ["Yes of course I do!!", "Not right now. Maybe later.", "OHHH YES. FUCK ME!!"]
+		if message.startswith("Fuck me") or message.startswith("fuck me"):
+			await ctx.send("I would love that, yes.")
+		if message.startswith("Wanna have sex?"):
+			await ctx.send(random.choice(choices))
+		
 	@commands.command()
 	@commands.has_permissions(manage_emojis=True)
 	@commands.bot_has_permissions(manage_emojis=True)

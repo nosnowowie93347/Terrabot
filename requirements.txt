@@ -8,6 +8,8 @@ mtranslate
 speedtest-cli
 giphypop
 cffi
+pyparsing
+pynacl
 aiohttp
 python-nmap
 random-cat
