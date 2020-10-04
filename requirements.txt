@@ -3,8 +3,7 @@ discord.py
 pyfiglet
 pyquery
 colorlog
-wikipedia
-mtranslate
+wikipedia
 speedtest-cli
 giphypop
 cffi
@@ -19,8 +18,7 @@ wavelink
 pillow
 pymongo
 geopy
-psutil
-steam
+psutil
 cowpy
 fortune
 python-twitch-client

@@ -33,6 +33,7 @@ class Ownercommands(commands.Cog):
 		try:
 			await ctx.send(file=discord.File(path))
 		except FileNotFoundError:
+			print(path)
 			await ctx.send("That file does not exist!")
 	@commands.command(hidden=False)
 	@commands.is_owner()

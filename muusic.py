@@ -155,10 +155,10 @@ class MusicPlayer(commands.Cog,name='Music'):
 		"""
 		function used to make bot leave voice channel if music not being played for longer than 2 minutes
 		"""
-		if msg.voice_client is not None:
+		"""if msg.voice_client is not None:
 			await asyncio.sleep(120)
 			if msg.voice_client is not None and msg.voice_client.is_playing() is False and msg.voice_client.is_paused() is False:
-				await msg.voice_client.disconnect()
+				await msg.voice_client.disconnect()"""
 
 
 	async def clear_data(self,msg):
@@ -211,7 +211,7 @@ class MusicPlayer(commands.Cog,name='Music'):
 
 		else:
 			self.player[msg.guild.id]['play']=False
-			await self.voice_check(msg)
+			#await self.voice_check(msg)
 	
 
 	async def start_song(self,msg,song):

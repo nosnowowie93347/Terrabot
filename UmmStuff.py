@@ -9,7 +9,7 @@ class UmmStuff(commands.Cog):
 
 
 
-	@commands.command(name="upgradedpurge",aliases=['p'], pass_context=True, no_pm=True)
+	@commands.command(name="upgradedpurge",aliases=['p'], no_pm=True)
 	@commands.bot_has_permissions(manage_messages=True)
 	@commands.guild_only()
 	@commands.has_permissions(manage_messages=True)
