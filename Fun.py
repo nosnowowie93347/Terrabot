@@ -360,7 +360,7 @@ class Fun(commands.Cog):
 
 		await ctx.send(msg)
 	@commands.command()
-	async def rolecall(self, ctx, role:discord.Role):
+	async def rolecall(self, ctx, *, role:discord.Role):
 		"""Number of online members in a role"""
 		role_embed = discord.Embed(color=role.color)
 		role_embed.set_author(name='{}'.format(role.name))
@@ -414,7 +414,7 @@ class Fun(commands.Cog):
 		avatar.save("data/trigger.png")
 		await ctx.send(file=discord.File("data/trigger.png"))
 	@commands.command()
-	async def spotify(self, ctx, user:discord.Member=None):
+	async def spotify(self, ctx, user:discord.Member):
 		"""Get the current song that you or another user is playing"""
 		if user is None:
 			user = ctx.author

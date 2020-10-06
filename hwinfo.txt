@@ -1,0 +1,2243 @@
+============ start debug info ============
+libhd version 21.67u (arm) [6472]
+using /var/lib/hardware
+kernel version is 3.18
+debug = 0xff7ffff7
+probe = 0x15938fcda8107cf9fffe (+memory +pci +isapnp +net +floppy +misc +misc.serial +misc.par +misc.floppy +serial +cpu +bios +monitor +mouse +scsi +usb -usb.mods +modem +modem.usb +parallel +parallel.lp +parallel.zip -isa -isa.isdn +isdn +kbd +prom +sbus +int -braille -braille.alva -braille.fhp -braille.ht -ignx11 +sys -bios.vbe -isapnp.old -isapnp.new -isapnp.mod -braille.baum -manual +fb +pppoe -scan +pcmcia +fork -parallel.imm +s390 +cpuemu -sysfs -s390disks +udev +block +block.cdrom +block.part +edd +edd.mod -bios.ddc -bios.fb -bios.mode +input +block.mods +bios.vesa -cpuemu.debug -scsi.noserial +wlan -bios.crc -hal +bios.vram +bios.acpi -bios.ddc.ports=0 +modules.pata -net.eeprom +x86emu=dump -max -lxrc)
+shm: attached segment 399179777 at 0xf6d5b000
+>> hal.1: read hal data
+>> floppy.1: get nvram
+>> floppy.2: klog info
+>> sys.1: cpu
+>> misc.9: kernel log
+>> misc.1: misc data
+>> misc.1.1: open serial
+>> misc.1.2: open parallel
+>> misc.2.1: io
+>> misc.2.2: dma
+>> misc.2.3: irq
+----- /proc/ioports -----
+----- /proc/ioports end -----
+----- /proc/interrupts -----
+    1:          0          0          0          0       GIC  27  arch_timer
+    2:   17910015   10406803    8259248    3029094       GIC  30  arch_timer
+    4:         48          0          0          0  MT_SYSIRQ 144  mtk-gpt
+    5:          0          0          0          0  MT_SYSIRQ  56  mtk_cpuxgpt0
+    6:          0          0          0          0  MT_SYSIRQ  57  mtk_cpuxgpt1
+    7:          0          0          0          0  MT_SYSIRQ  58  mtk_cpuxgpt2
+    8:          0          0          0          0  MT_SYSIRQ  59  mtk_cpuxgpt3
+   11:          1          0          0          0  MT_SYSIRQ  83
+   17:          1          0          0          0  MT_SYSIRQ  85
+   21:          0          0          0          0  MT_SYSIRQ 155  SPM
+   22:          0          0          0          0  MT_SYSIRQ 156  SPM
+   23:          0          0          0          0  MT_SYSIRQ 157  SPM
+   24:          0          0          0          0  MT_SYSIRQ 158  SPM
+   25:          0          0          0          0  MT_SYSIRQ 159  SPM
+   26:          0          0          0          0  MT_SYSIRQ 160  SPM
+   27:          0          0          0          0  MT_SYSIRQ 232  CIRQ
+   31:          0          0          0          0  MT_SYSIRQ 120  mtk-wdt
+   32:          0          0          0          0  MT_SYSIRQ 153  pmic_wrap
+   33:          2          0          0          0  MT_SYSIRQ 166  10020000.md32
+   34:          0          0          0          0  MT_SYSIRQ 126  TEE IRQ, mt_emi_mpu
+   35:          0          0          0          0  MT_SYSIRQ 139  m4u
+   37:    3427419          0          0          0  MT_SYSIRQ 135  mtk_cmdq
+   38:     258812          0          0          0  MT_SYSIRQ 136  TEE IRQ
+   39:          0          0          0          0  MT_SYSIRQ 137  m4u
+   44:    1274956          0          0          0  MT_SYSIRQ  77  i2c-mt65xx
+   45:     521708          0          0          0  MT_SYSIRQ  76  i2c-mt65xx
+   46:     791383          0          0          0  MT_SYSIRQ  78  i2c-mt65xx
+   47:     231519          0          0          0  MT_SYSIRQ 110  1100a000.spi
+   48:          0          0          0          0  MT_SYSIRQ  70  mtk-thermal
+   49:      25214          0          0          0  MT_SYSIRQ 117  ptp
+   50:     191396          0          0          0  MT_SYSIRQ  79  i2c-mt65xx
+   51:      34746          0          0          0  MT_SYSIRQ  80  i2c-mt65xx
+   52:      47825          0          0          0  MT_SYSIRQ  82  i2c-mt65xx
+   53:    4998461          0          0          0  MT_SYSIRQ 134  Afe_ISR_Handle
+   54:   50981621          0          0          0  MT_SYSIRQ  71  11230000.mmc
+   55:          0          0          0          0  MT_SYSIRQ  72  11240000.mmc
+   56:     255194          0          0          0  MT_SYSIRQ  74  mtk-sdio
+   58:          0          0          0          0  MT_SYSIRQ  64  11270000.usb
+   59:    3763991          0          0          0  MT_SYSIRQ 217  RGX
+   70:    2579679          0          0          0  MT_SYSIRQ 180  DISPSYS
+   71:          0          0          0          0  MT_SYSIRQ 181  DISPSYS
+   72:    5565198          0          0          0  MT_SYSIRQ 182  DISPSYS
+   73:          0          0          0          0  MT_SYSIRQ 183  DISPSYS
+   79:          0          0          0          0  MT_SYSIRQ 189  DISPSYS
+   82:       3681          0          0          0  MT_SYSIRQ 192  DISPSYS
+   84:          0          0          0          0  MT_SYSIRQ 194  DISPSYS
+   87:    5519875          0          0          0  MT_SYSIRQ 169  DISPSYS
+   88:      11654          0          0          0  MT_SYSIRQ 211  ISP
+   91:          0          0          0          0  MT_SYSIRQ 214  ISP
+   92:          0          0          0          0  MT_SYSIRQ 215  ISP
+   93:        255          0          0          0  MT_SYSIRQ 216  camera-fdvt
+   94:     454205          0          0          0  MT_SYSIRQ 204
+   96:          3          0          0          0  MT_SYSIRQ 200  jpeg_enc_driver
+   97:          0          0          0          0  MT_SYSIRQ 203  jpeg_dec_driver
+   99:        458          0          1          0  MT_SYSIRQ 154  mtk-kpd
+  100:         82          0         28          0  mtk-eint   0  rt5514
+  101:          0          0          0          0  mtk-eint   1  11240000.mmc cd
+  102:    1929984          0          0          0  mtk-eint   2  WIFI-eint
+  105:       4064          0          0          0  mtk-eint   5  mt6397-irqchip
+  109:         75          0          0          0  mtk-eint   9  ops_bq24297_int_handler
+  113:          0          0          0          0  mtk-eint  13  ACCDET-eint
+  114:     416136          0          0          0  mtk-eint  14  mtk-tpd
+  116:          0          0          0          0  mtk-eint  16  usb_iddig
+  224:          0          0          0          0  mtk-eint 124  hall_sensor_1
+  328:         10          4          2          2  mt6397-irqchip   4  mt6397_bat_l
+  329:       1522       1969         12         16  mt6397-irqchip   5  mt6397_bat_h
+  333:        197        114         58         13  mt6397-irqchip   9  mt6397_pwrkey
+  335:          0          0          0          0  mt6397-irqchip  11  mt6397_thr_h
+  338:         11         11          3          4  mt6397-irqchip  14  ops_mt6397_chrdet
+  341:          0          0          0          0  mt6397-irqchip  17  mt6397_homekey
+  342:          0          0          0          0  mt6397-irqchip  18  mt6397_accdet
+  344:        294         68        217          5  mt6397-irqchip  20  mt6397_rtc
+  356:     575518          0          0          0  MT_SYSIRQ 142
+  IPI0:  44076092   61622569   68035560   27822647       Rescheduling interrupts
+  IPI1:     25743      26375      19547      21258       Function call interrupts
+  IPI2:      1514       5006       7579       6415       Single function call interrupts
+  IPI3:         0          0          0          0       CPU stop interrupts
+  IPI4:         0          0          0          0       Timer broadcast interrupts
+  IPI5:       983          8          0          4       IRQ work interrupts
+  Err:          0
+----- /proc/interrupts end -----
+----- /proc/dma -----
+----- /proc/dma end -----
+>> misc.3: FPU
+>> misc.3.1: DMA
+>> misc.3.2: PIC
+>> misc.3.3: timer
+>> misc.3.4: RTC
+>> cpu.1: cpuinfo
+----- /proc/cpuinfo -----
+  Processor	: AArch64 Processor rev 2 (aarch64)
+  processor	: 0
+  model name	: AArch64 Processor rev 2 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd03
+  CPU revision	: 2
+  
+  processor	: 1
+  model name	: AArch64 Processor rev 2 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd03
+  CPU revision	: 2
+  
+  processor	: 2
+  model name	: AArch64 Processor rev 2 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd08
+  CPU revision	: 0
+  
+  processor	: 3
+  model name	: AArch64 Processor rev 2 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd08
+  CPU revision	: 0
+  
+  Hardware	: MT8173
+  Serial		: 1dd218aca201a37c
+----- /proc/cpuinfo end -----
+>> memory.1: main memory size
+  kcore mem:  0x0
+  klog mem 0: 0x0
+  klog mem 1: 0x0
+  klog mem:   0x0
+  bios mem:   0x0
+  meminfo:    0x717b6000
+  xen balloon:    0x0
+>> pci.1: sysfs drivers
+----- sysfs driver list (id 0xe286b03e30429151) -----
+    kd_camera_hw: /devices/soc/11010000.i2c/i2c-10/10-003c
+          ft5726: /devices/soc/11007000.i2c/i2c-7/7-0038
+          ltr559: /devices/soc/11011000.i2c/i2c-11/11-0023
+          mt6311: /devices/soc/11008000.i2c/i2c-8/8-006b
+         nt51021: /devices/soc/11013000.i2c/i2c-12/12-006f
+kd_camera_hw_bus2: /devices/soc/11007000.i2c/i2c-7/7-0021
+          rt5514: /devices/soc/11007000.i2c/i2c-7/7-0057
+         bq24297: /devices/soc/11010000.i2c/i2c-10/10-006b
+          BMA253: /devices/soc/11009000.i2c/i2c-9/9-0018
+      lp855x_led: /devices/soc/11011000.i2c/i2c-11/11-002c
+           apple: module = hid_apple
+      magicmouse: module = hid_magicmouse
+           ntrig: module = hid_ntrig
+           wacom: module = wacom
+       prodikeys: module = hid_prodikeys
+          mmcblk: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001
+          rt5514: /devices/soc/1100a000.spi/spi_master/spi32766/spi32766.0
+             hub: module = usbcore
+            xpad: module = xpad
+           usbfs: module = usbcore
+        uvcvideo: module = uvcvideo
+     usb-storage: module = usb_storage
+          usbhid: module = usbhid
+   snd-usb-audio: module = snd_usb_audio
+         cdc_ncm: module = cdc_ncm
+ mtk_sdio_client: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:1
+ mtk_sdio_client: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:2
+             etb: /devices/soc/10410000.etb
+             etm: /devices/soc/10840000.etm
+             m4u: /devices/soc/10205000.mmsys_iommu
+             m4u: /devices/soc/10214000.perisys
+            md32: /devices/soc/10020000.md32
+   Accdet_Driver: /devices/soc/soc:accdet@
+virtual_sensor_thermistor: /devices/thermistor@0
+virtual_sensor_thermistor: /devices/thermistor@1
+virtual_sensor_thermistor: /devices/thermistor@2
+        mtk-msdc: /devices/soc/11230000.mmc
+        mtk-msdc: /devices/soc/11240000.mmc
+        mtk-sdio: /devices/soc/11260000.sdio
+        mtk-uart: /devices/soc/11005000.uart3
+        mtk-uart: /devices/soc/11002000.uart0
+        mtk-uart: /devices/soc/11004000.uart2
+       reg-dummy: /devices/platform/reg-dummy
+battery_throttle: /devices/platform/battery_throttle
+           alsps: /devices/platform/alsps
+        mtk_cmdq: /devices/soc/10212000.gce
+        mtk_jpeg: /devices/soc/18003000.jpgenc
+      musb-mtu3d: /devices/soc/11270000.usb
+           mtkfb: /devices/soc/soc:MTKFB@bf200000
+      i2c-mt65xx: /devices/soc/11011000.i2c
+      i2c-mt65xx: /devices/soc/11007000.i2c
+      i2c-mt65xx: /devices/soc/11013000.i2c
+      i2c-mt65xx: /devices/soc/11009000.i2c
+      i2c-mt65xx: /devices/soc/11010000.i2c
+      i2c-mt65xx: /devices/soc/11008000.i2c
+     camera-fdvt: /devices/soc/1500b000.fdvt
+    mtk-smi-larb: /devices/soc/15001000.larb
+    mtk-smi-larb: /devices/soc/18001000.larb
+    mtk-smi-larb: /devices/soc/14021000.larb
+    mtk-smi-larb: /devices/soc/19001000.larb
+    mtk-smi-larb: /devices/soc/14027000.larb
+    mtk-smi-larb: /devices/soc/16010000.larb
+ mtktsgpu_sensor: /devices/platform/mtktsgpu_sensor
+ mtktscpu_sensor: /devices/platform/mtktscpu_sensor
+image_sensor_bus2: /devices/soc/15008000.camera2
+mt8173-soc-machine: /devices/soc/11220000.sound
+mt8173-soc-machine: /devices/soc/11220000.sound
+   battery_meter: /devices/mediatek,battery_meter
+    mt-vcoredvfs: /devices/mtvcoredvfs
+    image_sensor: /devices/soc/15008000.camera1
+          Vcodec: /devices/soc/16000000.vdec_gcon
+      alarmtimer: /devices/platform/alarmtimer
+mt8173-soc-dummy-dai: /devices/soc/soc:mediatek,mt8173-soc-dummy-dai@11220000
+mt8173-soc-btsco-pcm: /devices/soc/soc:mediatek,mt8173-soc-btsco-pcm@11220000
+      mt-cpufreq: /devices/mtcpufreq
+mt8173-soc-routing-pcm: /devices/soc/soc:mediatek,mt8173-soc-routing-pcm@11220000
+   snd-soc-dummy: /devices/platform/snd-soc-dummy
+mtktsbattery_sensor: /devices/platform/mtktsbattery_sensor
+mt8173-soc-mrgrx-awb-pcm: /devices/soc/soc:mediatek,mt8173-soc-mrgrx-awb-pcm@11220000
+  MT6391_THERMAL: /devices/platform/MT6391_THERMAL
+          als_ps: /devices/soc/soc:als_ps@0
+        pvrsrvkm: /devices/soc/13000000.gpu
+    mtk_disp_mgr: /devices/platform/mtk_disp_mgr.0
+mt8173-soc-ul1-pcm: /devices/soc/soc:mediatek,mt8173-soc-ul1-pcm@11220000
+mt8173-soc-ul2-pcm: /devices/soc/soc:mediatek,mt8173-soc-ul2-pcm@11220000
+mtktspmic_sensor: /devices/platform/mtktspmic_sensor
+       mt-auxadc: /devices/soc/11001000.auxadc
+mt8173-soc-dl1-awb-pcm: /devices/soc/soc:mediatek,mt8173-soc-dl1-awb-pcm@11220000
+         mt-mpll: /devices/soc/1000f000.ddrphy
+      systracker: /devices/soc/10208000.systracker
+mt6397-regulator: /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-regulator
+mediatek,mt8173-ice_debug: /devices/soc/soc:ice_debug
+     wlan_mt6630: /devices/platform/wlan_mt6630
+mt8173-soc-spdif-pcm: /devices/soc/soc:mediatek,mt8173-soc-spdif-pcm@11220000
+         mtk-smi: /devices/soc/14022000.smi
+         mtk-spi: /devices/soc/1100a000.spi
+         mtk-tpd: /devices/soc/soc:touch@
+         mtk-wdt: /devices/soc/10007000.toprgu
+          lastpc: /devices/soc/10200000.mcucfg
+          mfg-2d: /devices/soc/soc:mfgsys-2d
+          mt-ptp: /devices/soc/1100b000.ptp_od
+          mt-pwm: /devices/soc/11006000.pwm
+          mt-rtc: /devices/platform/mt-rtc
+          mt-spm: /devices/spm
+          mt6397: /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397
+          mtk_tz: /devices/soc/soc:mtee
+       mt-mem_bw: /devices/platform/mt-mem_bw
+  tmp103-thermal: /devices/platform/tmp103-thermal
+      serial8250: /devices/platform/serial8250
+    mt6397-codec: /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-codec
+   dynamic_boost: /devices/platform/dynamic_boost
+         gsensor: /devices/soc/soc:gsensor@0
+mt8173-soc-i2s0-awb-pcm: /devices/soc/soc:mediatek,mt8173-soc-i2s0-awb-pcm@11220000
+mediatek-mt8173-pinctrl: /devices/soc/1000b000.pinctrl
+     hall-sensor: /devices/hall_sensors
+mediatek-mt6397-pinctrl: /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-pinctrl
+         battery: /devices/mediatek,battery_common
+        MTK_GCPU: /devices/platform/MTK_GCPU
+       mfg-async: /devices/soc/soc:mfgsys-async
+       mtkts_bts: /devices/platform/mtkts_bts.0
+       mtkts_bts: /devices/platform/mtkts_bts.1
+       mtkts_bts: /devices/platform/mtkts_bts.2
+ usb_phy_generic: /devices/platform/usb_phy_generic.0.auto
+mediatek,connectivity-combo: /devices/mediatek,connectivity-combo
+  thermal_budget: /devices/platform/thermal_budget
+     mt6397-pmic: /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-pmic
+mt8173-soc-mrgrx-pcm: /devices/soc/soc:mediatek,mt8173-soc-mrgrx-pcm@11220000
+         perfmgr: /devices/platform/perfmgr
+     mtk-thermal: /devices/soc/1100b000.thermal
+      camera-isp: /devices/soc/15004000.ispsys
+mt8173-soc-hdmi-pcm: /devices/soc/soc:mediatek,mt8173-soc-hdmi-pcm@11220000
+mt8173-soc-hdmi-raw: /devices/soc/soc:mediatek,mt8173-soc-hdmi-raw@11220000
+ mtktswmt_sensor: /devices/platform/mtktswmt_sensor
+nt51021_wuxga_dsi_vdo: /devices/soc/soc:lcm
+      mtk-scpsys: /devices/soc/10006000.scpsys
+mediatek,mt8173-pwrap: /devices/soc/1000d000.pwrap
+      mt-gpufreq: /devices/mtgpufreq
+         ion-drv: /devices/platform/ion-drv.0
+    bq24297-user: /devices/platform/bq24297-user
+      mt-battery: /devices/platform/mt-battery
+mt8173-soc-dl1-pcm: /devices/soc/soc:mediatek,mt8173-soc-dl1-pcm@11220000
+mt8173-soc-dl2-pcm: /devices/soc/soc:mediatek,mt8173-soc-dl2-pcm@11220000
+----- sysfs driver list end -----
+>> pci.2: get sysfs pci data
+sysfs: no such bus: pci
+---------- PCI raw data ----------
+---------- PCI raw data end ----------
+>> pci.4: build list
+>> pci.3: macio
+sysfs: no such bus: macio
+>> pci.4: vio
+sysfs: no such bus: vio
+>> pci.5: xen
+sysfs: no such bus: xen
+>> pci.6: ps3
+sysfs: no such bus: ps3_system_bus
+>> pci.7: platform
+  platform device: name = soc
+    path = /devices/soc
+    type = "soc", modalias = "of:NsocT<NULL>Csimple-bus", driver = ""
+  platform device: name = spm
+    path = /devices/spm
+    type = "spm", modalias = "of:NspmT<NULL>Cmediatek,mt8173-spm", driver = "mt-spm"
+  platform device: name = psci
+    path = /devices/psci
+    type = "psci", modalias = "of:NpsciT<NULL>Carm,psci", driver = ""
+  platform device: name = 14001000.mdp_rdma0
+    path = /devices/soc/14001000.mdp_rdma0
+    type = "mdp_rdma0", modalias = "of:Nmdp_rdma0T<NULL>Cmediatek,mt8173-mdp_rdma0", driver = ""
+  platform device: name = 1401c000.DSI1
+    path = /devices/soc/1401c000.DSI1
+    type = "DSI1", modalias = "of:NDSI1T<NULL>Cmediatek,mt8173-disp_dsi1", driver = ""
+  platform device: name = 14017000.DISP_MERGE
+    path = /devices/soc/14017000.DISP_MERGE
+    type = "DISP_MERGE", modalias = "of:NDISP_MERGET<NULL>Cmediatek,mt8173-disp_merge", driver = ""
+  platform device: name = 10209000.apmixedsys
+    path = /devices/soc/10209000.apmixedsys
+    type = "apmixedsys", modalias = "of:NapmixedsysT<NULL>Cmediatek,mt8173-apmixedsys", driver = ""
+  platform device: name = cust_alsps@23
+    path = /devices/cust_alsps@23
+    type = "cust_alsps", modalias = "of:Ncust_alspsT<NULL>Cmediatek,ltr559", driver = ""
+  platform device: name = cust_alsps@48
+    path = /devices/cust_alsps@48
+    type = "cust_alsps", modalias = "of:Ncust_alspsT<NULL>Cmediatek,stk3x1x", driver = ""
+  platform device: name = soc:gyroscope@0
+    path = /devices/soc/soc:gyroscope@0
+    type = "gyroscope", modalias = "of:NgyroscopeT<NULL>Cmediatek,gyroscope", driver = ""
+  platform device: name = soc:ice_debug
+    path = /devices/soc/soc:ice_debug
+    type = "ice_debug", modalias = "of:Nice_debugT<NULL>Cmediatek,mt8173-ice_debug", driver = "mediatek,mt8173-ice_debug"
+  platform device: name = soc:mediatek,mt8173-soc-hdmi-raw@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-hdmi-raw@11220000
+    type = "mediatek,mt8173-soc-hdmi-raw", modalias = "of:Nmediatek,mt8173-soc-hdmi-rawT<NULL>Cmediatek,mt8173-soc-hdmi-raw", driver = "mt8173-soc-hdmi-raw"
+  platform device: name = soc:mediatek,mt8173-soc-btsco-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-btsco-pcm@11220000
+    type = "mediatek,mt8173-soc-btsco-pcm", modalias = "of:Nmediatek,mt8173-soc-btsco-pcmT<NULL>Cmediatek,mt8173-soc-btsco-pcm", driver = "mt8173-soc-btsco-pcm"
+  platform device: name = 14015000.DISP_AAL
+    path = /devices/soc/14015000.DISP_AAL
+    type = "DISP_AAL", modalias = "of:NDISP_AALT<NULL>Cmediatek,mt8173-disp_aal", driver = ""
+  platform device: name = soc:irq_nfc@
+    path = /devices/soc/soc:irq_nfc@
+    type = "irq_nfc", modalias = "of:Nirq_nfcT<NULL>Cmediatek,irq_nfc-eint", driver = ""
+  platform device: name = 11005000.uart3
+    path = /devices/soc/11005000.uart3
+    type = "uart3", modalias = "of:Nuart3T<NULL>Cmediatek,mt8173-uart", driver = "mtk-uart"
+  platform device: name = reg-dummy
+    path = /devices/platform/reg-dummy
+    type = "", modalias = "platform:reg-dummy", driver = "reg-dummy"
+  platform device: name = 15004000.ispsys
+    path = /devices/soc/15004000.ispsys
+    type = "ispsys", modalias = "of:NispsysT<NULL>Cmediatek,mt8173-ispsys", driver = "camera-isp"
+  platform device: name = 18002000.venc
+    path = /devices/soc/18002000.venc
+    type = "venc", modalias = "of:NvencT<NULL>Cmediatek,mt8173-venc", driver = ""
+  platform device: name = 10390000.cci400
+    path = /devices/soc/10390000.cci400
+    type = "cci400", modalias = "of:Ncci400T<NULL>Cmediatek,mt8173-cci400Cmediatek,cci400", driver = ""
+  platform device: name = 14004000.mdp_rsz1
+    path = /devices/soc/14004000.mdp_rsz1
+    type = "mdp_rsz1", modalias = "of:Nmdp_rsz1T<NULL>Cmediatek,mt8173-mdp_rsz1", driver = ""
+  platform device: name = mtgpufreq
+    path = /devices/mtgpufreq
+    type = "mtgpufreq", modalias = "of:NmtgpufreqT<NULL>Cmediatek,mt8173-gpufreq", driver = "mt-gpufreq"
+  platform device: name = battery_throttle
+    path = /devices/platform/battery_throttle
+    type = "", modalias = "platform:battery_throttle", driver = "battery_throttle"
+  platform device: name = soc:mediatek,mt8173-soc-mrgrx-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-mrgrx-pcm@11220000
+    type = "mediatek,mt8173-soc-mrgrx-pcm", modalias = "of:Nmediatek,mt8173-soc-mrgrx-pcmT<NULL>Cmediatek,mt8173-soc-mrgrx-pcm", driver = "mt8173-soc-mrgrx-pcm"
+  platform device: name = soc:nfc_gpio
+    path = /devices/soc/soc:nfc_gpio
+    type = "nfc_gpio", modalias = "of:Nnfc_gpioT<NULL>Cmediatek,nfc-gpio-v2", driver = ""
+  platform device: name = alsps
+    path = /devices/platform/alsps
+    type = "", modalias = "platform:alsps", driver = "alsps"
+  platform device: name = 11260000.sdio
+    path = /devices/soc/11260000.sdio
+    type = "sdio", modalias = "of:NsdioT<NULL>Cmediatek,mt8173-sdioCmediatek,mt8173-msdc", driver = "mtk-sdio"
+  platform device: name = 15000000.imgsys
+    path = /devices/soc/15000000.imgsys
+    type = "imgsys", modalias = "of:NimgsysT<NULL>Cmediatek,mt8173-imgsysCsyscon", driver = ""
+  platform device: name = timer
+    path = /devices/timer
+    type = "timer", modalias = "of:NtimerT<NULL>Carm,armv8-timer", driver = ""
+  platform device: name = 1400a000.mdp_tdshp1
+    path = /devices/soc/1400a000.mdp_tdshp1
+    type = "mdp_tdshp1", modalias = "of:Nmdp_tdshp1T<NULL>Cmediatek,mt8173-mdp_tdshp1", driver = ""
+  platform device: name = mtktsgpu_sensor
+    path = /devices/platform/mtktsgpu_sensor
+    type = "", modalias = "platform:mtktsgpu_sensor", driver = "mtktsgpu_sensor"
+  platform device: name = 8000000.chipid
+    path = /devices/soc/8000000.chipid
+    type = "chipid", modalias = "of:NchipidT<NULL>Cmediatek,mt8173-chipid", driver = ""
+  platform device: name = 11011000.i2c
+    path = /devices/soc/11011000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = soc:mediatek,mt8173-soc-ul1-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-ul1-pcm@11220000
+    type = "mediatek,mt8173-soc-ul1-pcm", modalias = "of:Nmediatek,mt8173-soc-ul1-pcmT<NULL>Cmediatek,mt8173-soc-ul1-pcm", driver = "mt8173-soc-ul1-pcm"
+  platform device: name = mtktscpu_sensor
+    path = /devices/platform/mtktscpu_sensor
+    type = "", modalias = "platform:mtktscpu_sensor", driver = "mtktscpu_sensor"
+  platform device: name = 10204000.sys_cirq
+    path = /devices/soc/10204000.sys_cirq
+    type = "sys_cirq", modalias = "of:Nsys_cirqT<NULL>Cmediatek,mt8173-sys_cirqCmediatek,mt6735-sys_cirq", driver = ""
+  platform device: name = 15001000.larb
+    path = /devices/soc/15001000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = 11007000.i2c
+    path = /devices/soc/11007000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = 14018000.DISP_SPLIT
+    path = /devices/soc/14018000.DISP_SPLIT
+    type = "DISP_SPLIT", modalias = "of:NDISP_SPLITT<NULL>Cmediatek,mt8173-disp_split", driver = ""
+  platform device: name = soc:mediatek,mt8173-soc-i2s0-awb-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-i2s0-awb-pcm@11220000
+    type = "mediatek,mt8173-soc-i2s0-awb-pcm", modalias = "of:Nmediatek,mt8173-soc-i2s0-awb-pcmT<NULL>Cmediatek,mt8173-soc-i2s0-awb-pcm", driver = "mt8173-soc-i2s0-awb-pcm"
+  platform device: name = mtvcoredvfs
+    path = /devices/mtvcoredvfs
+    type = "mtvcoredvfs", modalias = "of:NmtvcoredvfsT<NULL>Cmediatek,mt8173-vcoredvfs", driver = "mt-vcoredvfs"
+  platform device: name = soc:orientation@0
+    path = /devices/soc/soc:orientation@0
+    type = "orientation", modalias = "of:NorientationT<NULL>Cmediatek,orientation", driver = ""
+  platform device: name = soc:MTKFB@bf200000
+    path = /devices/soc/soc:MTKFB@bf200000
+    type = "MTKFB", modalias = "of:NMTKFBT<NULL>Cmediatek,MTKFB", driver = "mtkfb"
+  platform device: name = soc:msensor@0
+    path = /devices/soc/soc:msensor@0
+    type = "msensor", modalias = "of:NmsensorT<NULL>Cmediatek,msensor", driver = ""
+  platform device: name = 14008000.mdp_wrot1
+    path = /devices/soc/14008000.mdp_wrot1
+    type = "mdp_wrot1", modalias = "of:Nmdp_wrot1T<NULL>Cmediatek,mt8173-mdp_wrot1", driver = ""
+  platform device: name = 11230000.mmc
+    path = /devices/soc/11230000.mmc
+    type = "mmc", modalias = "of:NmmcT<NULL>Cmediatek,mt8173-mmcCmediatek,mt8135-mmc", driver = "mtk-msdc"
+  platform device: name = 10011000.dramc1
+    path = /devices/soc/10011000.dramc1
+    type = "dramc1", modalias = "of:Ndramc1T<NULL>Cmediatek,mt8173-dramc1", driver = ""
+  platform device: name = 10008000.apxgpt
+    path = /devices/soc/10008000.apxgpt
+    type = "apxgpt", modalias = "of:NapxgptT<NULL>Cmediatek,mt8173-apxgpt", driver = ""
+  platform device: name = soc:led@0
+    path = /devices/soc/soc:led@0
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,red", driver = ""
+  platform device: name = soc:led@1
+    path = /devices/soc/soc:led@1
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,green", driver = ""
+  platform device: name = soc:led@2
+    path = /devices/soc/soc:led@2
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,blue", driver = ""
+  platform device: name = soc:led@3
+    path = /devices/soc/soc:led@3
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,jogball-backlight", driver = ""
+  platform device: name = soc:led@4
+    path = /devices/soc/soc:led@4
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,keyboard-backlight", driver = ""
+  platform device: name = soc:led@5
+    path = /devices/soc/soc:led@5
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,button-backlight", driver = ""
+  platform device: name = soc:led@6
+    path = /devices/soc/soc:led@6
+    type = "led", modalias = "of:NledT<NULL>Cmediatek,lcd-backlight", driver = ""
+  platform device: name = 1000c274.DISP_TVDPLL_CON1
+    path = /devices/soc/1000c274.DISP_TVDPLL_CON1
+    type = "DISP_TVDPLL_CON1", modalias = "of:NDISP_TVDPLL_CON1T<NULL>Cmediatek,mt8173-disp_tvdpll_con1", driver = ""
+  platform device: name = 16020000.vdec
+    path = /devices/soc/16020000.vdec
+    type = "vdec", modalias = "of:NvdecT<NULL>Cmediatek,mt8173-vdec", driver = ""
+  platform device: name = 10200620.intpol-controller
+    path = /devices/soc/10200620.intpol-controller
+    type = "intpol-controller", modalias = "of:Nintpol-controllerT<NULL>Cmediatek,mt8173-sysirqCmediatek,mt6577-sysirq", driver = ""
+  platform device: name = tmp103-cooling
+    path = /devices/platform/tmp103-cooling
+    type = "", modalias = "platform:tmp103-cooling", driver = ""
+  platform device: name = soc:accdet@
+    path = /devices/soc/soc:accdet@
+    type = "accdet", modalias = "of:NaccdetT<NULL>Cmediatek,mt8173-accdet", driver = "Accdet_Driver"
+  platform device: name = 14024000.DPI1
+    path = /devices/soc/14024000.DPI1
+    type = "DPI1", modalias = "of:NDPI1T<NULL>Cmediatek,mt8173-disp_dpi1", driver = ""
+  platform device: name = 10000000.dcm
+    path = /devices/soc/10000000.dcm
+    type = "dcm", modalias = "of:NdcmT<NULL>Cmediatek,mt8173-dcm", driver = ""
+  platform device: name = alarmtimer
+    path = /devices/platform/alarmtimer
+    type = "", modalias = "platform:alarmtimer", driver = "alarmtimer"
+  platform device: name = 10005000.syscfg_pctl_a
+    path = /devices/soc/10005000.syscfg_pctl_a
+    type = "syscfg_pctl_a", modalias = "of:Nsyscfg_pctl_aT<NULL>Cmediatek,mt8173-pctl-a-syscfgCsyscon", driver = ""
+  platform device: name = 10001000.infracfg
+    path = /devices/soc/10001000.infracfg
+    type = "infracfg", modalias = "of:NinfracfgT<NULL>Cmediatek,mt8173-infracfgCsyscon", driver = ""
+  platform device: name = soc:m_baro_pl@0
+    path = /devices/soc/soc:m_baro_pl@0
+    type = "m_baro_pl", modalias = "of:Nm_baro_plT<NULL>Cmediatek,m_baro_pl", driver = ""
+  platform device: name = 14023000.DISP_OD
+    path = /devices/soc/14023000.DISP_OD
+    type = "DISP_OD", modalias = "of:NDISP_ODT<NULL>Cmediatek,mt8173-disp_od", driver = ""
+  platform device: name = 10212c00.cqdma
+    path = /devices/soc/10212c00.cqdma
+    type = "cqdma", modalias = "of:NcqdmaT<NULL>Cmediatek,mt8173-cqdma", driver = ""
+  platform device: name = soc:m_alsps_pl@0
+    path = /devices/soc/soc:m_alsps_pl@0
+    type = "m_alsps_pl", modalias = "of:Nm_alsps_plT<NULL>Cmediatek,m_alsps_pl", driver = ""
+  platform device: name = soc:cpuxgpt@10200000
+    path = /devices/soc/soc:cpuxgpt@10200000
+    type = "cpuxgpt", modalias = "of:NcpuxgptT<NULL>Cmediatek,mt8173-cpuxgpt", driver = ""
+  platform device: name = mediatek,battery_meter
+    path = /devices/mediatek,battery_meter
+    type = "mediatek,battery_meter", modalias = "of:Nmediatek,battery_meterT<NULL>Cmediatek,battery_meter", driver = "battery_meter"
+  platform device: name = 1500b000.fdvt
+    path = /devices/soc/1500b000.fdvt
+    type = "fdvt", modalias = "of:NfdvtT<NULL>Cmediatek,mt8173-fdvt", driver = "camera-fdvt"
+  platform device: name = 10004000.dramco
+    path = /devices/soc/10004000.dramco
+    type = "dramco", modalias = "of:NdramcoT<NULL>Cmediatek,mt8173-dramco", driver = ""
+  platform device: name = mt6397-pinctrl
+    path = /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-pinctrl
+    type = "pinctrl", modalias = "of:NpinctrlT<NULL>Cmediatek,mt6397-pinctrl", driver = "mediatek-mt6397-pinctrl"
+  platform device: name = 18004000.jpgdec
+    path = /devices/soc/18004000.jpgdec
+    type = "jpgdec", modalias = "of:NjpgdecT<NULL>Cmediatek,mt8173-jpgdecCmediatek,jpgdec", driver = ""
+  platform device: name = 10215800.LVDSTX0
+    path = /devices/soc/10215800.LVDSTX0
+    type = "LVDSTX0", modalias = "of:NLVDSTX0T<NULL>Cmediatek,mt8173-disp_lvdstx0", driver = ""
+  platform device: name = 11002000.uart0
+    path = /devices/soc/11002000.uart0
+    type = "uart0", modalias = "of:Nuart0T<NULL>Cmediatek,mt8173-uart", driver = "mtk-uart"
+  platform device: name = soc:gps
+    path = /devices/soc/soc:gps
+    type = "gps", modalias = "of:NgpsT<NULL>Cmediatek,mt3326-gps", driver = ""
+  platform device: name = soc:lcm
+    path = /devices/soc/soc:lcm
+    type = "lcm", modalias = "of:NlcmT<NULL>Cmediatek,mt8173-lcm", driver = "nt51021_wuxga_dsi_vdo"
+  platform device: name = 14005000.mdp_rsz2
+    path = /devices/soc/14005000.mdp_rsz2
+    type = "mdp_rsz2", modalias = "of:Nmdp_rsz2T<NULL>Cmediatek,mt8173-mdp_rsz2", driver = ""
+  platform device: name = 10012000.ddrphy1
+    path = /devices/soc/10012000.ddrphy1
+    type = "ddrphy1", modalias = "of:Nddrphy1T<NULL>Cmediatek,mt8173-ddrphy1", driver = ""
+  platform device: name = mediatek,battery_common
+    path = /devices/mediatek,battery_common
+    type = "mediatek,battery_common", modalias = "of:Nmediatek,battery_commonT<NULL>Cmediatek,battery_common", driver = "battery"
+  platform device: name = 11013000.i2c
+    path = /devices/soc/11013000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = snd-soc-dummy
+    path = /devices/platform/snd-soc-dummy
+    type = "", modalias = "platform:snd-soc-dummy", driver = "snd-soc-dummy"
+  platform device: name = 14013000.DISP_COLOR
+    path = /devices/soc/14013000.DISP_COLOR
+    type = "DISP_COLOR", modalias = "of:NDISP_COLORT<NULL>Cmediatek,mt8173-disp_color", driver = ""
+  platform device: name = 19000000.vencltsys
+    path = /devices/soc/19000000.vencltsys
+    type = "vencltsys", modalias = "of:NvencltsysT<NULL>Cmediatek,mt8173-vencltsysCsyscon", driver = ""
+  platform device: name = mtktsbattery_sensor
+    path = /devices/platform/mtktsbattery_sensor
+    type = "", modalias = "platform:mtktsbattery_sensor", driver = "mtktsbattery_sensor"
+  platform device: name = 11009000.i2c
+    path = /devices/soc/11009000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = 15008000.camera1
+    path = /devices/soc/15008000.camera1
+    type = "camera1", modalias = "of:Ncamera1T<NULL>Cmediatek,mt8173-camera_hw", driver = "image_sensor"
+  platform device: name = 15008000.camera2
+    path = /devices/soc/15008000.camera2
+    type = "camera2", modalias = "of:Ncamera2T<NULL>Cmediatek,mt8173-camera_hw2", driver = "image_sensor_bus2"
+  platform device: name = MT6391_THERMAL
+    path = /devices/platform/MT6391_THERMAL
+    type = "", modalias = "platform:MT6391_THERMAL", driver = "MT6391_THERMAL"
+  platform device: name = 10215000.MIPITX0
+    path = /devices/soc/10215000.MIPITX0
+    type = "MIPITX0", modalias = "of:NMIPITX0T<NULL>Cmediatek,mt8173-disp_mipitx0", driver = ""
+  platform device: name = 1100b000.thermal
+    path = /devices/soc/1100b000.thermal
+    type = "thermal", modalias = "of:NthermalT<NULL>Cmediatek,mt8173-thermal", driver = "mtk-thermal"
+  platform device: name = 10209e00.fhctl
+    path = /devices/soc/10209e00.fhctl
+    type = "fhctl", modalias = "of:NfhctlT<NULL>Cmediatek,mt8173-fhctl", driver = ""
+  platform device: name = 1401b000.DSI0
+    path = /devices/soc/1401b000.DSI0
+    type = "DSI0", modalias = "of:NDSI0T<NULL>Cmediatek,mt8173-disp_dsi0", driver = ""
+  platform device: name = mtkts_bts.0
+    path = /devices/platform/mtkts_bts.0
+    type = "", modalias = "platform:mtkts_bts", driver = "mtkts_bts"
+  platform device: name = mtkts_bts.1
+    path = /devices/platform/mtkts_bts.1
+    type = "", modalias = "platform:mtkts_bts", driver = "mtkts_bts"
+  platform device: name = mtkts_bts.2
+    path = /devices/platform/mtkts_bts.2
+    type = "", modalias = "platform:mtkts_bts", driver = "mtkts_bts"
+  platform device: name = soc:als_ps@0
+    path = /devices/soc/soc:als_ps@0
+    type = "als_ps", modalias = "of:Nals_psT<NULL>Cmediatek,als_ps", driver = "als_ps"
+  platform device: name = 16000000.vdecsys
+    path = /devices/soc/16000000.vdecsys
+    type = "vdecsys", modalias = "of:NvdecsysT<NULL>Cmediatek,mt8173-vdecsysCsyscon", driver = ""
+  platform device: name = 10216800.LVDSTX1
+    path = /devices/soc/10216800.LVDSTX1
+    type = "LVDSTX1", modalias = "of:NLVDSTX1T<NULL>Cmediatek,mt8173-disp_lvdstx1", driver = ""
+  platform device: name = mtktspmic_sensor
+    path = /devices/platform/mtktspmic_sensor
+    type = "", modalias = "platform:mtktspmic_sensor", driver = "mtktspmic_sensor"
+  platform device: name = soc:barometer@0
+    path = /devices/soc/soc:barometer@0
+    type = "barometer", modalias = "of:NbarometerT<NULL>Cmediatek,barometer", driver = ""
+  platform device: name = 14007000.mdp_wrot0
+    path = /devices/soc/14007000.mdp_wrot0
+    type = "mdp_wrot0", modalias = "of:Nmdp_wrot0T<NULL>Cmediatek,mt8173-mdp_wrot0", driver = ""
+  platform device: name = 1400c000.DISP_OVL
+    path = /devices/soc/1400c000.DISP_OVL
+    type = "DISP_OVL", modalias = "of:NDISP_OVLT<NULL>Cmediatek,mt8173-disp_ovl", driver = ""
+  platform device: name = 11270000.usb
+    path = /devices/soc/11270000.usb
+    type = "usb", modalias = "of:NusbT<NULL>Cmediatek,mt8173-ssusb", driver = "musb-mtu3d"
+    is usb
+  platform device: name = 13000000.gpu
+    path = /devices/soc/13000000.gpu
+    type = "gpu", modalias = "of:NgpuT<NULL>Cmediatek,mt8173-han", driver = "pvrsrvkm"
+  platform device: name = 14009000.mdp_tdshp0
+    path = /devices/soc/14009000.mdp_tdshp0
+    type = "mdp_tdshp0", modalias = "of:Nmdp_tdshp0T<NULL>Cmediatek,mt8173-mdp_tdshp0", driver = ""
+  platform device: name = mt6397-regulator
+    path = /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-regulator
+    type = "mt6397regulator", modalias = "of:Nmt6397regulatorT<NULL>Cmediatek,mt6397-regulator", driver = "mt6397-regulator"
+  platform device: name = soc:m_mag_pl@0
+    path = /devices/soc/soc:m_mag_pl@0
+    type = "m_mag_pl", modalias = "of:Nm_mag_plT<NULL>Cmediatek,m_mag_pl", driver = ""
+  platform device: name = 18001000.larb
+    path = /devices/soc/18001000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = 16000000.vdec_gcon
+    path = /devices/soc/16000000.vdec_gcon
+    type = "vdec_gcon", modalias = "of:Nvdec_gconT<NULL>Cmediatek,mt8173-vdec_gcon", driver = "Vcodec"
+  platform device: name = wlan_mt6630
+    path = /devices/platform/wlan_mt6630
+    type = "", modalias = "platform:wlan_mt6630", driver = "wlan_mt6630"
+  platform device: name = mtcpufreq
+    path = /devices/mtcpufreq
+    type = "mtcpufreq", modalias = "of:NmtcpufreqT<NULL>Cmediatek,mt8173-cpufreq", driver = "mt-cpufreq"
+  platform device: name = 10212000.gce
+    path = /devices/soc/10212000.gce
+    type = "gce", modalias = "of:NgceT<NULL>Cmediatek,mt8173-gce", driver = "mtk_cmdq"
+  platform device: name = 100000a0.DISP_TVDPLL_CFG6
+    path = /devices/soc/100000a0.DISP_TVDPLL_CFG6
+    type = "DISP_TVDPLL_CFG6", modalias = "of:NDISP_TVDPLL_CFG6T<NULL>Cmediatek,mt8173-disp_tvdpll_cfg6", driver = ""
+  platform device: name = 10840000.etm
+    path = /devices/soc/10840000.etm
+    type = "etm", modalias = "of:NetmT<NULL>Cmediatek,mt8173-etm", driver = "etm"
+  platform device: name = 10216000.MIPITX1
+    path = /devices/soc/10216000.MIPITX1
+    type = "MIPITX1", modalias = "of:NMIPITX1T<NULL>Cmediatek,mt8173-disp_mipitx1", driver = ""
+  platform device: name = 11220000.sound
+    path = /devices/soc/11220000.sound
+    type = "sound", modalias = "of:NsoundT<NULL>Cmediatek,mt8173-soc-machine", driver = "mt8173-soc-machine"
+  platform device: name = 100020f0.DISP_IO_DRIVING
+    path = /devices/soc/100020f0.DISP_IO_DRIVING
+    type = "DISP_IO_DRIVING", modalias = "of:NDISP_IO_DRIVINGT<NULL>Cmediatek,mt8173-disp_io_driving", driver = ""
+  platform device: name = 10020000.md32
+    path = /devices/soc/10020000.md32
+    type = "md32", modalias = "of:Nmd32T<NULL>Cmediatek,mt8173-md32", driver = "md32"
+  platform device: name = 14022000.smi
+    path = /devices/soc/14022000.smi
+    type = "smi", modalias = "of:NsmiT<NULL>Cmediatek,mt8173-smi", driver = "mtk-smi"
+  platform device: name = 10010000.keypad
+    path = /devices/soc/10010000.keypad
+    type = "keypad", modalias = "of:NkeypadT<NULL>Cmediatek,mt8173-keypad", driver = ""
+  platform device: name = 10203000.emi
+    path = /devices/soc/10203000.emi
+    type = "emi", modalias = "of:NemiT<NULL>Cmediatek,mt8173-emiCmediatek,emi", driver = ""
+  platform device: name = soc:m_gyro_pl@0
+    path = /devices/soc/soc:m_gyro_pl@0
+    type = "m_gyro_pl", modalias = "of:Nm_gyro_plT<NULL>Cmediatek,m_gyro_pl", driver = ""
+  platform device: name = 1100a000.spi
+    path = /devices/soc/1100a000.spi
+    type = "spi", modalias = "of:NspiT<NULL>Cmediatek,mt8173-spi", driver = "mtk-spi"
+  platform device: name = 14021000.larb
+    path = /devices/soc/14021000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = 1020e000.dramc_nao
+    path = /devices/soc/1020e000.dramc_nao
+    type = "dramc_nao", modalias = "of:Ndramc_naoT<NULL>Cmediatek,mt8173-dramc_naoCmediatek,dramc0_nao", driver = ""
+  platform device: name = soc:batchsensor@0
+    path = /devices/soc/soc:batchsensor@0
+    type = "batchsensor", modalias = "of:NbatchsensorT<NULL>Cmediatek,batchsensor", driver = ""
+  platform device: name = 11010000.i2c
+    path = /devices/soc/11010000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = 1401d000.DPI0
+    path = /devices/soc/1401d000.DPI0
+    type = "DPI0", modalias = "of:NDPI0T<NULL>Cmediatek,mt8173-disp_dpi0", driver = ""
+  platform device: name = 14000000.mmsys
+    path = /devices/soc/14000000.mmsys
+    type = "mmsys", modalias = "of:NmmsysT<NULL>Cmediatek,mt8173-mmsysCsyscon", driver = ""
+  platform device: name = mt-rtc
+    path = /devices/platform/mt-rtc
+    type = "", modalias = "platform:mt-rtc", driver = "mt-rtc"
+  platform device: name = 18003000.jpgenc
+    path = /devices/soc/18003000.jpgenc
+    type = "jpgenc", modalias = "of:NjpgencT<NULL>Cmediatek,mt8173-jpgencCmediatek,jpgenc", driver = "mtk_jpeg"
+  platform device: name = soc:m_acc_pl@0
+    path = /devices/soc/soc:m_acc_pl@0
+    type = "m_acc_pl", modalias = "of:Nm_acc_plT<NULL>Cmediatek,m_acc_pl", driver = ""
+  platform device: name = 11006000.pwm
+    path = /devices/soc/11006000.pwm
+    type = "pwm", modalias = "of:NpwmT<NULL>Cmediatek,mt8173-pwm", driver = "mt-pwm"
+  platform device: name = mt-mem_bw
+    path = /devices/platform/mt-mem_bw
+    type = "", modalias = "platform:mt-mem_bw", driver = "mt-mem_bw"
+  platform device: name = soc:mediatek,mt8173-soc-routing-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-routing-pcm@11220000
+    type = "mediatek,mt8173-soc-routing-pcm", modalias = "of:Nmediatek,mt8173-soc-routing-pcmT<NULL>Cmediatek,mt8173-soc-routing-pcm", driver = "mt8173-soc-routing-pcm"
+  platform device: name = 1000c270.DISP_TVDPLL_CON0
+    path = /devices/soc/1000c270.DISP_TVDPLL_CON0
+    type = "DISP_TVDPLL_CON0", modalias = "of:NDISP_TVDPLL_CON0T<NULL>Cmediatek,mt8173-disp_tvdpll_con0", driver = ""
+  platform device: name = 14006000.mdp_wdma
+    path = /devices/soc/14006000.mdp_wdma
+    type = "mdp_wdma", modalias = "of:Nmdp_wdmaT<NULL>Cmediatek,mt8173-mdp_wdma", driver = ""
+  platform device: name = tmp103-thermal
+    path = /devices/platform/tmp103-thermal
+    type = "", modalias = "platform:tmp103-thermal", driver = "tmp103-thermal"
+  platform device: name = serial8250
+    path = /devices/platform/serial8250
+    type = "", modalias = "platform:serial8250", driver = "serial8250"
+  platform device: name = mt6397-codec
+    path = /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-codec
+    type = "mt6397codec", modalias = "of:Nmt6397codecT<NULL>Cmediatek,mt6397-codec", driver = "mt6397-codec"
+  platform device: name = dynamic_boost
+    path = /devices/platform/dynamic_boost
+    type = "", modalias = "platform:dynamic_boost", driver = "dynamic_boost"
+  platform device: name = 19001000.larb
+    path = /devices/soc/19001000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = mtk_disp_mgr.0
+    path = /devices/platform/mtk_disp_mgr.0
+    type = "", modalias = "platform:mtk_disp_mgr", driver = "mtk_disp_mgr"
+  platform device: name = soc:touch@
+    path = /devices/soc/soc:touch@
+    type = "touch", modalias = "of:NtouchT<NULL>Cmediatek,mt8173-touch", driver = "mtk-tpd"
+  platform device: name = 14020000.MM_MUTEX
+    path = /devices/soc/14020000.MM_MUTEX
+    type = "MM_MUTEX", modalias = "of:NMM_MUTEXT<NULL>Cmediatek,mt8173-disp_mutex", driver = ""
+  platform device: name = soc:mediatek,mt8173-soc-dl1-awb-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-dl1-awb-pcm@11220000
+    type = "mediatek,mt8173-soc-dl1-awb-pcm", modalias = "of:Nmediatek,mt8173-soc-dl1-awb-pcmT<NULL>Cmediatek,mt8173-soc-dl1-awb-pcm", driver = "mt8173-soc-dl1-awb-pcm"
+  platform device: name = 13fff000.mfgsys
+    path = /devices/soc/13fff000.mfgsys
+    type = "mfgsys", modalias = "of:NmfgsysT<NULL>Cmediatek,mt8173-mfgsys", driver = ""
+  platform device: name = 1000b000.pinctrl
+    path = /devices/soc/1000b000.pinctrl
+    type = "pinctrl", modalias = "of:NpinctrlT<NULL>Cmediatek,mt8173-pinctrl", driver = "mediatek-mt8173-pinctrl"
+  platform device: name = 1401e000.DISP_PWM
+    path = /devices/soc/1401e000.DISP_PWM
+    type = "DISP_PWM", modalias = "of:NDISP_PWMT<NULL>Cmediatek,mt8173-disp_pwm", driver = ""
+  platform device: name = soc:mfgsys-2d
+    path = /devices/soc/soc:mfgsys-2d
+    type = "mfgsys-2d", modalias = "of:Nmfgsys-2dT<NULL>Cmediatek,mt8173-mfg-2d", driver = "mfg-2d"
+  platform device: name = 1400e000.DISP_RDMA
+    path = /devices/soc/1400e000.DISP_RDMA
+    type = "DISP_RDMA", modalias = "of:NDISP_RDMAT<NULL>Cmediatek,mt8173-disp_rdma", driver = ""
+  platform device: name = soc:mediatek,mt8173-soc-dl2-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-dl2-pcm@11220000
+    type = "mediatek,mt8173-soc-dl2-pcm", modalias = "of:Nmediatek,mt8173-soc-dl2-pcmT<NULL>Cmediatek,mt8173-soc-dl2-pcm", driver = "mt8173-soc-dl2-pcm"
+  platform device: name = 1100b000.ptp_od
+    path = /devices/soc/1100b000.ptp_od
+    type = "ptp_od", modalias = "of:Nptp_odT<NULL>Cmediatek,mt8173-ptp_od", driver = "mt-ptp"
+  platform device: name = MTK_GCPU
+    path = /devices/platform/MTK_GCPU
+    type = "", modalias = "platform:MTK_GCPU", driver = "MTK_GCPU"
+  platform device: name = 10007000.toprgu
+    path = /devices/soc/10007000.toprgu
+    type = "toprgu", modalias = "of:NtoprguT<NULL>Cmediatek,mt8173-rgu", driver = "mtk-wdt"
+  platform device: name = 19002000.venclt
+    path = /devices/soc/19002000.venclt
+    type = "venclt", modalias = "of:NvencltT<NULL>Cmediatek,mt8173-venclt", driver = ""
+  platform device: name = 10221000.interrupt-controller
+    path = /devices/soc/10221000.interrupt-controller
+    type = "interrupt-controller", modalias = "of:Ninterrupt-controllerT<NULL>Carm,gic-400", driver = ""
+  platform device: name = 10208000.systracker
+    path = /devices/soc/10208000.systracker
+    type = "systracker", modalias = "of:NsystrackerT<NULL>Cmediatek,bus_dbg-v2", driver = "systracker"
+  platform device: name = soc:mediatek,mt8173-soc-hdmi-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-hdmi-pcm@11220000
+    type = "mediatek,mt8173-soc-hdmi-pcm", modalias = "of:Nmediatek,mt8173-soc-hdmi-pcmT<NULL>Cmediatek,mt8173-soc-hdmi-pcm", driver = "mt8173-soc-hdmi-pcm"
+  platform device: name = 14002000.mdp_rdma1
+    path = /devices/soc/14002000.mdp_rdma1
+    type = "mdp_rdma1", modalias = "of:Nmdp_rdma1T<NULL>Cmediatek,mt8173-mdp_rdma1", driver = ""
+  platform device: name = 1000f000.ddrphy
+    path = /devices/soc/1000f000.ddrphy
+    type = "ddrphy", modalias = "of:NddrphyT<NULL>Cmediatek,mt8173-ddrphy", driver = "mt-mpll"
+  platform device: name = 10205000.mmsys_iommu
+    path = /devices/soc/10205000.mmsys_iommu
+    type = "mmsys_iommu", modalias = "of:Nmmsys_iommuT<NULL>Cmediatek,mt8173-m4u", driver = "m4u"
+  platform device: name = 1000d000.pwrap
+    path = /devices/soc/1000d000.pwrap
+    type = "pwrap", modalias = "of:NpwrapT<NULL>Cmediatek,mt8173-pwrap", driver = "mediatek,mt8173-pwrap"
+  platform device: name = cust_accel@0
+    path = /devices/cust_accel@0
+    type = "cust_accel", modalias = "of:Ncust_accelT<NULL>Cmediatek,bma253", driver = ""
+  platform device: name = mediatek,connectivity-combo
+    path = /devices/mediatek,connectivity-combo
+    type = "mediatek,connectivity-combo", modalias = "of:Nmediatek,connectivity-comboT<NULL>Cmediatek,connectivity-combo", driver = "mediatek,connectivity-combo"
+  platform device: name = thermal_budget
+    path = /devices/platform/thermal_budget
+    type = "", modalias = "platform:thermal_budget", driver = "thermal_budget"
+  platform device: name = 11240000.mmc
+    path = /devices/soc/11240000.mmc
+    type = "mmc", modalias = "of:NmmcT<NULL>Cmediatek,mt8173-mmcCmediatek,mt8135-mmc", driver = "mtk-msdc"
+  platform device: name = mt6397-pmic
+    path = /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397/mt6397-pmic
+    type = "mt6397pmic", modalias = "of:Nmt6397pmicT<NULL>Cmediatek,mt6397-pmic", driver = "mt6397-pmic"
+  platform device: name = 10213000.dramc1_nao
+    path = /devices/soc/10213000.dramc1_nao
+    type = "dramc1_nao", modalias = "of:Ndramc1_naoT<NULL>Cmediatek,mt8173-dram1_naoCmediatek,dramc1_nao", driver = ""
+  platform device: name = 11008000.i2c
+    path = /devices/soc/11008000.i2c
+    type = "i2c", modalias = "of:Ni2cT<NULL>Cmediatek,mt8173-i2c", driver = "i2c-mt65xx"
+  platform device: name = 18000000.vencsys
+    path = /devices/soc/18000000.vencsys
+    type = "vencsys", modalias = "of:NvencsysT<NULL>Cmediatek,mt8173-vencsysCsyscon", driver = ""
+  platform device: name = soc:gsensor@0
+    path = /devices/soc/soc:gsensor@0
+    type = "gsensor", modalias = "of:NgsensorT<NULL>Cmediatek,gsensor", driver = "gsensor"
+  platform device: name = perfmgr
+    path = /devices/platform/perfmgr
+    type = "", modalias = "platform:perfmgr", driver = "perfmgr"
+  platform device: name = 11001000.auxadc
+    path = /devices/soc/11001000.auxadc
+    type = "auxadc", modalias = "of:NauxadcTCmediatek,mt8173-auxadcCmediatek,mt6735-auxadc", driver = "mt-auxadc"
+  platform device: name = soc:mediatek,mt8173-soc-mrgrx-awb-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-mrgrx-awb-pcm@11220000
+    type = "mediatek,mt8173-soc-mrgrx-awb-pcm", modalias = "of:Nmediatek,mt8173-soc-mrgrx-awb-pcmT<NULL>Cmediatek,mt8173-soc-mrgrx-awb-pcm", driver = "mt8173-soc-mrgrx-awb-pcm"
+  platform device: name = soc:mediatek,mt8173-soc-dummy-dai@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-dummy-dai@11220000
+    type = "mediatek,mt8173-soc-dummy-dai", modalias = "of:Nmediatek,mt8173-soc-dummy-daiT<NULL>Cmediatek,mt8173-soc-dummy-dai", driver = "mt8173-soc-dummy-dai"
+  platform device: name = 10214000.perisys
+    path = /devices/soc/10214000.perisys
+    type = "perisys", modalias = "of:NperisysT<NULL>Cmediatek,mt8173-perisys-iommu", driver = "m4u"
+  platform device: name = mtktswmt_sensor
+    path = /devices/platform/mtktswmt_sensor
+    type = "", modalias = "platform:mtktswmt_sensor", driver = "mtktswmt_sensor"
+  platform device: name = 10410000.etb
+    path = /devices/soc/10410000.etb
+    type = "etb", modalias = "of:NetbT<NULL>Cmediatek,mt8173-etb", driver = "etb"
+  platform device: name = 11004000.uart2
+    path = /devices/soc/11004000.uart2
+    type = "uart2", modalias = "of:Nuart2T<NULL>Cmediatek,mt8173-uart", driver = "mtk-uart"
+  platform device: name = 14025000.hdmi
+    path = /devices/soc/14025000.hdmi
+    type = "hdmi", modalias = "of:NhdmiT<NULL>Cmediatek,mt8173-hdmitx", driver = ""
+  platform device: name = usb_phy_generic.0.auto
+    path = /devices/platform/usb_phy_generic.0.auto
+    type = "", modalias = "platform:usb_phy_generic", driver = "usb_phy_generic"
+  platform device: name = 1000d000.pwrap:mt6397
+    path = /devices/soc/1000d000.pwrap/1000d000.pwrap:mt6397
+    type = "mt6397", modalias = "of:Nmt6397T<NULL>Cmediatek,mt6397", driver = "mt6397"
+  platform device: name = soc:mediatek,mt8173-soc-spdif-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-spdif-pcm@11220000
+    type = "mediatek,mt8173-soc-spdif-pcm", modalias = "of:Nmediatek,mt8173-soc-spdif-pcmT<NULL>Cmediatek,mt8173-soc-spdif-pcm", driver = "mt8173-soc-spdif-pcm"
+  platform device: name = thermistor@0
+    path = /devices/thermistor@0
+    type = "thermistor", modalias = "of:NthermistorT<NULL>Camazon,virtual_sensor_thermistor", driver = "virtual_sensor_thermistor"
+  platform device: name = thermistor@1
+    path = /devices/thermistor@1
+    type = "thermistor", modalias = "of:NthermistorT<NULL>Camazon,virtual_sensor_thermistor", driver = "virtual_sensor_thermistor"
+  platform device: name = thermistor@2
+    path = /devices/thermistor@2
+    type = "thermistor", modalias = "of:NthermistorT<NULL>Camazon,virtual_sensor_thermistor", driver = "virtual_sensor_thermistor"
+  platform device: name = 14016000.DISP_GAMMA
+    path = /devices/soc/14016000.DISP_GAMMA
+    type = "DISP_GAMMA", modalias = "of:NDISP_GAMMAT<NULL>Cmediatek,mt8173-disp_gamma", driver = ""
+  platform device: name = 14003000.mdp_rsz0
+    path = /devices/soc/14003000.mdp_rsz0
+    type = "mdp_rsz0", modalias = "of:Nmdp_rsz0T<NULL>Cmediatek,mt8173-mdp_rsz0", driver = ""
+  platform device: name = soc:m_batch_pl@0
+    path = /devices/soc/soc:m_batch_pl@0
+    type = "m_batch_pl", modalias = "of:Nm_batch_plT<NULL>Cmediatek,m_batch_pl", driver = ""
+  platform device: name = ion-drv.0
+    path = /devices/platform/ion-drv.0
+    type = "", modalias = "platform:ion-drv", driver = "ion-drv"
+  platform device: name = regulatory.0
+    path = /devices/platform/regulatory.0
+    type = "", modalias = "platform:regulatory", driver = ""
+  platform device: name = 1401a000.DISP_UFOE
+    path = /devices/soc/1401a000.DISP_UFOE
+    type = "DISP_UFOE", modalias = "of:NDISP_UFOET<NULL>Cmediatek,mt8173-disp_ufoe", driver = ""
+  platform device: name = 14011000.DISP_WDMA
+    path = /devices/soc/14011000.DISP_WDMA
+    type = "DISP_WDMA", modalias = "of:NDISP_WDMAT<NULL>Cmediatek,mt8173-disp_wdma", driver = ""
+  platform device: name = bq24297-user
+    path = /devices/platform/bq24297-user
+    type = "", modalias = "platform:bq24297-user", driver = "bq24297-user"
+  platform device: name = soc:mediatek,mt8173-soc-ul2-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-ul2-pcm@11220000
+    type = "mediatek,mt8173-soc-ul2-pcm", modalias = "of:Nmediatek,mt8173-soc-ul2-pcmT<NULL>Cmediatek,mt8173-soc-ul2-pcm", driver = "mt8173-soc-ul2-pcm"
+  platform device: name = soc:mtee
+    path = /devices/soc/soc:mtee
+    type = "mtee", modalias = "of:NmteeT<NULL>Cmediatek,mtee", driver = "mtk_tz"
+  platform device: name = hall_sensors
+    path = /devices/hall_sensors
+    type = "hall_sensors", modalias = "of:Nhall_sensorsT<NULL>Chall,hall-sensor", driver = "hall-sensor"
+  platform device: name = 12fb00.emi_dvfs_sram
+    path = /devices/soc/12fb00.emi_dvfs_sram
+    type = "emi_dvfs_sram", modalias = "of:Nemi_dvfs_sramT<NULL>Cmediatek,emi_dvfs_sram", driver = ""
+  platform device: name = dummy26m
+    path = /devices/dummy26m
+    type = "dummy26m", modalias = "of:Ndummy26mT<NULL>Cfixed-clock", driver = ""
+  platform device: name = soc:hwmsensor@0
+    path = /devices/soc/soc:hwmsensor@0
+    type = "hwmsensor", modalias = "of:NhwmsensorT<NULL>Cmediatek,hwmsensor", driver = ""
+  platform device: name = keypanic
+    path = /devices/keypanic
+    type = "keypanic", modalias = "of:NkeypanicT<NULL>Camzn,keypanic", driver = ""
+  platform device: name = mt-battery
+    path = /devices/platform/mt-battery
+    type = "", modalias = "platform:mt-battery", driver = "mt-battery"
+  platform device: name = 10200000.mcucfg
+    path = /devices/soc/10200000.mcucfg
+    type = "mcucfg", modalias = "of:NmcucfgT<NULL>Cmediatek,mt8173-mcucfgCsyscon", driver = "lastpc"
+  platform device: name = 10000000.topckgen
+    path = /devices/soc/10000000.topckgen
+    type = "topckgen", modalias = "of:NtopckgenT<NULL>Cmediatek,mt8173-topckgen", driver = ""
+  platform device: name = 10006000.scpsys
+    path = /devices/soc/10006000.scpsys
+    type = "scpsys", modalias = "of:NscpsysT<NULL>Cmediatek,mt8173-scpsysCsyscon", driver = "mtk-scpsys"
+  platform device: name = soc:mediatek,mt8173-soc-dl1-pcm@11220000
+    path = /devices/soc/soc:mediatek,mt8173-soc-dl1-pcm@11220000
+    type = "mediatek,mt8173-soc-dl1-pcm", modalias = "of:Nmediatek,mt8173-soc-dl1-pcmT<NULL>Cmediatek,mt8173-soc-dl1-pcm", driver = "mt8173-soc-dl1-pcm"
+  platform device: name = 14027000.larb
+    path = /devices/soc/14027000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = 16010000.larb
+    path = /devices/soc/16010000.larb
+    type = "larb", modalias = "of:NlarbT<NULL>Cmediatek,mt8173-smi-larb", driver = "mtk-smi-larb"
+  platform device: name = 10003000.pericfg
+    path = /devices/soc/10003000.pericfg
+    type = "pericfg", modalias = "of:NpericfgT<NULL>Cmediatek,mt8173-pericfgCsyscon", driver = ""
+  platform device: name = soc:mfgsys-async
+    path = /devices/soc/soc:mfgsys-async
+    type = "mfgsys-async", modalias = "of:Nmfgsys-asyncT<NULL>Cmediatek,mt8173-mfg-async", driver = "mfg-async"
+>> pci.8: of_platform
+sysfs: no such bus: of_platform
+>> pci.9: vm
+sysfs: no such bus: vm
+>> pci.10: virtio
+sysfs: no such bus: virtio
+>> pci.11: ibmebus
+sysfs: no such bus: ibmebus
+>> pci.12: uisvirtpci
+sysfs: no such bus: uisvirtpci
+>> pci.13: mmc
+  mmc device: name = mmc0:0001
+    path = /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001
+    driver = "mmcblk"
+    index = 0
+    type = "MMC"
+  mmc device: name = mmc2:0001
+    path = /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001
+    driver = "(null)"
+    index = 2
+    type = "SDIO"
+>> pci.14: sdio
+  sdio device: name = mmc2:0001:1
+    path = /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:1
+    driver = "mtk_sdio_client"
+    modalias = "sdio:c00v037Ad6630"
+    vendor = 890
+    device = 26160
+  sdio device: name = mmc2:0001:2
+    path = /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:2
+    driver = "mtk_sdio_client"
+    modalias = "sdio:c00v037Ad6630"
+    vendor = 890
+    device = 26160
+>> pci.15: nd
+sysfs: no such bus: nd
+>> pci.16: visorbus
+sysfs: no such bus: visorbus
+>> pci.17: mdio
+sysfs: no such bus: mdio
+>> monitor.1: ddc
+>> monitor.2: bios
+>> monitor.3: pci
+>> monitor.4: internal db
+>> monitor.5: prom
+>> pcmcia.1: sysfs drivers
+>> pcmcia.2: pcmcia
+sysfs: no such bus: pcmcia
+>> pcmcia.3: pcmcia ctrl
+sysfs: no such class: pcmcia_socket
+>> serial.1: read info
+----- serial info -----
+----- serial info end -----
+>> serial.2: build list
+>> misc.5: misc data
+----- misc resources -----
+irq:0  1 (        0) "27  arch_timer"
+irq:0  2 ( 39605160) "30  arch_timer"
+irq:0  4 (       48) "144  mtk-gpt"
+irq:0  5 (        0) "56  mtk_cpuxgpt0"
+irq:0  6 (        0) "57  mtk_cpuxgpt1"
+irq:0  7 (        0) "58  mtk_cpuxgpt2"
+irq:0  8 (        0) "59  mtk_cpuxgpt3"
+irq:0 11 (        1) "83"
+irq:0 17 (        1) "85"
+irq:0 21 (        0) "155  SPM"
+irq:0 22 (        0) "156  SPM"
+irq:0 23 (        0) "157  SPM"
+irq:0 24 (        0) "158  SPM"
+irq:0 25 (        0) "159  SPM"
+irq:0 26 (        0) "160  SPM"
+irq:0 27 (        0) "232  CIRQ"
+irq:0 31 (        0) "120  mtk-wdt"
+irq:0 32 (        0) "153  pmic_wrap"
+irq:0 33 (        2) "166  10020000.md32"
+irq:0 34 (        0) "126  TEE IRQ" "mt_emi_mpu"
+irq:0 35 (        0) "139  m4u"
+irq:0 37 (  3427419) "135  mtk_cmdq"
+irq:0 38 (   258812) "136  TEE IRQ"
+irq:0 39 (        0) "137  m4u"
+irq:0 44 (  1274956) "77  i2c-mt65xx"
+irq:0 45 (   521708) "76  i2c-mt65xx"
+irq:0 46 (   791383) "78  i2c-mt65xx"
+irq:0 47 (   231519) "110  1100a000.spi"
+irq:0 48 (        0) "70  mtk-thermal"
+irq:0 49 (    25214) "117  ptp"
+irq:0 50 (   191396) "79  i2c-mt65xx"
+irq:0 51 (    34746) "80  i2c-mt65xx"
+irq:0 52 (    47825) "82  i2c-mt65xx"
+irq:0 53 (  4998461) "134  Afe_ISR_Handle"
+irq:0 54 ( 50981621) "71  11230000.mmc"
+irq:0 55 (        0) "72  11240000.mmc"
+irq:0 56 (   255194) "74  mtk-sdio"
+irq:0 58 (        0) "64  11270000.usb"
+irq:0 59 (  3763991) "217  RGX"
+irq:0 70 (  2579679) "180  DISPSYS"
+irq:0 71 (        0) "181  DISPSYS"
+irq:0 72 (  5565198) "182  DISPSYS"
+irq:0 73 (        0) "183  DISPSYS"
+irq:0 79 (        0) "189  DISPSYS"
+irq:0 82 (     3681) "192  DISPSYS"
+irq:0 84 (        0) "194  DISPSYS"
+irq:0 87 (  5519875) "169  DISPSYS"
+irq:0 88 (    11654) "211  ISP"
+irq:0 91 (        0) "214  ISP"
+irq:0 92 (        0) "215  ISP"
+irq:0 93 (      255) "216  camera-fdvt"
+irq:0 94 (   454205) "204"
+irq:0 96 (        3) "200  jpeg_enc_driver"
+irq:0 97 (        0) "203  jpeg_dec_driver"
+irq:0 99 (      459) "154  mtk-kpd"
+irq:0 100 (      110) "0  rt5514"
+irq:0 101 (        0) "1  11240000.mmc cd"
+irq:0 102 (  1929984) "2  WIFI-eint"
+irq:0 105 (     4064) "5  mt6397-irqchip"
+irq:0 109 (       75) "9  ops_bq24297_int_handler"
+irq:0 113 (        0) "13  ACCDET-eint"
+irq:0 114 (   416136) "14  mtk-tpd"
+irq:0 116 (        0) "16  usb_iddig"
+irq:0 224 (        0) "124  hall_sensor_1"
+irq:0 328 (       18) "4  mt6397_bat_l"
+irq:0 329 (     3519) "5  mt6397_bat_h"
+irq:0 333 (      382) "9  mt6397_pwrkey"
+irq:0 335 (        0) "11  mt6397_thr_h"
+irq:0 338 (       29) "14  ops_mt6397_chrdet"
+irq:0 341 (        0) "17  mt6397_homekey"
+irq:0 342 (        0) "18  mt6397_accdet"
+irq:0 344 (      584) "20  mt6397_rtc"
+irq:0 356 (   575518) "142"
+----- misc resources end -----
+>> parallel.1: pp mod
+>> parallel.2.1: lp read info
+>> parallel.2.2: lp read info
+>> parallel.2.3: lp read info
+----- parallel info -----
+----- parallel info end -----
+>> block.1: block modules
+>> block.2: sysfs drivers
+>> block.3: cdrom
+>> block.4: partition
+----- /proc/partitions -----
+     7        0      87028 loop0
+     7        1       1254 loop1
+     7        2      10240 loop2
+   179        0   30535680 mmcblk0
+   179        1       3072 mmcblk0p1
+   179        2       4608 mmcblk0p2
+   179        3       1024 mmcblk0p3
+   179        4       1024 mmcblk0p4
+   179        5       1024 mmcblk0p5
+   179        6       5120 mmcblk0p6
+   179        7       5120 mmcblk0p7
+   179        8      40448 mmcblk0p8
+   179        9        512 mmcblk0p9
+   179       10       8192 mmcblk0p10
+   179       11      16384 mmcblk0p11
+   179       12      17408 mmcblk0p12
+   179       13    1653248 mmcblk0p13
+   179       14     434176 mmcblk0p14
+   179       15   28343791 mmcblk0p15
+   179       96       4096 mmcblk0rpmb
+   179       64       4096 mmcblk0boot1
+   179       32       1024 mmcblk0boot0
+   179       33          2 mmcblk0boot0p1
+   179       34          2 mmcblk0boot0p2
+   179       35        256 mmcblk0boot0p3
+   179       36        747 mmcblk0boot0p4
+----- /proc/partitions end -----
+disks:
+  mmcblk0
+  mmcblk0rpmb
+  mmcblk0boot1
+  mmcblk0boot0
+partitions:
+  mmcblk0p1
+  mmcblk0p2
+  mmcblk0p3
+  mmcblk0p4
+  mmcblk0p5
+  mmcblk0p6
+  mmcblk0p7
+  mmcblk0p8
+  mmcblk0p9
+  mmcblk0p10
+  mmcblk0p11
+  mmcblk0p12
+  mmcblk0p13
+  mmcblk0p14
+  mmcblk0p15
+  mmcblk0boot0p1
+  mmcblk0boot0p2
+  mmcblk0boot0p3
+  mmcblk0boot0p4
+>> block.5: get sysfs block dev data
+-----  lsscsi -----
+-----  lsscsi end -----
+  block: name = mmcblk0p1, path = /class/block/mmcblk0p1
+    dev = 179:1
+  block: name = mmcblk0p2, path = /class/block/mmcblk0p2
+    dev = 179:2
+  block: name = mmcblk0p3, path = /class/block/mmcblk0p3
+    dev = 179:3
+  block: name = mmcblk0p4, path = /class/block/mmcblk0p4
+    dev = 179:4
+  block: name = mmcblk0p5, path = /class/block/mmcblk0p5
+    dev = 179:5
+  block: name = mmcblk0p6, path = /class/block/mmcblk0p6
+    dev = 179:6
+  block: name = mmcblk0p7, path = /class/block/mmcblk0p7
+    dev = 179:7
+  block: name = mmcblk0p8, path = /class/block/mmcblk0p8
+    dev = 179:8
+  block: name = mmcblk0p9, path = /class/block/mmcblk0p9
+    dev = 179:9
+  block: name = mmcblk0boot0p1, path = /class/block/mmcblk0boot0p1
+    dev = 179:33
+  block: name = mmcblk0boot0p2, path = /class/block/mmcblk0boot0p2
+    dev = 179:34
+  block: name = mmcblk0boot0p3, path = /class/block/mmcblk0boot0p3
+    dev = 179:35
+  block: name = mmcblk0boot0p4, path = /class/block/mmcblk0boot0p4
+    dev = 179:36
+  block: name = loop0, path = /class/block/loop0
+    dev = 7:0
+    range = 1
+  block: name = loop1, path = /class/block/loop1
+    dev = 7:1
+    range = 1
+  block: name = loop2, path = /class/block/loop2
+    dev = 7:2
+    range = 1
+  block: name = loop3, path = /class/block/loop3
+    dev = 7:3
+    range = 1
+  block: name = loop4, path = /class/block/loop4
+    dev = 7:4
+    range = 1
+  block: name = loop5, path = /class/block/loop5
+    dev = 7:5
+    range = 1
+  block: name = loop6, path = /class/block/loop6
+    dev = 7:6
+    range = 1
+  block: name = loop7, path = /class/block/loop7
+    dev = 7:7
+    range = 1
+  block: name = zram0, path = /class/block/zram0
+    dev = 254:0
+    range = 1
+  block: name = mmcblk0rpmb, path = /class/block/mmcblk0rpmb
+    dev = 179:96
+    range = 32
+    block device: bus = block, bus_id = mmcblk0 driver = (null)
+      path = /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+>> block.5: /dev/mmcblk0rpmb
+  block: name = mmcblk0boot0, path = /class/block/mmcblk0boot0
+    dev = 179:32
+    range = 32
+    block device: bus = block, bus_id = mmcblk0 driver = (null)
+      path = /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+>> block.5: /dev/mmcblk0boot0
+  block: name = mmcblk0boot1, path = /class/block/mmcblk0boot1
+    dev = 179:64
+    range = 32
+    block device: bus = block, bus_id = mmcblk0 driver = (null)
+      path = /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+>> block.5: /dev/mmcblk0boot1
+  block: name = mmcblk0, path = /class/block/mmcblk0
+    dev = 179:0
+    range = 32
+    block device: bus = mmc, bus_id = mmc0:0001 driver = mmcblk
+      path = /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001
+>> block.5: /dev/mmcblk0
+  block: name = mmcblk0p10, path = /class/block/mmcblk0p10
+    dev = 179:10
+  block: name = mmcblk0p11, path = /class/block/mmcblk0p11
+    dev = 179:11
+  block: name = mmcblk0p12, path = /class/block/mmcblk0p12
+    dev = 179:12
+  block: name = mmcblk0p13, path = /class/block/mmcblk0p13
+    dev = 179:13
+  block: name = mmcblk0p14, path = /class/block/mmcblk0p14
+    dev = 179:14
+  block: name = mmcblk0p15, path = /class/block/mmcblk0p15
+    dev = 179:15
+>> scsi.1: scsi modules
+>> scsi.2: scsi tape
+sysfs: no such class: scsi_tape
+>> scsi.3: scsi generic
+sysfs: no such class: scsi_generic
+>> usb.1: sysfs drivers
+>> usb.2: usb
+sysfs: no such bus: usb
+>> usb.3.1: joydev mod
+>> usb.3.2: evdev mod
+>> usb.3.3: input
+  input: name = event0, path = /devices/virtual/input/input0/event0
+    dev = 13:64
+    input device: bus = input, bus_id = input0 driver = (null)
+      path = /devices/virtual/input/input0
+  input: name = event1, path = /devices/soc/10010000.keypad/input/input1/event1
+    dev = 13:65
+    input device: bus = platform, bus_id = 10010000.keypad driver = (null)
+      path = /devices/soc/10010000.keypad
+  input: name = event2, path = /devices/virtual/input/input2/event2
+    dev = 13:66
+    input device: bus = input, bus_id = input2 driver = (null)
+      path = /devices/virtual/input/input2
+  input: name = event3, path = /devices/virtual/input/input3/event3
+    dev = 13:67
+    input device: bus = input, bus_id = input3 driver = (null)
+      path = /devices/virtual/input/input3
+  input: name = event4, path = /devices/virtual/input/input4/event4
+    dev = 13:68
+    input device: bus = input, bus_id = input4 driver = (null)
+      path = /devices/virtual/input/input4
+  input: name = event5, path = /devices/virtual/input/input5/event5
+    dev = 13:69
+    input device: bus = input, bus_id = input5 driver = (null)
+      path = /devices/virtual/input/input5
+  input: name = event6, path = /devices/virtual/input/input6/event6
+    dev = 13:70
+    input device: bus = input, bus_id = input6 driver = (null)
+      path = /devices/virtual/input/input6
+  input: name = event7, path = /devices/virtual/input/input7/event7
+    dev = 13:71
+    input device: bus = input, bus_id = input7 driver = (null)
+      path = /devices/virtual/input/input7
+  input: name = input0, path = /devices/virtual/input/input0
+    no dev - ignored
+  input: name = input1, path = /devices/soc/10010000.keypad/input/input1
+    no dev - ignored
+  input: name = input2, path = /devices/virtual/input/input2
+    no dev - ignored
+  input: name = input3, path = /devices/virtual/input/input3
+    no dev - ignored
+  input: name = input4, path = /devices/virtual/input/input4
+    no dev - ignored
+  input: name = input5, path = /devices/virtual/input/input5
+    no dev - ignored
+  input: name = input6, path = /devices/virtual/input/input6
+    no dev - ignored
+  input: name = input7, path = /devices/virtual/input/input7
+    no dev - ignored
+>> usb.3.4: lp
+sysfs: no such class: usb
+>> usb.3.5: serial
+>> modem.1: serial
+******  started child process 6094 (15s/120s)  ******
+******  stopped child process 6094 (120s)  ******
+>> mouse.2: serial
+******  started child process 6095 (20s/20s)  ******
+******  stopped child process 6095 (20s)  ******
+>> input.1: joydev mod
+>> input.1.1: evdev mod
+>> input.2: input
+----- /proc/bus/input/devices -----
+  I: Bus=0019 Vendor=0000 Product=0000 Version=0000
+  N: Name="ACCDET"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input0
+  U: Uniq=
+  H: Handlers=event0 gpufreq_ib dynamic_boost keychord 
+  B: PROP=0
+  B: EV=3
+  B: KEY=80 0 78 0 40c0000 0 0 0
+  
+  I: Bus=0019 Vendor=2454 Product=6500 Version=0010
+  N: Name="mtk-kpd"
+  P: Phys=
+  S: Sysfs=/devices/soc/10010000.keypad/input/input1
+  U: Uniq=
+  H: Handlers=event1 gpufreq_ib dynamic_boost keychord 
+  B: PROP=0
+  B: EV=3
+  B: KEY=1c0000 0 0 0
+  
+  I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+  N: Name="hall_sensors"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input2
+  U: Uniq=
+  H: Handlers=event2 gpufreq_ib dynamic_boost 
+  B: PROP=0
+  B: EV=21
+  B: SW=1
+  
+  I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+  N: Name="hwmdata"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input3
+  U: Uniq=
+  H: Handlers=event3 gpufreq_ib dynamic_boost 
+  B: PROP=0
+  B: EV=5
+  B: REL=6
+  
+  I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+  N: Name="m_alsps_input"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input4
+  U: Uniq=
+  H: Handlers=event4 gpufreq_ib dynamic_boost 
+  B: PROP=0
+  B: EV=d
+  B: REL=6
+  B: ABS=101
+  
+  I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+  N: Name="m_acc_input"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input5
+  U: Uniq=
+  H: Handlers=event5 gpufreq_ib dynamic_boost 
+  B: PROP=0
+  B: EV=d
+  B: REL=c1
+  B: ABS=107
+  
+  I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+  N: Name="mtk-tpd"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input6
+  U: Uniq=
+  H: Handlers=event6 gpufreq_ib dynamic_boost 
+  B: PROP=2
+  B: EV=b
+  B: KEY=400 0 0 0 0 0 0 0 0 0 0
+  B: ABS=6638000 1000003
+  
+  I: Bus=0005 Vendor=0000 Product=0000 Version=0008
+  N: Name="amazon_touch"
+  P: Phys=
+  S: Sysfs=/devices/virtual/input/input7
+  U: Uniq=
+  H: Handlers=event7 gpufreq_ib dynamic_boost 
+  B: PROP=0
+  B: EV=b
+  B: KEY=400 0 0 0 0 0 0 0 0 0 0
+  B: ABS=2650000 1000000
+  
+----- /proc/bus/input/devices end -----
+bus = 25, name = ACCDET
+  handlers = event0 gpufreq_ib dynamic_boost keychord
+  key = 00000080000000000000007800000000040c0000000000000000000000000000
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 25, name = mtk-kpd
+  handlers = event1 gpufreq_ib dynamic_boost keychord
+  key = 001c0000000000000000000000000000
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 0, name = hall_sensors
+  handlers = event2 gpufreq_ib dynamic_boost
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 0, name = hwmdata
+  handlers = event3 gpufreq_ib dynamic_boost
+  rel = 00000006
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 0, name = m_alsps_input
+  handlers = event4 gpufreq_ib dynamic_boost
+  rel = 00000006
+  abs = 00000101
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 0, name = m_acc_input
+  handlers = event5 gpufreq_ib dynamic_boost
+  rel = 000000c1
+  abs = 00000107
+  mouse buttons = 0
+  mouse wheels = 2
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 0, name = mtk-tpd
+  handlers = event6 gpufreq_ib dynamic_boost
+  key = 0000040000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  abs = 0663800001000003
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+bus = 5, name = amazon_touch
+  handlers = event7 gpufreq_ib dynamic_boost
+  key = 0000040000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  abs = 0265000001000000
+  mouse buttons = 0
+  mouse wheels = 0
+  is_mouse = 0
+  is_joystick = 0
+unknown non-USB input device
+>> kbd.2: uml
+>> cpu.1: cpuinfo
+----- /proc/cpuinfo -----
+  Processor	: AArch64 Processor rev 0 (aarch64)
+  processor	: 0
+  model name	: AArch64 Processor rev 0 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd03
+  CPU revision	: 2
+  
+  processor	: 1
+  model name	: AArch64 Processor rev 0 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd03
+  CPU revision	: 2
+  
+  processor	: 2
+  model name	: AArch64 Processor rev 0 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd08
+  CPU revision	: 0
+  
+  processor	: 3
+  model name	: AArch64 Processor rev 0 (aarch64)
+  BogoMIPS	: 26.00
+  Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt lpae evtstrm aes pmull sha1 sha2 crc32
+  CPU implementer	: 0x41
+  CPU architecture: 8
+  CPU variant	: 0x0
+  CPU part	: 0xd08
+  CPU revision	: 0
+  
+  Hardware	: MT8173
+  Serial		: 1dd218aca201a37c
+----- /proc/cpuinfo end -----
+>> kbd.3: serial console
+>> fb.1: read info
+>> net.1: get network data
+  net interface: name = wlan0, path = /class/net/wlan0
+    type = 1
+    carrier = 1
+    hw_addr = 24:4c:e3:9e:2f:da
+    net device: path = /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:1
+    net driver: name = mtk_sdio_client, path = /bus/sdio/drivers/mtk_sdio_client
+  wlan0: ethtool permanent hw address[6]: 24:4c:e3:9e:2f:da
+    ethtool private flags: 0
+  net interface: name = tunl0, path = /class/net/tunl0
+    type = 768
+    hw_addr = 00:00:00:00
+  tunl0: ethtool permanent hw address[4]: 00:00:00:00
+    ethtool private flags: 0
+  net interface: name = lo, path = /class/net/lo
+    type = 772
+    carrier = 1
+    hw_addr = 00:00:00:00:00:00
+  lo: ethtool permanent hw address[6]: 00:00:00:00:00:00
+    GDRVINFO ethtool error: Operation not supported on transport endpoint
+    ethtool private flags: 0
+  net interface: name = sit0, path = /class/net/sit0
+    type = 776
+    hw_addr = 00:00:00:00
+  sit0: ethtool permanent hw address[4]: 00:00:00:00
+    ethtool private flags: 0
+  net interface: name = p2p0, path = /class/net/p2p0
+    type = 1
+    carrier = 1
+    hw_addr = 26:4c:e3:9e:2f:da
+  p2p0: ethtool permanent hw address[6]: 26:4c:e3:9e:2f:da
+    GDRVINFO ethtool error: Operation not supported on transport endpoint
+    ethtool private flags: 0
+  net interface: name = ifb1, path = /class/net/ifb1
+    type = 1
+    hw_addr = c6:6f:bd:fd:7c:eb
+  ifb1: ethtool permanent hw address[6]: 00:00:00:00:00:00
+    GDRVINFO ethtool error: Operation not supported on transport endpoint
+    ethtool private flags: 0
+  net interface: name = ifb0, path = /class/net/ifb0
+    type = 1
+    hw_addr = c6:53:4d:1e:24:8b
+  ifb0: ethtool permanent hw address[6]: 00:00:00:00:00:00
+    GDRVINFO ethtool error: Operation not supported on transport endpoint
+    ethtool private flags: 0
+  net interface: name = ip6tnl0, path = /class/net/ip6tnl0
+    type = 769
+    hw_addr = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+  ip6tnl0: ethtool permanent hw address[16]: fa:81:89:ba:32:63:00:00:00:00:00:00:00:00:00:00
+    GDRVINFO ethtool error: Operation not supported on transport endpoint
+    ethtool private flags: 0
+  tunl0: GLINK ethtool error: Operation not supported on transport endpoint
+  sit0: GLINK ethtool error: Operation not supported on transport endpoint
+  ifb1: GLINK ethtool error: Operation not supported on transport endpoint
+  ifb0: GLINK ethtool error: Operation not supported on transport endpoint
+  ip6tnl0: GLINK ethtool error: Operation not supported on transport endpoint
+>> pppoe.1: looking for pppoe
+>> pppoe.2: discovery
+p2p0: socket failed: m
+ifb1: socket failed: m
+ifb0: socket failed: m
+>> wlan.1: detecting wlan features
+>> isdn.1: list
+>> dsl.1: list
+>> int.2: cdrom
+>> int.3: media
+>> int.4.1: /dev/mmcblk0rpmb
+  read_block0: open(/dev/mmcblk0rpmb) failed
+>> int.4.2: /dev/mmcblk0boot0
+  read_block0: open(/dev/mmcblk0boot0) failed
+>> int.4.3: /dev/mmcblk0boot1
+  read_block0: open(/dev/mmcblk0boot1) failed
+>> int.4.4: /dev/mmcblk0
+  read_block0: open(/dev/mmcblk0) failed
+>> int.4: floppy
+>> int.6: mouse
+>> int.7: hdb
+>> int.7.1: modules
+>> int.8: usbscsi
+>> int.9: hotplug
+>> int.10: modem
+>> int.11: wlan
+>> int.12: udev
+-----  udevinfo -----
+-----  udevinfo end -----
+>> int.13: device names
+>> int.16: parent
+  prop read: rdCR.n_7QNeEnh23 (failed)
+  old prop read: rdCR.n_7QNeEnh23 (failed)
+  prop read: rdCR.CxwsZFjVASF (failed)
+  old prop read: rdCR.CxwsZFjVASF (failed)
+  prop read: a0Dv.TAOITtdfnIE (failed)
+  old prop read: a0Dv.TAOITtdfnIE (failed)
+  prop read: raGZ.TzQFl_vZhO4 (failed)
+  old prop read: raGZ.TzQFl_vZhO4 (failed)
+  prop read: caAK.VoJli79_k95 (failed)
+  old prop read: caAK.VoJli79_k95 (failed)
+  prop read: Kks1.fxLrFPBC_ED (failed)
+  old prop read: Kks1.fxLrFPBC_ED (failed)
+  prop read: nv66.dxp7paDlLdF (failed)
+  old prop read: nv66.dxp7paDlLdF (failed)
+  prop read: ni5P.Fxp0d3BezAE (failed)
+  old prop read: ni5P.Fxp0d3BezAE (failed)
+  prop read: Hj0w.Fxp0d3BezAE (failed)
+  old prop read: Hj0w.Fxp0d3BezAE (failed)
+  prop read: w_Wz.SE1wIdpsiiC (failed)
+  old prop read: w_Wz.SE1wIdpsiiC (failed)
+  prop read: NAn1.SE1wIdpsiiC (failed)
+  old prop read: NAn1.SE1wIdpsiiC (failed)
+  prop read: qL16.SE1wIdpsiiC (failed)
+  old prop read: qL16.SE1wIdpsiiC (failed)
+  prop read: HXHA.SE1wIdpsiiC (failed)
+  old prop read: HXHA.SE1wIdpsiiC (failed)
+  prop read: kuG_.Fxp0d3BezAE (failed)
+  old prop read: kuG_.Fxp0d3BezAE (failed)
+  prop read: HAKk.Fxp0d3BezAE (failed)
+  old prop read: HAKk.Fxp0d3BezAE (failed)
+  prop read: l7UW.SE1wIdpsiiC (failed)
+  old prop read: l7UW.SE1wIdpsiiC (failed)
+  prop read: CJka.SE1wIdpsiiC (failed)
+  old prop read: CJka.SE1wIdpsiiC (failed)
+  prop read: fU_e.SE1wIdpsiiC (failed)
+  old prop read: fU_e.SE1wIdpsiiC (failed)
+  prop read: 6gEj.SE1wIdpsiiC (failed)
+  old prop read: 6gEj.SE1wIdpsiiC (failed)
+  prop read: ZrUn.SE1wIdpsiiC (failed)
+  old prop read: ZrUn.SE1wIdpsiiC (failed)
+  prop read: 01lr.SE1wIdpsiiC (failed)
+  old prop read: 01lr.SE1wIdpsiiC (failed)
+  prop read: iTwK.SE1wIdpsiiC (failed)
+  old prop read: iTwK.SE1wIdpsiiC (failed)
+  prop read: AfAP.SE1wIdpsiiC (failed)
+  old prop read: AfAP.SE1wIdpsiiC (failed)
+  prop read: dqQT.SE1wIdpsiiC (failed)
+  old prop read: dqQT.SE1wIdpsiiC (failed)
+  prop read: 8vbH.SE1wIdpsiiC (failed)
+  old prop read: 8vbH.SE1wIdpsiiC (failed)
+  prop read: b4sL.SE1wIdpsiiC (failed)
+  old prop read: b4sL.SE1wIdpsiiC (failed)
+  prop read: 2G6Q.SE1wIdpsiiC (failed)
+  old prop read: 2G6Q.SE1wIdpsiiC (failed)
+  prop read: VRMU.SE1wIdpsiiC (failed)
+  old prop read: VRMU.SE1wIdpsiiC (failed)
+  prop read: yccY.SE1wIdpsiiC (failed)
+  old prop read: yccY.SE1wIdpsiiC (failed)
+  prop read: Posc.SE1wIdpsiiC (failed)
+  old prop read: Posc.SE1wIdpsiiC (failed)
+  prop read: 3mXp.SE1wIdpsiiC (failed)
+  old prop read: 3mXp.SE1wIdpsiiC (failed)
+  prop read: Wxnt.SE1wIdpsiiC (failed)
+  old prop read: Wxnt.SE1wIdpsiiC (failed)
+  prop read: z62y.SE1wIdpsiiC (failed)
+  old prop read: z62y.SE1wIdpsiiC (failed)
+  prop read: QII0.SE1wIdpsiiC (failed)
+  old prop read: QII0.SE1wIdpsiiC (failed)
+  prop read: rdCR.j8NaKXDZtZ6 (failed)
+  old prop read: rdCR.j8NaKXDZtZ6 (failed)
+  prop read: wkFv.j8NaKXDZtZ6 (failed)
+  old prop read: wkFv.j8NaKXDZtZ6 (failed)
+  prop read: +rIN.j8NaKXDZtZ6 (failed)
+  old prop read: +rIN.j8NaKXDZtZ6 (failed)
+  prop read: 4zLr.j8NaKXDZtZ6 (failed)
+  old prop read: 4zLr.j8NaKXDZtZ6 (failed)
+  prop read: AYEt.QXn1l67RSa1 (failed)
+  old prop read: AYEt.QXn1l67RSa1 (failed)
+  prop read: OgUs.GSopYcFr9cF (failed)
+  old prop read: OgUs.GSopYcFr9cF (failed)
+  prop read: ZsBS.GQNx7L4uPNA (failed)
+  old prop read: ZsBS.GQNx7L4uPNA (failed)
+  prop read: wl2P.nfEXJulusj6 (failed)
+  old prop read: wl2P.nfEXJulusj6 (failed)
+  prop read: pG9W.ndpeucax6V1 (failed)
+  old prop read: pG9W.ndpeucax6V1 (failed)
+  prop read: lpif.ndpeucax6V1 (failed)
+  old prop read: lpif.ndpeucax6V1 (failed)
+  prop read: IeSb.ndpeucax6V1 (failed)
+  old prop read: IeSb.ndpeucax6V1 (failed)
+  prop read: HtAv.GSopYcFr9cF (failed)
+  old prop read: HtAv.GSopYcFr9cF (failed)
+----- /proc/modules -----
+  ufsd 200473 0 - Live 0x0000000000000000 (PO)
+----- /proc/modules end -----
+  used irqs: 1,2,4,5,6,7,8,11,17,21,22,23,24,25,26,27,31,32,33,34,35,37,38,39,44,45,46,47,48,49,50,51,52,53,54,55,56,58,59
+=========== end debug info ============
+01: None 00.0: 10107 System
+  [Created at sys.61]
+  Unique ID: rdCR.n_7QNeEnh23
+  Hardware Class: system
+  Model: "System"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+06: None 00.0: 10102 Main Memory
+  [Created at memory.74]
+  Unique ID: rdCR.CxwsZFjVASF
+  Hardware Class: memory
+  Model: "Main Memory"
+  Memory Range: 0x00000000-0x717b5fff (rw)
+  Memory Size: 1 GB + 768 MB
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+07: None 00.0: 0c03 USB Controller (UHCI)
+  [Created at pci.1049]
+  Unique ID: a0Dv.TAOITtdfnIE
+  SysFS ID: /devices/soc/11270000.usb
+  SysFS BusID: 11270000.usb
+  Hardware Class: usb controller
+  Model: "ARM USB controller"
+  Device: "ARM USB controller"
+  Driver: "musb-mtu3d"
+  Module Alias: "of:NusbT<NULL>Cmediatek,mt8173-ssusb"
+  Driver Info #0:
+    Driver Status: uhci-hcd is not active
+    Driver Activation Cmd: "modprobe uhci-hcd"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+08: MMC 00.0: 11700 MMC Controller
+  [Created at pci.1867]
+  Unique ID: raGZ.TzQFl_vZhO4
+  SysFS ID: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001
+  SysFS BusID: mmc0:0001
+  Model: "MMC Controller"
+  Vendor: int 0x6015 
+  Device: int 0x0000 "MMC Controller"
+  Driver: "mmcblk"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+09: MMC 02.0: 11700 MMC Controller
+  [Created at pci.1867]
+  Unique ID: caAK.VoJli79_k95
+  SysFS ID: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001
+  SysFS BusID: mmc2:0001
+  Model: "SDIO Controller 2"
+  Vendor: int 0x6015 
+  Device: int 0x0002 "SDIO Controller 2"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+10: SDIO 00.0: 0280 Network controller
+  [Created at pci.1939]
+  Unique ID: Kks1.fxLrFPBC_ED
+  Parent ID: caAK.VoJli79_k95
+  SysFS ID: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:1
+  SysFS BusID: mmc2:0001:1
+  Hardware Class: network
+  Model: "MediaTek Network controller"
+  Vendor: sdio 0x037a "MediaTek Inc."
+  Device: sdio 0x6630 
+  Driver: "mtk_sdio_client"
+  Device File: wlan0
+  HW Address: 24:4c:e3:9e:2f:da
+  Permanent HW Address: 24:4c:e3:9e:2f:da
+  Link detected: yes
+  Module Alias: "sdio:c00v037Ad6630"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #9 (MMC Controller)
+
+11: SDIO 00.0: 0000 Unclassified device
+  [Created at pci.1939]
+  Unique ID: nv66.dxp7paDlLdF
+  Parent ID: caAK.VoJli79_k95
+  SysFS ID: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:2
+  SysFS BusID: mmc2:0001:2
+  Hardware Class: unknown
+  Model: "MediaTek Unclassified device"
+  Vendor: sdio 0x037a "MediaTek Inc."
+  Device: sdio 0x6630 
+  Driver: "mtk_sdio_client"
+  Module Alias: "sdio:c00v037Ad6630"
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #9 (MMC Controller)
+
+12: None 00.0: 10600 Disk
+  [Created at block.245]
+  Unique ID: ni5P.Fxp0d3BezAE
+  Parent ID: raGZ.TzQFl_vZhO4
+  SysFS ID: /class/block/mmcblk0rpmb
+  SysFS BusID: mmcblk0
+  SysFS Device Link: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+  Hardware Class: disk
+  Model: "Disk"
+  Driver: "mmcblk"
+  Device File: /dev/mmcblk0rpmb
+  Device Number: block 179:96-179:127
+  Drive status: no medium
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #8 (MMC Controller)
+
+13: None 00.0: 10600 Disk
+  [Created at block.245]
+  Unique ID: Hj0w.Fxp0d3BezAE
+  Parent ID: raGZ.TzQFl_vZhO4
+  SysFS ID: /class/block/mmcblk0boot0
+  SysFS BusID: mmcblk0
+  SysFS Device Link: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+  Hardware Class: disk
+  Model: "Disk"
+  Driver: "mmcblk"
+  Device File: /dev/mmcblk0boot0
+  Device Number: block 179:32-179:63
+  Drive status: no medium
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #8 (MMC Controller)
+
+14: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: w_Wz.SE1wIdpsiiC
+  Parent ID: Hj0w.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0boot0/mmcblk0boot0p1
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p1
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #13 (Disk)
+
+15: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: NAn1.SE1wIdpsiiC
+  Parent ID: Hj0w.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0boot0/mmcblk0boot0p2
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p2
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #13 (Disk)
+
+16: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: qL16.SE1wIdpsiiC
+  Parent ID: Hj0w.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0boot0/mmcblk0boot0p3
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p3
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #13 (Disk)
+
+17: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: HXHA.SE1wIdpsiiC
+  Parent ID: Hj0w.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0boot0/mmcblk0boot0p4
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p4
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #13 (Disk)
+
+18: None 00.0: 10600 Disk
+  [Created at block.245]
+  Unique ID: kuG_.Fxp0d3BezAE
+  Parent ID: raGZ.TzQFl_vZhO4
+  SysFS ID: /class/block/mmcblk0boot1
+  SysFS BusID: mmcblk0
+  SysFS Device Link: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001/block/mmcblk0
+  Hardware Class: disk
+  Model: "Disk"
+  Driver: "mmcblk"
+  Device File: /dev/mmcblk0boot1
+  Device Number: block 179:64-179:95
+  Drive status: no medium
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #8 (MMC Controller)
+
+19: None 00.0: 10600 Disk
+  [Created at block.245]
+  Unique ID: HAKk.Fxp0d3BezAE
+  Parent ID: raGZ.TzQFl_vZhO4
+  SysFS ID: /class/block/mmcblk0
+  SysFS BusID: mmc0:0001
+  SysFS Device Link: /devices/soc/11230000.mmc/mmc_host/mmc0/mmc0:0001
+  Hardware Class: disk
+  Model: "Disk"
+  Driver: "mtk-msdc", "mmcblk"
+  Device File: /dev/mmcblk0
+  Device Number: block 179:0-179:31
+  Drive status: no medium
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #8 (MMC Controller)
+
+20: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: l7UW.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p1
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p1
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+21: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: CJka.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p2
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p2
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+22: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: fU_e.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p3
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p3
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+23: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: 6gEj.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p4
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p4
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+24: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: ZrUn.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p5
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p5
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+25: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: 01lr.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p6
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p6
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+26: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: iTwK.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p7
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p7
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+27: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: AfAP.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p8
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p8
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+28: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: dqQT.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p9
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p9
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+29: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: 8vbH.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p10
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p10
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+30: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: b4sL.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p11
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p11
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+31: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: 2G6Q.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p12
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p12
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+32: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: VRMU.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p13
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p13
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+33: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: yccY.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p14
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p14
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+34: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: Posc.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0p15
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0p15
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+35: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: 3mXp.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0boot0p1
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p1
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+36: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: Wxnt.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0boot0p2
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p2
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+37: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: z62y.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0boot0p3
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p3
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+38: None 00.0: 11300 Partition
+  [Created at block.434]
+  Unique ID: QII0.SE1wIdpsiiC
+  Parent ID: HAKk.Fxp0d3BezAE
+  SysFS ID: /class/block/mmcblk0/mmcblk0boot0p4
+  Hardware Class: partition
+  Model: "Partition"
+  Device File: /dev/mmcblk0boot0p4
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #19 (Disk)
+
+39: None 00.0: 10103 CPU
+  [Created at cpu.275]
+  Unique ID: rdCR.j8NaKXDZtZ6
+  Hardware Class: cpu
+  Arch: ARM
+  Vendor: "ARM Limited"
+  Model: 0.0.0 "AArch64 Processor rev 0 (aarch64)"
+  Platform: "MT8173"
+  Features: half,thumb,fastmult,vfp,edsp,neon,vfpv3,tls,vfpv4,idiva,idivt,lpae,evtstrm,aes,pmull,sha1,sha2,crc32
+  BogoMips: 26.00
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+40: None 01.0: 10103 CPU
+  [Created at cpu.275]
+  Unique ID: wkFv.j8NaKXDZtZ6
+  Hardware Class: cpu
+  Arch: ARM
+  Vendor: "ARM Limited"
+  Model: 0.0.0 "AArch64 Processor rev 0 (aarch64)"
+  Platform: "MT8173"
+  Features: half
+  BogoMips: 26.00
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+41: None 02.0: 10103 CPU
+  [Created at cpu.275]
+  Unique ID: +rIN.j8NaKXDZtZ6
+  Hardware Class: cpu
+  Arch: ARM
+  Vendor: "ARM Limited"
+  Model: 0.0.0 "AArch64 Processor rev 0 (aarch64)"
+  Platform: "MT8173"
+  Features: half
+  BogoMips: 26.00
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+42: None 03.0: 10103 CPU
+  [Created at cpu.275]
+  Unique ID: 4zLr.j8NaKXDZtZ6
+  Hardware Class: cpu
+  Arch: ARM
+  Vendor: "ARM Limited"
+  Model: 0.0.0 "AArch64 Processor rev 0 (aarch64)"
+  Platform: "MT8173"
+  Features: half
+  BogoMips: 26.00
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+43: None 00.0: 1070a WLAN
+  [Created at net.126]
+  Unique ID: AYEt.QXn1l67RSa1
+  Parent ID: Kks1.fxLrFPBC_ED
+  SysFS ID: /class/net/wlan0
+  SysFS Device Link: /devices/soc/11260000.sdio/mmc_host/mmc2/mmc2:0001/mmc2:0001:1
+  Hardware Class: network interface
+  Model: "WLAN network interface"
+  Driver: "mtk_sdio_client"
+  Device File: wlan0
+  HW Address: 24:4c:e3:9e:2f:da
+  Permanent HW Address: 24:4c:e3:9e:2f:da
+  Link detected: yes
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+  Attached to: #10 (Network controller)
+
+44: None 00.0: 10780 Network Interface
+  [Created at net.126]
+  Unique ID: OgUs.GSopYcFr9cF
+  SysFS ID: /class/net/tunl0
+  Hardware Class: network interface
+  Model: "Network Interface"
+  Device File: tunl0
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+45: None 00.0: 10700 Loopback
+  [Created at net.126]
+  Unique ID: ZsBS.GQNx7L4uPNA
+  SysFS ID: /class/net/lo
+  Hardware Class: network interface
+  Model: "Loopback network interface"
+  Device File: lo
+  Link detected: yes
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+46: None 00.0: 10781 Network Interface
+  [Created at net.126]
+  Unique ID: wl2P.nfEXJulusj6
+  SysFS ID: /class/net/sit0
+  Hardware Class: network interface
+  Model: "Network Interface"
+  Device File: sit0
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+47: None 00.0: 10701 Ethernet
+  [Created at net.126]
+  Unique ID: pG9W.ndpeucax6V1
+  SysFS ID: /class/net/p2p0
+  Hardware Class: network interface
+  Model: "Ethernet network interface"
+  Device File: p2p0
+  HW Address: 26:4c:e3:9e:2f:da
+  Permanent HW Address: 26:4c:e3:9e:2f:da
+  Link detected: yes
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+48: None 01.0: 10701 Ethernet
+  [Created at net.126]
+  Unique ID: lpif.ndpeucax6V1
+  SysFS ID: /class/net/ifb1
+  Hardware Class: network interface
+  Model: "Ethernet network interface"
+  Device File: ifb1
+  HW Address: c6:6f:bd:fd:7c:eb
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+49: None 00.0: 10701 Ethernet
+  [Created at net.126]
+  Unique ID: IeSb.ndpeucax6V1
+  SysFS ID: /class/net/ifb0
+  Hardware Class: network interface
+  Model: "Ethernet network interface"
+  Device File: ifb0
+  HW Address: c6:53:4d:1e:24:8b
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+50: None 00.0: 10780 Network Interface
+  [Created at net.126]
+  Unique ID: HtAv.GSopYcFr9cF
+  SysFS ID: /class/net/ip6tnl0
+  Hardware Class: network interface
+  Model: "Network Interface"
+  Device File: ip6tnl0
+  Permanent HW Address: fa:81:89:ba:32:63:00:00:00:00:00:00:00:00:00:00
+  Config Status: cfg=new, avail=yes, need=no, active=unknown
