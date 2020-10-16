@@ -1,5 +1,6 @@
-import discord, random, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
+import discord, random, speedtest, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
 from discord import ext
+import humanize as h
 from random import choice
 from io import BytesIO
 from utils.tools import *
@@ -414,35 +415,31 @@ class Fun(commands.Cog):
 		avatar.save("data/trigger.png")
 		await ctx.send(file=discord.File("data/trigger.png"))
 	@commands.command()
-	async def spotify(self, ctx, user:discord.Member):
-		"""Get the current song that you or another user is playing"""
-		if user is None:
-			user = ctx.author
-		activity = user.activity
-		if activity is None:
-			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
-			return
-		if activity.type == discord.ActivityType.listening:
-			embed = discord.Embed(description="\u200b")
-			embed.add_field(name="Artists", value=", ".join(activity.artists))
-			embed.add_field(name="Album", value=activity.album)
-			embed.add_field(name="Duration", value=str(activity.duration)[3:].split(".", 1)[0])
-			embed.title = "**{}**".format(activity.title)
-			embed.set_thumbnail(url=activity.album_cover_url)
-			embed.url = "https://open.spotify.com/track/{}".format(activity.track_id)
-			embed.color = activity.color
-			embed.set_footer(text="{} - is currently playing this song".format(user.display_name), icon_url=get_avatar(user))
-			await ctx.send(embed=embed)
-		else:
-			await ctx.send("{} is not playing anything on spotify!".format(user.display_name))
-			return
-	@commands.command()
 	async def tableflip(self, ctx):
 		# I hope this unicode doesn't break
 		"""(╯°□°）╯︵ ┻━┻"""
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/reactions/tableflip.gif"))
+	
+	@commands.command(aliases=['speedtest', 'speed'],help='Shows Information about the system that the bot is running on')
+	@commands.cooldown(1, 10, commands.BucketType.guild)
+	async def system(self,msg):
+		Speed = speedtest.Speedtest()
+		Speed.get_best_server()
 
+		upload = Speed.upload(threads=None)
+		download = Speed.download(threads=None)
+
+		try:
+
+			em = discord.Embed(color=discord.Color.red(), title="System Connection Speed",)
+
+			em.add_field(name="System Connection info",value=f"{h.naturalsize(download)}/s Down {h.naturalsize(upload)}/s Up",inline=True)
+
+
+			await msg.send(embed=em)
+		except Exception as e:
+			await msg.send(f"Failed to get system info: {e} ")
 	@commands.command()
 	async def unflip(self, ctx):
 		# I hope this unicode doesn't break
