@@ -390,11 +390,13 @@ class Admin(commands.Cog):
 		"""create a text channel. Args are name, and slowmodetime in seconds"""
 		guild = ctx.guild
 		await ctx.guild.create_text_channel(name=name, slowmode_delay=slowmodetime)
-		embed=discord.Embed(title="Channel created", description="A Text Channel Named {} was made.".format(name), color=0xffc0cb)
-		await ctx.send(embed=embed)
+		msg = discord.Embed(title="CHANNEL CREATED")
+		msg.add_field(name= "Channel Name: ", value=name)
+		msg.add_field(name= "Slowmode: ", value=slowmodetime)
+		await ctx.send(embed=msg)
 		for channel in guild.channels:
-			if channel.name == "logs":
-				await channel.send(embed=embed)
+			if channel.name == "logs":	
+				await channel.send(embed=msg)
 	@commands.command()
 	@commands.guild_only()
 	@has_permissions(manage_channels=True)
