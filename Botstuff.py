@@ -5,7 +5,7 @@ from utils.language import Language
 from utils.mysql import *
 from utils.channel_logger import Channel_Logger
 from utils.tools import *
-from utils import checks
+from utils import checks, default
 from discord.ext.commands import Bot, has_permissions, bot_has_permissions, MissingPermissions
 
 bot_status = discord.Status.online
@@ -71,6 +71,16 @@ class Botstuff(commands.Cog):
 						extensions.append(ext)
 						pass
 		return extensions
+	@commands.command()
+	@commands.guild_only()
+	async def joinedat(self, ctx, *, user: discord.Member = None):
+		""" Check when a user joined the current server """
+		user = user or ctx.author
+
+		embed = discord.Embed(colour=user.top_role.colour.value)
+		embed.set_thumbnail(url=user.avatar_url)
+		embed.description = f'**{user}** joined **{ctx.guild.name}**\n{default.date(user.joined_at)}'
+		await ctx.send(embed=embed)
 	@commands.command(description="About the Bot")
 	async def about(self, ctx):
 		embed = discord.Embed(color=0x676767, description=str(len(self.bot.commands)) + " commands")

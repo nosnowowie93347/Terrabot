@@ -43,6 +43,7 @@ class Embed(commands.Cog):
 	@commands.command(
 		name='embed',
 		description='The embed command',
+		help="create an embed"
 	)
 	async def embed_command(self, ctx):
 

@@ -385,7 +385,7 @@ class Fun(commands.Cog):
 			await ctx.send("{0} tried to fight {1} with nothing so {1} beat the breaks off of them!".format(ctx.author.mention, user))
 			return
 		await ctx.send("{} used **{}** on **{}** {}".format(ctx.author.mention, weapon, user, random.choice(fight_results).replace("%user%", user).replace("%attacker%", ctx.author.mention)))
-	@commands.command(description="moo")
+	@commands.command(description="moo", help="use the cows command to list the different types", usage="[type] [message]")
 	async def cowsay(self, ctx, type:str, *, message:str):
 		try:
 			cow = cowList[type.lower()]
@@ -462,7 +462,7 @@ class Fun(commands.Cog):
 		cat2 = random.choice(cats)
 		
 		await ctx.send(cat2)
-	@commands.command()
+	@commands.command(enabled=False)
 	async def heal(self, ctx, member:discord.Member):
 		"""Heals a person. NOTE: Just for fun."""
 		await ctx.send(f"Attempting to heal {member.mention}")
