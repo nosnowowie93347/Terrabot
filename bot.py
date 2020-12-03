@@ -6,7 +6,11 @@ from pathlib import Path
 from random import choice, randint, randrange
 from discord.ext import commands
 import discord.utils
+import motor.motor_asyncio
+from pymongo import MongoClient
+import utils.json_loader
 from utils.tools import *
+from utils.mongo import Document
 from utils.channel_logger import Channel_Logger
 from discord.utils import get
 from utils.language import Language
@@ -53,6 +57,10 @@ bot.colors = {
   'DARK_RED': 0x992D22,
   'DARK_NAVY': 0x2C3E50
 }
+bot.connection_url = config.connection_url
+bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
+bot.db = bot.mongo["pinkalicious"]
+bot.command_usage = Document(bot.db, "command_usage")
 bot.color_list = [c for c in bot.colors.values()]
 now = datetime.datetime.now()
 conn = sqlite3.connect("data/Ruby.db")
@@ -79,18 +87,26 @@ lines = open('words.txt').read().splitlines()
 startTime = int(time.time())
 compliments = open("Compliments.txt", encoding='utf8').read().splitlines()
 myline = random.choice(lines)
+bot.blacklisted_users = []
+cwd = Path(__file__).parents[0]
+cwd = str(cwd)
+bot.cwd = cwd
 @bot.event
 async def on_ready():
+	data = utils.json_loader.read_json("blacklist")
+	bot.blacklisted_users = data["blacklistedUsers"]
+	print(bot.blacklisted_users)
 	print("Hey! I'm Terrabot!")
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	bot.load_extension("EightBall")
-	bot.load_extension("Ownercommands")
+	bot.load_extension("cogs.Ownercommands")
 	bot.load_extension("cog2")
 	bot.load_extension("Helpme")
 	bot.load_extension("cogs3")
 	bot.load_extension("Help")
 	bot.load_extension("giveaway")
+	bot.load_extension("usage")
 	bot.load_extension("Math")
 	bot.load_extension("Fun")
 	bot.load_extension("UmmStuff")
@@ -105,7 +121,7 @@ async def on_ready():
 	bot.load_extension("cogs4")
 	print(time.time())
 	print(len(bot.commands))
-	statuses = ["Minecraft", "Tmodloader", "Banning Bowling Pins", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
+	statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
@@ -123,6 +139,8 @@ async def on_message(message):
 			await message.channel.send("You too!")
 
 	if message.author.bot:
+		return
+	if message.author.id in bot.blacklisted_users:
 		return
 	
 	await bot.process_commands(message)
@@ -208,30 +226,7 @@ async def on_command_error(ctx, error):
 	#  pass
 	#  log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
 
-@bot.event
-async def on_member_join(user): 
-	member = user
-	
-	channel = discord.utils.get(user.guild.text_channels, name="logs")
-	if channel:
-		embed = discord.Embed(description="Welcome to our guild!", color=random.choice(bot.color_list))
-		embed.set_thumbnail(url=user.avatar_url)
-		embed.set_author(name=user.name, icon_url=user.avatar_url)
-		embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-		embed.timestamp = datetime.datetime.utcnow()
 
-		await channel.send(embed=embed)
-	try:
-		rules = discord.Embed(title="Rules", description="These are the rules", color=0xff00ae)
-		rules.add_field(name="1", value="Leave banning the bots to Admins/server owner")
-		rules.add_field(name="2", value="Behave/use common sense")
-		rules.add_field(name="3", value="Just don't be a jerk. Be your kindest self, follow golden rule")
-		rules.add_field(name="4", value="Admins and maybe staff will purge channels at times")
-		rules.add_field(name="5", value="Absolutely no NSFW content outside of NSFW channels. This will result in automatic kick and if it happens again, ban.")
-		if not user.bot:
-			await user.send(embed=rules)
-	except discord.errors.Forbidden:
-		return
 @bot.event
 async def on_member_remove(member):
 	channel = discord.utils.get(member.guild.text_channels, name="logs")
@@ -246,13 +241,7 @@ async def on_member_remove(member):
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
-def read_json(filename):
-	with open(f"{cwd}/bot_config/{filename}.json", "r") as file:
-		data = json.load(file)
-	return data
-def write_json(data, filename):
-	with open(f"{cwd}/bot_config/{filename}.json", "w") as file:
-		json.dump(data, file, indent=4)
+
 
 @bot.command()
 @commands.is_owner()
@@ -292,7 +281,7 @@ async def purge(ctx, number: int):
 @bot.command(name="hostinfo")
 async def hostinfo(ctx):
 	"""
-	A usefull command that displays bot statistics.
+	A useful command that displays bot statistics.
 	"""
 	bot.version = 3.3
 	pythonVersion = platform.python_version()
@@ -358,21 +347,21 @@ async def dicksize_error(ctx, error):
 				userembed.add_field(name="Command --> ``dicksize <user>``", value="Info --> `says how big of a dick a member has.`", inline=False)
 				await ctx.send(embed=userembed)
 				await ctx.send("You need to specify a member!")
-@bot.command()
+@bot.command(help="Displays what a user is listening to on Spotify", usage="[user]")
 async def spotify(ctx, user: discord.Member=None):
-    user = user or ctx.author
-    for activity in user.activities:
-        if isinstance(activity, Spotify):
-            em = discord.Embed(color=activity.color)
-            em.title = f'{user.name} is listening to {activity.title}'
-            em.set_thumbnail(url=activity.album_cover_url)
-            em.description = f"**Song Name**: {activity.title}\n**Song Aetist**: {activity.artist}\n**Song Album**: {activity.album}\n**Song Lenght**: {pendulum.duration(seconds=activity.duration.total_seconds()).in_words(locale='en')}"
-            await ctx.send(embed=em)
-            break
-    else:
-          embed = discord.Embed(color=0xff0000)
-          embed.title = f'{user.name} is not listening Spotify right now!'
-          await ctx.send(embed=embed)
+	user = user or ctx.author
+	for activity in user.activities:
+		if isinstance(activity, Spotify):
+			em = discord.Embed(color=activity.color)
+			em.title = f'{user.name} is listening to {activity.title}'
+			em.set_thumbnail(url=activity.album_cover_url)
+			em.description = f"**Song Name**: {activity.title}\n**Song Aetist**: {activity.artist}\n**Song Album**: {activity.album}\n**Song Lenght**: {pendulum.duration(seconds=activity.duration.total_seconds()).in_words(locale='en')}"
+			await ctx.send(embed=em)
+			break
+	else:
+		  embed = discord.Embed(color=0xff0000)
+		  embed.title = f'{user.name} is not listening Spotify right now!'
+		  await ctx.send(embed=embed)
 @bot.command()
 async def goodmorning(ctx):
 	"""It's a good morning"""
@@ -750,13 +739,9 @@ async def rabbit(ctx):
 	rabbitimage = open("rabbits.txt").read().splitlines()
 	image = random.choice(rabbitimage)
 	await ctx.send(image)
-@bot.command()
+@bot.command(name="rickroll", help="Rickroll your friends!")
 async def rickroll(ctx):
 	await ctx.send("https://youtu.be/dGeEuyG_DIc")
-@bot.command()
-async def getinvites(ctx):
-	guild = ctx.guild
-	invites = await guild.invites()
-	await ctx.send(f"Here are the invites active in this guild: {invites}")
+
 token = ""
 bot.run(token)
