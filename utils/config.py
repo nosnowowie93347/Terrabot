@@ -7,5 +7,5 @@ dev_ids = [606284419447128064, 466778567905116170, 478267562397007873]
 Lock_Status = 'no'
 lock_status = Lock_Status
 supporter_ids = [606284419447128064]
-connection_url = "mongodb+srv://pinkalicious:panda500@cluster0.jbdrl.mongodb.net/test?retryWrites=true&w=majority"
+connection_url = 
 helpers = [503066505999679518]
