@@ -1,4 +1,4 @@
-import discord, math, datetime, time, pyfiglet, pendulum, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
 from PIL import Image
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
@@ -23,12 +23,13 @@ from utils import checks
 from pyfiglet import figlet_format, FontNotFound
 import datetime as dt
 from utils.logger import log
+from dotenv import load_dotenv
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logfile = 'discord.log'
 intents = discord.Intents.all()
-bot = discord.ext.commands.Bot(help_command=None, command_prefix=config.command_prefixes, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 745293950390239263, 606284419447128064])
+bot = discord.ext.commands.Bot(help_command=None, command_prefix=config.command_prefixes, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 606284419447128064])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -60,6 +61,8 @@ bot.colors = {
 bot.connection_url = config.connection_url
 bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
 bot.db = bot.mongo["pinkalicious"]
+bot.muted_users = {}
+bot.mutes = Document(bot.db, "mutes")
 bot.command_usage = Document(bot.db, "command_usage")
 bot.color_list = [c for c in bot.colors.values()]
 now = datetime.datetime.now()
@@ -104,6 +107,7 @@ async def on_ready():
 	bot.load_extension("cog2")
 	bot.load_extension("Helpme")
 	bot.load_extension("cogs3")
+	bot.load_extension("moderation")
 	bot.load_extension("Help")
 	bot.load_extension("giveaway")
 	bot.load_extension("usage")
@@ -119,7 +123,6 @@ async def on_ready():
 	bot.load_extension("Botstuff")
 	bot.load_extension("Admin")
 	bot.load_extension("cogs4")
-	print(time.time())
 	print(len(bot.commands))
 	statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
 	running = True
@@ -127,6 +130,11 @@ async def on_ready():
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
 		await asyncio.sleep(30)
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+	currentMutes = await bot.mutes.get_all()
+	for mute in currentMutes:
+		bot.muted_users[mute["_id"]] = mute
+
+	print(bot.muted_users)
 @bot.event
 async def on_message(message):
 
@@ -743,5 +751,6 @@ async def rabbit(ctx):
 async def rickroll(ctx):
 	await ctx.send("https://youtu.be/dGeEuyG_DIc")
 
-token = ""
+load_dotenv()
+token = os.getenv('DISCORD_TOKEN')
 bot.run(token)
