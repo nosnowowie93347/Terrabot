@@ -5,6 +5,7 @@ pyquery
 colorlog
 wikipedia
 humanize
+python-dotenv
 speedtest-cli
 giphypop
 cffi
