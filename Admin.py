@@ -133,67 +133,7 @@ class Admin(commands.Cog):
 					await channel.send(embed=embed)
 		except discord.errors.Forbidden:
 			await ctx.send("I do not have the `Ban Members` permission.")
-	@commands.command(name='mute', usage="<user> <reason>")
-	@has_permissions(manage_roles=True)
-	@commands.guild_only()
-	@bot_has_permissions(manage_roles=True)
-	async def mute_cmd(self, ctx, member: discord.Member, *, reason:str):
-		"""Mute ppl who break the rules"""
-		guild = ctx.guild
-		role = discord.utils.get(ctx.guild.roles, name='Muted')
-		if not role:
-			return await ctx.send(f'Unable to Mute {ctx.author} - No Role was Found')
-		if role in member.roles:
-			return await ctx.send(f'Unable to Mute {ctx.author} - User Already Muted')
-		if member is ctx.author:
-			msg = 'It would be easier for me if you just *stayed quiet all by yourself...*'
-			return await ctx.send(msg)
-		#check if bot owner is muted
-		if member.id == 466778567905116170:
-			return await ctx.send("... I can't betray my master!!")
-
-		# Check if we're muting the bot
-		if member.id == self.bot.user.id:
-			msg = 'How about we don\'t, and *pretend* we did...'
-			return await ctx.send(msg)
-		try:
-			await member.add_roles(role)
-
-			embed = discord.Embed(title = 'User Muted',color = 0xff00f6,description = f'{member.mention} was muted by {ctx.author.mention}')
-			mutedmembed = discord.Embed(title="You've been muted.", color=0xff00f6, description=f"You've been muted in {guild} by {ctx.author} for {reason}.")
-			await ctx.send(embed=embed)
-			if not member.bot:
-				await member.send(embed=mutedmembed)
-			for channel in guild.channels:
-				if channel.name == "logs":
-					await channel.send(embed=embed)
-			logger.info("Muted {} for {}".format(member, reason))
-		except discord.errors.Forbidden:
-			if role.position == ctx.me.top_role.position:
-				await ctx.send("I cannot add the mute role to users as it's my highest role")
-			elif role.position > ctx.me.top_role.position:
-				await ctx.send("I cannot add the mute role to users as it's higher than my highest role.")
-			else:
-				await ctx.send("I do not have the `Manage Roles` permission.")
-	@commands.command(name="unmute")
-	@has_permissions(manage_roles=True)
-	@commands.guild_only()
-	async def unmute_command(self, ctx, member : discord.Member, *, reason:str):
-		"""Unmute. Just in case."""
-		guild = ctx.guild
-		role = discord.utils.get(ctx.guild.roles, name='Muted')
-		if not role:
-			await ctx.send("User not muted")
-			return await ctx.send(f"Unable to unmute {ctx.author} - No role found")
-		if role in member.roles:
-			await member.remove_roles(role)
-			embed = discord.Embed(title= "User Unmuted", color=0xff00f6,description= f'{member.mention} was unmuted by {ctx.author.mention} for {reason}')
-			await ctx.send(embed=embed)
-			if not member.bot:
-				await member.send(f"You were unmuted by {ctx.author} in {ctx.guild} for {reason}.")
-			for channel in guild.channels:
-				if channel.name == "logs":
-					await channel.send(embed=embed)
+	
 	@commands.command(usage="<user> <reason>")
 	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
@@ -430,7 +370,7 @@ class Admin(commands.Cog):
 	# 	await ctx.guild.create_integration(type="YouTube", id=643)
 	# 	await ctx.send("Successfully created an integration for YouTube.")
 
-	@commands.command()
+	@commands.command(help="Delete a text channel", usage="[channel]")
 	@commands.guild_only()
 	@commands.has_permissions(manage_channels=True)
 	async def deletetc(self, ctx, channelname:discord.TextChannel):
