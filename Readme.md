@@ -6,14 +6,13 @@ Hello internet! This is Terrabot, my discord bot I decided to make a long time a
 -Fun commands<br>
 -And much more!<br>
 
-Example config file:
-`insults = ["put", "insults", "here"]   <br>
-max_nsfw_count = 75   <br>
-command_prefixes = ('^', "t%", 't&')   <br>
-owner_id = botownerid   <br>
-dev_ids = [trusted user ids]   <br>
-Lock_Status = 'no'   <br>
-lock_status = Lock_Status   <br>
-supporter_ids = [whatever user id u want]   <br>
-connection_url = "mongodbconnectionurl"   <br>
-`
+Example config file:<br>
+insults = ["put", "insults", "here"]<br>
+max_nsfw_count = 75<br>
+command_prefixes = ('^', "t%", 't&')<br>
+owner_id = botownerid<br>
+dev_ids = [trusted user ids]<br>
+Lock_Status = 'no'<br>
+lock_status = Lock_Status<br>
+supporter_ids = [whatever user id u want]<br>
+connection_url = "mongodbconnectionurl"<br>
