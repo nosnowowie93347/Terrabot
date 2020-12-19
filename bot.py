@@ -25,15 +25,27 @@ import datetime as dt
 from utils.logger import log
 from dotenv import load_dotenv
 
+
+async def get_prefix(bot, message):
+	try:
+		data = await bot.config.find(message.guild.id)
+
+		# Make sure we have a useable prefix
+		if not data or "prefix" not in data:
+			return commands.when_mentioned_or(config.command_prefixes)(bot, message)
+		return commands.when_mentioned_or(data["prefix"])(bot, message)
+	except:
+		return commands.when_mentioned_or(config.command_prefixes)(bot, message)
 logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logfile = 'discord.log'
 intents = discord.Intents.all()
-bot = discord.ext.commands.Bot(help_command=None, command_prefix=config.command_prefixes, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 606284419447128064])
+bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 606284419447128064])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
+
 EMOJI_NAME_REGEX = re.compile(r"<a?(:\w{2,32}:)\d{15,}>")
 client = discord.Client()
 today = datetime.date.today()
@@ -61,9 +73,12 @@ bot.colors = {
 bot.connection_url = config.connection_url
 bot.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(bot.connection_url))
 bot.db = bot.mongo["pinkalicious"]
+bot.reaction_roles = Document(bot.db, "reaction_roles")
 bot.muted_users = {}
 bot.mutes = Document(bot.db, "mutes")
 bot.command_usage = Document(bot.db, "command_usage")
+bot.config = Document(bot.db, "config")
+bot.reaction_roles = Document(bot.db, "reaction_roles")
 bot.color_list = [c for c in bot.colors.values()]
 now = datetime.datetime.now()
 conn = sqlite3.connect("data/Ruby.db")
@@ -109,7 +124,9 @@ async def on_ready():
 	bot.load_extension("cogs3")
 	bot.load_extension("moderation")
 	bot.load_extension("Help")
+	bot.load_extension("cfg")
 	bot.load_extension("giveaway")
+	bot.load_extension("cogs.reaction")
 	bot.load_extension("usage")
 	bot.load_extension("Math")
 	bot.load_extension("Fun")
@@ -150,7 +167,16 @@ async def on_message(message):
 		return
 	if message.author.id in bot.blacklisted_users:
 		return
-	
+	#Respond with prefix if bot is pinged
+	if message.content.startswith(f"<@!{bot.user.id}>") and len(message.content) == len(
+		f"<@!{bot.user.id}>"
+	):
+		data = await bot.config.get_by_id(message.guild.id)
+		if not data or "prefix" not in data:
+			prefix = bot.DEFAULTPREFIX
+		else:
+			prefix = data["prefix"]
+		await message.channel.send(f"My prefix here is `{prefix}`", delete_after=15)
 	await bot.process_commands(message)
 @bot.event
 async def on_command_error(ctx, error):
@@ -227,12 +253,6 @@ async def on_command_error(ctx, error):
 		await ctx.send(Language.get("bot.errors.command_error_dm_channel", ctx))
 		return
 
-	# #In case the bot failed to send a message to the channel, the try except pass statement is to prevent another error
-   #ry:
-	#  await ctx.send(Language.get("bot.errors.command_error", ctx).format(error))
-	#except:
-	#  pass
-	#  log.error("An error occured while executing the {} command: {}".format(ctx.command.qualified_name, error))
 
 
 @bot.event
