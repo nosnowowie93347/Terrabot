@@ -80,15 +80,7 @@ class YetAnotherCog(commands.Cog):
 			await ctx.send('Banning failed.')
 		else:
 			await ctx.send('\U0001f44c {} banned successfully.'.format(member))
-	@commands.command()
-	async def talk(self, ctx, *, message):
-		print(message)
-		choices = ["Yes of course I do!!", "Not right now. Maybe later.", "OHHH YES. FUCK ME!!"]
-		if message.startswith("Fuck me") or message.startswith("fuck me"):
-			await ctx.send("I would love that, yes.")
-		if message.startswith("Wanna have sex?"):
-			await ctx.send(random.choice(choices))
-		
+	
 	@commands.command()
 	@commands.has_permissions(manage_emojis=True)
 	@commands.bot_has_permissions(manage_emojis=True)

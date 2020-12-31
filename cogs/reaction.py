@@ -134,6 +134,46 @@ class Reactions(commands.Cog, name="ReactionRoles"):
 
 		await self.rebuild_role_embed(ctx.guild.id)
 		await ctx.send("This is added and good to go!")
+	@commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        data = await self.bot.config.find(payload.guild_id)
 
+        if not payload.guild_id or not data or not data.get("is_enabled"):
+            return
+
+        guild_reaction_roles = await self.get_current_reactions(payload.guild_id)
+        if str(payload.emoji) not in guild_reaction_roles:
+            return
+
+        guild = await self.bot.fetch_guild(payload.guild_id)
+
+        emoji_data = await self.bot.reaction_roles.find(str(payload.emoji))
+        role = guild.get_role(emoji_data["role"])
+
+        member = await guild.fetch_member(payload.user_id)
+
+        if role not in member.roles:
+            await member.add_roles(role, reason="Reaction role.")
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        data = await self.bot.config.find(payload.guild_id)
+
+        if not payload.guild_id or not data or not data.get("is_enabled"):
+            return
+
+        guild_reaction_roles = await self.get_current_reactions(payload.guild_id)
+        if str(payload.emoji) not in guild_reaction_roles:
+            return
+
+        guild = await self.bot.fetch_guild(payload.guild_id)
+
+        emoji_data = await self.bot.reaction_roles.find(str(payload.emoji))
+        role = guild.get_role(emoji_data["role"])
+
+        member = await guild.fetch_member(payload.user_id)
+
+        if role in member.roles:
+            await member.remove_roles(role, reason="Reaction role.")
 def setup(bot):
 	bot.add_cog(Reactions(bot))

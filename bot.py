@@ -1,4 +1,4 @@
-import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, json, struct
 from discord import *
 from PIL import Image
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf

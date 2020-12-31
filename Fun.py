@@ -421,25 +421,6 @@ class Fun(commands.Cog):
 		await ctx.channel.trigger_typing()
 		await ctx.send(file=discord.File("assets/imgs/reactions/tableflip.gif"))
 	
-	@commands.command(aliases=['speedtest', 'speed'],help='Shows Information about the system that the bot is running on')
-	@commands.cooldown(1, 10, commands.BucketType.guild)
-	async def system(self,msg):
-		Speed = speedtest.Speedtest()
-		Speed.get_best_server()
-
-		upload = Speed.upload(threads=None)
-		download = Speed.download(threads=None)
-
-		try:
-
-			em = discord.Embed(color=discord.Color.red(), title="System Connection Speed",)
-
-			em.add_field(name="System Connection info",value=f"{h.naturalsize(download)}/s Down {h.naturalsize(upload)}/s Up",inline=True)
-
-
-			await msg.send(embed=em)
-		except Exception as e:
-			await msg.send(f"Failed to get system info: {e} ")
 	@commands.command()
 	async def unflip(self, ctx):
 		# I hope this unicode doesn't break
