@@ -120,9 +120,11 @@ async def on_ready():
 	bot.load_extension("EightBall")
 	bot.load_extension("cogs.Ownercommands")
 	bot.load_extension("cog2")
+	bot.load_extension("cogs.webhook_remover")
 	bot.load_extension("Helpme")
 	bot.load_extension("cogs3")
 	bot.load_extension("moderation")
+	bot.load_extension("cogs.token-remover")
 	bot.load_extension("Help")
 	bot.load_extension("cfg")
 	bot.load_extension("giveaway")
@@ -130,6 +132,7 @@ async def on_ready():
 	bot.load_extension("usage")
 	bot.load_extension("Math")
 	bot.load_extension("Fun")
+	bot.load_extension("cogs.antimalware")
 	bot.load_extension("UmmStuff")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
@@ -163,8 +166,7 @@ async def on_message(message):
 		if message.content == "Have a nice day":
 			await message.channel.send("You too!")
 
-	if message.author.bot:
-		return
+	
 	if message.author.id in bot.blacklisted_users:
 		return
 	#Respond with prefix if bot is pinged
@@ -173,7 +175,7 @@ async def on_message(message):
 	):
 		data = await bot.config.get_by_id(message.guild.id)
 		if not data or "prefix" not in data:
-			prefix = bot.DEFAULTPREFIX
+			prefix = config.command_prefixes
 		else:
 			prefix = data["prefix"]
 		await message.channel.send(f"My prefix here is `{prefix}`", delete_after=15)
@@ -440,10 +442,14 @@ async def urban(ctx, *msg):
 	embed.add_field(name="Top definition:", value=response['list'][0]['definition'])
 	embed.add_field(name="Examples:", value=response['list'][0]['example'])
 	await ctx.send(embed=embed)
+@bot.command()
+async def iinvite(ctx, id: discord.Guild):
+	guild = bot.get_guild(id=id).create_text_channel(name="testing")
+	d = guild.create_invite()
+	await ctx.send(d)
 @bot.command(aliases=["aboutguild", "aboutserver", "serverinfo"])
-async def guildinfo(ctx):
+async def guildinfo(ctx, guild: discord.Guild):
 	"""About the guild"""
-	guild = ctx.guild
 	total_text_channels = len(guild.text_channels)
 	total_voice_channels = len(guild.voice_channels)
 	categories = len(guild.categories)

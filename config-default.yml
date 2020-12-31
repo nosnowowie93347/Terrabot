@@ -1,0 +1,105 @@
+filter:
+    # What do we filter?
+    filter_zalgo:          false
+    filter_invites:        true
+    filter_domains:        true
+    filter_everyone_ping:  true
+    watch_regex:           true
+    watch_rich_embeds:     true
+
+    # Notify user on filter?
+    # Notifications are not expected for "watchlist" type filters
+    notify_user_zalgo:          false
+    notify_user_invites:        true
+    notify_user_domains:        false
+    notify_user_everyone_ping:  true
+
+    # Filter configuration
+    ping_everyone:             true
+    offensive_msg_delete_days: 7     # How many days before deleting an offensive message?
+
+anti_spam:
+    # Clean messages that violate a rule.
+    clean_offending: true
+    ping_everyone: true
+
+    punishment:
+        role_id: 788843430645465110
+        remove_after: 600
+
+    rules:
+        attachments:
+            interval: 10
+            max: 9
+
+        burst:
+            interval: 10
+            max: 7
+
+        # Burst shared it (temporarily) disabled to prevent
+        # the bug that triggers multiple infractions/DMs per
+        # user. It also tends to catch a lot of innocent users
+        # now that we're so big.
+        # burst_shared:
+        #    interval: 10
+        #    max: 20
+
+        chars:
+            interval: 5
+            max: 3_000
+
+        duplicates:
+            interval: 10
+            max: 3
+
+        discord_emojis:
+            interval: 10
+            max: 20
+
+        links:
+            interval: 10
+            max: 10
+
+        mentions:
+            interval: 10
+            max: 5
+
+        newlines:
+            interval: 10
+            max: 100
+            max_consecutive: 10
+
+        role_mentions:
+            interval: 10
+            max: 3
+guild:
+    id: 785653984211107889
+    invite: "https://discord.gg/rpVkbajmjv"
+
+   
+    
+    moderation_categories:
+        - 788843448928698389
+
+    moderation_channels:
+        - 788843457716289587
+        - 788843458601287690
+        - 788843461654741002
+        - 788843457716289587
+
+
+    reminder_whitelist:
+        - 788843461654741002
+        - 788843461654741002
+
+
+    moderation_roles:
+        - 788843417341132860
+        - 788843420663021569
+        - 788843426853552130
+
+    staff_roles:
+        - 788843417341132860
+        - 788843420663021569
+        - 788843426853552130
+        - 788843426853552130

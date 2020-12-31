@@ -11,6 +11,8 @@ giphypop
 cffi
 pyparsing
 pynacl
+PyYAML
+emoji
 aiohttp
 python-nmap
 random-cat
