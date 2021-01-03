@@ -1,4 +1,4 @@
-import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, json, struct
+import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
 from discord import *
 from PIL import Image
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
@@ -119,7 +119,6 @@ async def on_ready():
 	print("Who's ready to have a good time?")
 	bot.load_extension("EightBall")
 	bot.load_extension("cogs.Ownercommands")
-	bot.load_extension("cog2")
 	bot.load_extension("cogs.webhook_remover")
 	bot.load_extension("Helpme")
 	bot.load_extension("cogs3")
@@ -136,7 +135,6 @@ async def on_ready():
 	bot.load_extension("UmmStuff")
 	bot.load_extension("invite")
 	bot.load_extension("emojis")
-	bot.load_extension("Morecogs")
 	bot.load_extension("Morse")
 	bot.load_extension("muusic")
 	bot.load_extension("apply")
@@ -442,14 +440,11 @@ async def urban(ctx, *msg):
 	embed.add_field(name="Top definition:", value=response['list'][0]['definition'])
 	embed.add_field(name="Examples:", value=response['list'][0]['example'])
 	await ctx.send(embed=embed)
-@bot.command()
-async def iinvite(ctx, id: discord.Guild):
-	guild = bot.get_guild(id=id).create_text_channel(name="testing")
-	d = guild.create_invite()
-	await ctx.send(d)
+
 @bot.command(aliases=["aboutguild", "aboutserver", "serverinfo"])
-async def guildinfo(ctx, guild: discord.Guild):
+async def guildinfo(ctx):
 	"""About the guild"""
+	guild = ctx.guild
 	total_text_channels = len(guild.text_channels)
 	total_voice_channels = len(guild.voice_channels)
 	categories = len(guild.categories)
@@ -550,12 +545,6 @@ async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
 	await ctx.send(embed=embed)
-@bot.command()
-async def claptrap(ctx):
-	"""Can I shoot something now? SOMETHING exciting?"""
-	claptraps = open("claptraps.py", encoding="utf8").read().splitlines()
-	claptrap = random.choice(claptraps)
-	await ctx.send(claptrap)
 @bot.command()
 async def turret(ctx):
 	"""Now you're thinking with - wait... turrets?"""

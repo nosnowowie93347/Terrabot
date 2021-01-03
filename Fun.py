@@ -198,12 +198,7 @@ class Fun(commands.Cog):
 			bio = BytesIO(req)
 			bio.seek(0)
 			await ctx.send(content=content, file=discord.File(bio, filename=filename))
-	@commands.command(hidden=True)
-	async def getbotprefix(self, ctx):
-		"""Gets the prefixes of the bot"""
-		message = discord.Message
-		prefix = await self.bot.get_prefix(message)
-		await ctx.send(f"My prefix is {prefix}")
+	
 	@commands.command(hidden=True, aliases=["changeavatar", "newavatar"])
 	@commands.cooldown(1, 654, commands.BucketType.guild)
 	async def change_avatar(self, ctx, url: str = None):
@@ -443,27 +438,6 @@ class Fun(commands.Cog):
 		cat2 = random.choice(cats)
 		
 		await ctx.send(cat2)
-	@commands.command(enabled=False)
-	async def heal(self, ctx, member:discord.Member):
-		"""Heals a person. NOTE: Just for fun."""
-		await ctx.send(f"Attempting to heal {member.mention}")
-		await asyncio.sleep(3)
-		options = ["Healing Failed", "Yay! It worked!"]
-		await ctx.send(random.choice(options))
-	@commands.command()
-	async def feed(self, ctx, member:discord.Member, *, food):
-		"""Feed someone. NOTE: Just for fun"""
-		await ctx.send("Fed {} {}".format(member, food))
-	@commands.command()
-	async def areyoutired(self, ctx):
-		"""Is the bot tired?"""
-		yes = "yes"
-		no = "no"
-		await ctx.send(random.choice([yes, no]))
-	@commands.command()
-	async def timetravel(self, ctx, numofminutes:int):
-		"""Just don't mess up the timeline..."""
-		await ctx.send(f"skipping forward {numofminutes} minutes", delete_after=35)
 	@commands.command(description="What time is it?")
 	async def clock(self, ctx):
 		now = datetime.datetime.now()
