@@ -9,3 +9,4 @@ ffprobe.exe
 __pycache__/
 .env
 bot.py
+.env
