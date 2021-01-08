@@ -201,6 +201,7 @@ class Fun(commands.Cog):
 	
 	@commands.command(hidden=True, aliases=["changeavatar", "newavatar"])
 	@commands.cooldown(1, 654, commands.BucketType.guild)
+	@commands.is_owner()
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -434,7 +435,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def cat(self, ctx):
 		"""Like the shibe command, but with cats."""
-		cats = open("cats.py").read().splitlines()
+		cats = open("cats.txt").read().splitlines()
 		cat2 = random.choice(cats)
 		
 		await ctx.send(cat2)

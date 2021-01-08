@@ -2,7 +2,7 @@
 # Requires pip install buttons
 from discord.ext import commands
 
-from util2 import Pag
+from utils.util2 import Pag
 
 class HelpMe(commands.Cog, name="Help command"):
     def __init__(self, bot):

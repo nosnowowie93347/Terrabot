@@ -109,38 +109,18 @@ bot.blacklisted_users = []
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 bot.cwd = cwd
+cogdir = f"{cwd}\cogs"
+
 @bot.event
 async def on_ready():
+	print(cwd)
 	data = utils.json_loader.read_json("blacklist")
 	bot.blacklisted_users = data["blacklistedUsers"]
 	print(bot.blacklisted_users)
 	print("Hey! I'm Terrabot!")
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
-	bot.load_extension("EightBall")
-	bot.load_extension("cogs.Ownercommands")
-	bot.load_extension("cogs.webhook_remover")
-	bot.load_extension("Helpme")
-	bot.load_extension("cogs3")
-	bot.load_extension("moderation")
-	bot.load_extension("cogs.token-remover")
-	bot.load_extension("Help")
-	bot.load_extension("cfg")
-	bot.load_extension("giveaway")
-	bot.load_extension("cogs.reaction")
-	bot.load_extension("usage")
-	bot.load_extension("Math")
-	bot.load_extension("Fun")
-	bot.load_extension("cogs.antimalware")
-	bot.load_extension("UmmStuff")
-	bot.load_extension("invite")
-	bot.load_extension("emojis")
-	bot.load_extension("Morse")
-	bot.load_extension("muusic")
-	bot.load_extension("apply")
-	bot.load_extension("Botstuff")
-	bot.load_extension("Admin")
-	bot.load_extension("cogs4")
+	
 	print(len(bot.commands))
 	statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
 	running = True
@@ -402,7 +382,7 @@ async def embiggen(ctx, *, text):
 @bot.command()
 async def terrariaquotes(ctx):
 	"""Various messages from the game Terraria"""
-	terrariaquote = open("terrariaquotes.py").read().splitlines()
+	terrariaquote = open("terrariaquotes.txt").read().splitlines()
 	terraria = random.choice(terrariaquote)
 	await ctx.send(terraria)
 @bot.command()
@@ -548,7 +528,7 @@ async def backwards(ctx, *, message):
 @bot.command()
 async def turret(ctx):
 	"""Now you're thinking with - wait... turrets?"""
-	turrets = open("turrets.py").read().splitlines()
+	turrets = open("turrets.txt").read().splitlines()
 	await ctx.send(random.choice(turrets))
 @bot.command()
 @has_permissions(embed_links=True)
@@ -743,19 +723,19 @@ async def notifydev(ctx, *, message:str):
 	owner = await bot.fetch_user(466778567905116170)
 	await owner.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	await ctx.send(Language.get("bot.dev_notify", ctx).format(message))
-# @bot.command(hidden=True, aliases=["createguild", "create_guild"])
-# @commands.is_owner()
-# async def guildcreate(ctx, name):
-# 	"""create a guild"""
-# 	VoiceRegion = ctx.guild.region
-# 	with open('AwOo.png', 'rb') as f:
-# 		icon = f.read()
-# 	print("Here!")
-# 	newserver = await bot.create_guild(name=name, region=VoiceRegion.us_west, icon=icon)
-# 	await newserver.create_text_channel(name="whatever")
-# 	invite = await newserver.channels[0].create_invite()
-# 	await ctx.send(invite)
-# 	print("And Here!")
+@bot.command(hidden=True, aliases=["createguild", "create_guild"])
+@commands.is_owner()
+async def guildcreate(ctx, name):
+	"""create a guild"""
+	VoiceRegion = ctx.guild.region
+	with open('AwOo.png', 'rb') as f:
+		icon = f.read()
+	print("Here!")
+	newserver = await bot.create_guild(name=name, icon=icon)
+	await newserver.create_text_channel(name="whatever")
+	invite = await newserver.channels[0].create_invite()
+	await ctx.send(invite)
+	print("And Here!")
 @bot.command(aliases=["bunny", "bunnyrabbit"])
 async def rabbit(ctx):
 	"""Get a cute rabbit image"""
@@ -765,7 +745,14 @@ async def rabbit(ctx):
 @bot.command(name="rickroll", help="Rickroll your friends!")
 async def rickroll(ctx):
 	await ctx.send("https://youtu.be/dGeEuyG_DIc")
-
+if __name__ == '__main__':
+	for file in os.listdir(cwd):
+		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py"):
+			bot.load_extension(file[:-3])
+			print(file)
+	for file in os.listdir(cogdir):
+		if file.endswith(".py") and not file.startswith("_"):
+			bot.load_extension(f"cogs.{file[:-3]}")
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 bot.run(token)

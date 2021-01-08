@@ -8,5 +8,3 @@ ffprobe.exe
 .idea
 __pycache__/
 .env
-bot.py
-.env
