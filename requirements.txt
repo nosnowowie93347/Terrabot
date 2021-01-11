@@ -6,7 +6,6 @@ colorlog
 wikipedia
 humanize
 python-dotenv
-speedtest-cli
 giphypop
 cffi
 dnspython
@@ -26,9 +25,6 @@ pymongo
 geopy
 psutil
 pendulum
-cowpy
 fortune
-python-twitch-client
-google-api-python-client
 timeago
 buttons
