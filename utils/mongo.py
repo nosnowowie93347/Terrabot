@@ -1,4 +1,5 @@
 import logging, collections
+
 class Document:
     def __init__(self, connection, document_name):
         """
@@ -150,14 +151,11 @@ class Document:
 
         await self.db.update_one({"_id": id}, {"$inc": {field: amount}})
 
-    async def get_all(self):
+    async def get_all(self, filter={}, *args, **kwargs):
         """
         Returns a list of all data in the document
         """
-        data = []
-        async for document in self.db.find({}):
-            data.append(document)
-        return data
+        return await self.db.find(filter, *args, **kwargs).to_list(None)
 
     # <-- Private methods -->
     async def __get_raw(self, id):

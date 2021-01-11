@@ -1,5 +1,6 @@
-import discord, math, datetime, time, pyfiglet, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, speedtest, json, struct
+import discord, math, datetime, time, pyfiglet, io, textwrap, contextlib, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, json, struct
 from discord import *
+from traceback import format_exception
 from PIL import Image
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
 from pathlib import Path
@@ -19,6 +20,7 @@ from discord.ext.commands import Bot, MissingPermissions, has_permissions, bot_h
 from discord.ext.tasks import loop
 from asyncio import sleep
 from utils import config
+from utils.util import clean_code, Pag
 from utils import checks
 from pyfiglet import figlet_format, FontNotFound
 import datetime as dt
@@ -36,9 +38,9 @@ async def get_prefix(bot, message):
 		return commands.when_mentioned_or(data["prefix"])(bot, message)
 	except:
 		return commands.when_mentioned_or(config.command_prefixes)(bot, message)
-logger = logging.getLogger('discord')
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logfile = 'discord.log'
+logfile = 'discord.txt'
 intents = discord.Intents.all()
 bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 606284419447128064])
 channel_logger = Channel_Logger(bot)
@@ -109,7 +111,7 @@ bot.blacklisted_users = []
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 bot.cwd = cwd
-cogdir = f"{cwd}\cogs"
+cogdir = f"{cwd}/cogs"
 
 @bot.event
 async def on_ready():
@@ -133,18 +135,26 @@ async def on_ready():
 		bot.muted_users[mute["_id"]] = mute
 
 	print(bot.muted_users)
+
+# channel = msg_dump_channel.get_channel(797235482110328884)
 @bot.event
 async def on_message(message):
-
-	if message.guild is None:
-		if message.content.startswith("Hello") or message.content.startswith("hello"):
-			await message.channel.send(f"Hi {message.author}!")
-		if message.content.startswith("help") or message.content.startswith("Help"):
-			await message.channel.send("Use the help command by doing t&help.")
-		if message.content == "Have a nice day":
-			await message.channel.send("You too!")
+	if message.guild is None and not message.author.bot:
+		embed = discord.Embed(
+			title = 'NEW MESSAGE!',
+			description = '{}'.format(message.content),
+			color = discord.Color.from_rgb(r=159, g=255, b=255)
+			)
+		embed.set_footer(text='Sent by {} | ID-{}'.format(message.author, message.author.id))
+		for channel in bot.get_all_channels():
+			if channel.name == "dms":
+				await channel.send("<@466778567905116170>")
+				await channel.send(embed=embed)
 
 	
+	# if message.guild is None and not message.author.bot:
+	# 	# if the channel is public at all, make sure to sanitize this first
+	# 	await channel.send(message.content)
 	if message.author.id in bot.blacklisted_users:
 		return
 	#Respond with prefix if bot is pinged
@@ -158,82 +168,6 @@ async def on_message(message):
 			prefix = data["prefix"]
 		await message.channel.send(f"My prefix here is `{prefix}`", delete_after=15)
 	await bot.process_commands(message)
-@bot.event
-async def on_command_error(ctx, error):
-	if isinstance(error, commands.CommandOnCooldown):
-		await ctx.send(f"Hold on! This command is on cooldown for another {error.retry_after} seconds.")
-		return
-	if isinstance(error, commands.MissingPermissions):
-		await ctx.send(f"Oof. You don't have permission to use this command. The missing permission is: {error.missing_perms}.")
-		return
-	if isinstance(error, commands.NoEntryPointError):
-		await ctx.send("Oof. The extension {} does not have a valid entry point. This is most likely due to an invalid setup function. Join the support server/contact botowner for more info.")
-		return
-	if isinstance(error, commands.InvalidEndOfQuotedStringError):
-		await ctx.send(f"Oof. A string was ended incorrectly. Here's the invalid character that needs changing: {error.char}")
-		return
-	if isinstance(error, commands.BotMissingPermissions):
-		await ctx.send("Oof. The bot doesn't have permission to do this. Please give the bot the following perms: {}".format(error.missing_perms))
-		return
-	if isinstance(error, commands.MissingAnyRole):
-		return await ctx.send(f"You're missing the role(s) {error.missing_roles}")
-	if isinstance(error, commands.ExtensionFailed):
-		await ctx.send("Oof. The extension {} failed due to the following error: {}".format(error.name, error.original))
-		return
-	if isinstance(error, commands.ConversionError):
-		await ctx.send("Oops! Command failed due to conversion error. Contact the bot owner and tell him to fix his code")
-		return
-	if isinstance(error, commands.TooManyArguments):
-		await ctx.send("Oops. Too many arguments were given somewhere in the code for this command. Join the support server for help")
-		return
-	if isinstance(error, commands.BadArgument):
-		await ctx.send("Oops. A bad argument was given. Join the support server for help.")
-		return
-	if isinstance(error, commands.BadUnionArgument):
-		await ctx.send(f"Something went wrong. Here's a list of errors: {error.errors}")
-		return
-	if isinstance(error, commands.ArgumentParsingError):
-		await ctx.send("Arg parsing failed: Contact the bot owner if u need help.")
-		return
-	if isinstance(error, commands.ExpectedClosingQuoteError):
-		await ctx.send("Oops. Command failed due to the bot developer forgetting a closing quote: {}".format(error.close_quote))
-		return
-	if isinstance(error, commands.UnexpectedQuoteError):
-		await ctx.send(f"Oopsies! There's a quotation mark in an invalid spot! Here's the error: {error.quote}")
-		return
-	if isinstance(error, commands.MissingRequiredArgument):
-		await ctx.send("Whoops. You forgot an argument: {}".format(error.param))
-		return
-	if isinstance(error, commands.CommandNotFound):
-		await ctx.send("Oops! This command doesn't exist. If you think it should, dm the devs with ur suggestion.")
-		return
-	if isinstance(error, commands.DisabledCommand):
-		await ctx.send("This command has been disabled.")
-		return
-	if isinstance(error, commands.NotOwner):
-		await ctx.send("You need to be the bot owner to use this command!")
-		return
-	if isinstance(error, checks.dev_only):
-		await ctx.send(Language.get("bot.errors.dev_only", ctx))
-		return
-	if isinstance(error, checks.support_only):
-		await ctx.send(Language.get("bot.errors.support_only", ctx))
-		return
-	if isinstance(error, commands.NSFWChannelRequired):
-		await ctx.send(Language.get("bot.errors.not_nsfw_channel", ctx))
-		return
-	if isinstance(error, commands.NoPrivateMessage):
-		await ctx.send("Command cannot be used in DMs try again.")
-		return
-	if isinstance(error, commands.CommandInvokeError):
-		return await ctx.send(f"Oof. Something went wrong. Here's the exception: {error.original}")
-	if isinstance(error, commands.PrivateMessageOnly):
-		return await ctx.send("Oof. This command is only useable in DMs.")
-	if isinstance(ctx.channel, discord.DMChannel):
-		await ctx.send(Language.get("bot.errors.command_error_dm_channel", ctx))
-		return
-
-
 
 @bot.event
 async def on_member_remove(member):
@@ -249,7 +183,6 @@ async def on_member_remove(member):
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
-
 
 @bot.command()
 @commands.is_owner()
@@ -310,7 +243,44 @@ async def hostinfo(ctx):
 	embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
 
 	await ctx.send(embed=embed)
+@bot.command(name="eval", aliases=["exec"])
+@commands.is_owner()
+async def _eval(ctx, *, code):
+	code = clean_code(code)
 
+	local_variables = {
+		"discord": discord,
+		"commands": commands,
+		"bot": bot,
+		"ctx": ctx,
+		"channel": ctx.channel,
+		"author": ctx.author,
+		"guild": ctx.guild,
+		"message": ctx.message
+	}
+
+	stdout = io.StringIO()
+
+	try:
+		with contextlib.redirect_stdout(stdout):
+			exec(
+				f"async def func():\n{textwrap.indent(code, '    ')}", local_variables
+			)
+
+			obj = await local_variables["func"]()
+			result = f"{stdout.getvalue()}\n-- {obj}\n"
+	except Exception as e:
+		result = "".join(format_exception(e, e, e.__traceback__))
+
+	pager = Pag(
+		timeout=100,
+		entries=[result[i: i + 2000] for i in range(0, len(result), 2000)],
+		length=1,
+		prefix="```py\n",
+		suffix="```"
+	)
+
+	await pager.start(ctx)
 @bot.command()
 @commands.cooldown(1, 20,commands.BucketType.guild)
 @bot_has_permissions(manage_messages=True)
@@ -602,7 +572,8 @@ async def rule34(ctx, *, tags:str):
 	await ctx.channel.trigger_typing()
 	try:
 		data = requests.get("http://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}".format(limit, tags), headers=header).json()
-	except json.JSONDecodeError:
+	except json.JSONDecodeError as f:
+		logger.error(f)
 		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
 		return
 
@@ -630,7 +601,8 @@ async def shibe(ctx):
 		embed.set_image(url=image[0])
 		await ctx.send(embed=embed)
 		
-	except aiohttp.ClientError:
+	except aiohttp.ClientError as e:
+		logger.error(e)
 		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
 
 @bot.command(name="emojinames")
@@ -651,6 +623,7 @@ async def namesofemojis(ctx):
 	names: Set[str] = functools.reduce(reducer, messages, set())
 
 	if not names:
+		logger.error("No recently used custom emoji were found.")
 		await ctx.send("No recently used custom emoji were found.")
 	else:
 		formatted = ", ".join(f"`{name}`" for name in names)
@@ -723,7 +696,7 @@ async def notifydev(ctx, *, message:str):
 	owner = await bot.fetch_user(466778567905116170)
 	await owner.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	await ctx.send(Language.get("bot.dev_notify", ctx).format(message))
-@bot.command(hidden=True, aliases=["createguild", "create_guild"])
+@bot.command(hidden=True, enabled=False,aliases=["createguild", "create_guild"])
 @commands.is_owner()
 async def guildcreate(ctx, name):
 	"""create a guild"""
@@ -745,11 +718,13 @@ async def rabbit(ctx):
 @bot.command(name="rickroll", help="Rickroll your friends!")
 async def rickroll(ctx):
 	await ctx.send("https://youtu.be/dGeEuyG_DIc")
+
+
 if __name__ == '__main__':
 	for file in os.listdir(cwd):
 		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py"):
 			bot.load_extension(file[:-3])
-			print(file)
+
 	for file in os.listdir(cogdir):
 		if file.endswith(".py") and not file.startswith("_"):
 			bot.load_extension(f"cogs.{file[:-3]}")

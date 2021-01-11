@@ -49,6 +49,7 @@ class Ownercommands(commands.Cog):
 		   pass
 		await self.bot.logout()
 		subprocess.call([sys.executable, "bot.py"])
+	
 	@commands.command(usage="<channel>")
 	@commands.is_owner()
 	async def lockdown(self, ctx, channel: discord.TextChannel = None):

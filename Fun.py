@@ -237,7 +237,6 @@ class Fun(commands.Cog):
 			# 	return await ctx.send("This user has the no dm role. This means they probably don't want DMs.")
 			await ctx.send(f"✉️ Sent a DM to **{member.name}**")
 			await user.send(f"Message sent by: {ctx.author}")
-			await user.send(f"Sent from {ctx.guild.name}")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
 	@commands.command()

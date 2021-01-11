@@ -9,9 +9,11 @@ python-dotenv
 speedtest-cli
 giphypop
 cffi
+dnspython
 pyparsing
 pynacl
 PyYAML
+sentry_sdk
 emoji
 aiohttp
 python-nmap
