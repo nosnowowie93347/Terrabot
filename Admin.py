@@ -19,12 +19,12 @@ handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 class Admin(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-	@commands.command()
+	@commands.command(description="Pins the message with the specified ID to the channel")
 	@commands.guild_only()
 	@commands.has_permissions(manage_messages=True)
 	@commands.bot_has_permissions(manage_messages=True)
 	async def pin(self, ctx, messageid:int):
-		"""Pins the message with the specified ID to the channel"""
+		
 		try:
 			await ctx.message.delete()
 			message = await ctx.channel.fetch_message(messageid)
@@ -36,9 +36,10 @@ class Admin(commands.Cog):
 			await ctx.send(f"Successfully pinned message with id {messageid}")
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command()
+	@commands.command(description="Lists banned members")
+	@commands.guild_only()
 	async def getbans(self, ctx):
-		"""Lists banned members"""
+		
 		# from utils import config
 		x = await ctx.guild.bans()
 		x = '\n'.join([str(y.user) for y in x])
@@ -77,11 +78,10 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
-	@commands.command(name="kick", usage="<user> <reason>")
+	@commands.command(name="kick", description="Kicks a user.", usage="<user> <reason>")
 	@commands.guild_only()
 	@commands.bot_has_permissions(manage_roles=True)
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
-		"""Kicks a user."""
 		guild = ctx.guild
 		if member.id in self.bot.owner_ids or member == ctx.author:
 			return await ctx.send("I'm not kicking this person.")
@@ -96,12 +96,11 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=kickembed)
 		logger.info(f"You've been bad, {member.mention}. You've been kicked.")
-	@commands.command(name="addrole")
+	@commands.command(name="addrole", description="Adds a role to a user")
 	@commands.guild_only()
 	@commands.has_permissions(manage_roles=True)
 	@commands.bot_has_permissions(manage_roles=True)
 	async def addrole(self, ctx, member: discord.Member, *, role:discord.Role):
-		"""Adds a role to a user"""
 		user=member
 		if role is None:
 			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
@@ -116,11 +115,11 @@ class Admin(commands.Cog):
 
 		await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
 		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
-	@commands.command(usage="<userid>", brief="Doesn't need a reason")
+	@commands.command(usage="<userid>", description="Unbans a user")
 	@commands.has_permissions(ban_members=True)
 	@commands.guild_only()
 	async def unban(self, ctx, memberid : discord.Object):
-		"""Unbans a user"""
+		
 		member = memberid
 		try:
 			await ctx.guild.unban(member)
@@ -134,23 +133,21 @@ class Admin(commands.Cog):
 		except discord.errors.Forbidden:
 			await ctx.send("I do not have the `Ban Members` permission.")
 	
-	@commands.command(usage="<user> <reason>")
+	@commands.command(usage="<user> <reason>", description="If for whatever reason you want to unwarn someone")
 	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
 	@commands.guild_only()
 	async def unwarn(self, ctx, member:discord.Member=None, *, reason:str):
-		"""If for whatever reason you want to unwarn someone"""
 		embed=discord.Embed(title="Unwarned User", description="Unwarned {} for {}".format(member, reason))
 		role = discord.utils.get(ctx.guild.roles, name="Warned")
 		await member.remove_roles(role)
 		await ctx.send(embed=embed)
 		if not member.bot:
 			await member.send(f"You were unwarned in {ctx.guild}.")
-	@commands.command(usage="<user> <reason>")
+	@commands.command(usage="<user> <reason>", description="Warn Someone.")
 	@bot_has_permissions(manage_roles=True)
 	@commands.guild_only()
 	async def warn(self, ctx, member:discord.Member, *, reason:str):
-		"""Warn Someone."""
 		guild = ctx.guild
 		embed = discord.Embed(title="Warned User", color=0xff00f6,description=f'{member.mention} was warned by {ctx.author.mention}')
 		role = discord.utils.get(ctx.guild.roles, name='Warned')
@@ -168,7 +165,7 @@ class Admin(commands.Cog):
 	@commands.bot_has_permissions(manage_roles=True)
 	@commands.has_permissions(manage_roles=True)
 	async def removerole(self, ctx, member:discord.Member, *, rolename:discord.Role):
-		"""Remove a role from someone. Must have manage role perms"""
+		"""Remove a role from someone."""
 		guild = ctx.guild
 		author = ctx.message.author
 		await member.remove_roles(rolename, reason=None)
@@ -192,59 +189,8 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
-	@commands.command()
-	@commands.guild_only()
-	async def mods(self, ctx):
-		""" Check which mods are online on current guild """
-		message = ""
-		online, idle, dnd, offline = [], [], [], []
+	
 
-		for user in ctx.guild.members:
-			if ctx.channel.permissions_for(user).kick_members or \
-			   ctx.channel.permissions_for(user).ban_members:
-				if not user.bot and user.status is discord.Status.online:
-					online.append(f"**{user}**")
-				if not user.bot and user.status is discord.Status.idle:
-					idle.append(f"**{user}**")
-				if not user.bot and user.status is discord.Status.dnd:
-					dnd.append(f"**{user}**")
-				if not user.bot and user.status is discord.Status.offline:
-					offline.append(f"**{user}**")
-
-		if online:
-			message += f"Online {', '.join(online)}\n"
-		if idle:
-			message += f"idle {', '.join(idle)}\n"
-		if dnd:
-			message += f"DND {', '.join(dnd)}\n"
-		if offline:
-			message += f"Offline {', '.join(offline)}\n"
-
-		await ctx.send(f"Mods in **{ctx.guild.name}**\n{message}")
-	@commands.command(brief="Generates a random password string for you")
-	async def password(self, ctx, nbytes: int = 18):
-		if nbytes not in range(3, 1401):
-			return await ctx.send("I only accept any numbers between 3-1400")
-		if hasattr(ctx, 'guild') and ctx.guild is not None:
-			await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
-		await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(nbytes)}")
-	@commands.command()
-	async def rate(self, ctx, *, thing: commands.clean_content):
-		""" Rates what you desire """
-		member = discord.Member
-		rate_amount = random.uniform(0.0, 100.0)
-		if thing == "Minecraft" or thing == "minecraft" or thing == "MC" or thing == "Mc" or thing == "mc":
-			rate_amount = 98.88
-		
-		await ctx.send(f"I'd rate `{thing}` a **{round(rate_amount, 4)} / 100**")
-	@commands.command(name="botnick")
-	@has_permissions(manage_nicknames=True)
-	async def changebotnick(self, ctx, *, name : str):
-		"""Change the bot nickname for the server"""
-		# Let's get the bot's member in the current server
-		botName = "{}#{}".format(self.bot.user.name, self.bot.user.discriminator)
-		botMember = ctx.message.guild.get_member_named(botName)
-		await botMember.edit(nick=str(name))
 	@commands.command()
 	@commands.guild_only()
 	@has_permissions(ban_members=True)
@@ -268,28 +214,6 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
-	@commands.command(usage="<role> <permissionvalue> <pos> <hoist>", brief="Hoist is whether or not to display seperatly")
-	@has_permissions(manage_roles=True)
-	@commands.guild_only()
-	@bot_has_permissions(manage_roles=True)
-	async def editrole(self, ctx, role:discord.Role, permissionvalue:int, pos:int, hoist:bool):
-		value=permissionvalue
-		try:
-			perms = discord.Permissions(permissions=int(value))
-		except:
-			await ctx.send(Language.get("moderation.invalid_permission_number", ctx).format(value))
-			return
-		try:
-			await role.edit(permissions=perms, position=pos, hoist=hoist)
-			await ctx.send("Permissions Changed")
-		except discord.errors.Forbidden:
-			await ctx.send("Here")
-			if role.position == ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_editrole_highest_role", ctx))
-			elif role.position > ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_editrole_higher_role", ctx))
-			else:
-				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
 	@commands.guild_only()
 	@commands.command()
 	@bot_has_permissions(manage_roles=True)
@@ -311,6 +235,7 @@ class Admin(commands.Cog):
 				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
 	@commands.command()
 	@commands.guild_only()
+	@bot_has_permissions(manage_roles=True)
 	@has_permissions(manage_roles=True)
 	async def delrole(self, ctx, *, role:discord.Role):
 		"""Delete a role. Must have manage roles perms"""
@@ -323,11 +248,11 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(embed=embed)
 	
-	@commands.command()
+	@commands.command(usage="<name> <slomodetime>", description="create a text channel.")
 	@commands.guild_only()
 	@has_permissions(manage_channels=True)
 	async def createtc(self, ctx, name, slowmodetime : int):
-		"""create a text channel. Args are name, and slowmodetime in seconds"""
+		
 		guild = ctx.guild
 		await ctx.guild.create_text_channel(name=name, slowmode_delay=slowmodetime)
 		msg = discord.Embed(title="CHANNEL CREATED")
@@ -337,38 +262,15 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":	
 				await channel.send(embed=msg)
-	@commands.command()
-	@commands.guild_only()
-	@has_permissions(manage_channels=True)
-	async def createvc(self, ctx, name, bitrate:int, user_limit:int):
-		"""Create a voice channel"""
-		guild = ctx.guild
-		await ctx.guild.create_voice_channel(name=name, bitrate=bitrate, user_limit=user_limit)
-		await ctx.send(f"A Voice Channel Named {name} was made")
-		for channel in guild.channels:
-			if channel.name == "logs":
-				await channel.send(f"A Voice Channel Named {name} was made")
-	@commands.command()
+
+	@commands.command(usage="<newname>", description="edit a text channel.")
 	@commands.guild_only()
 	@has_permissions(manage_channels=True)
 	async def edittc(self, ctx, newname):
-		"""edit a text channel. Args are newname."""
-		print("here")
 		topic = "This is a channel created by Terrabot"
 		await ctx.channel.edit(name=newname, topic=topic)
 		embed=discord.Embed(title="Renamed Channel Successfully", description=f"The channel has been renamed to {newname}")
 		await ctx.send(embed=embed)
-	@commands.command()
-	@commands.guild_only()
-	@has_permissions(manage_channels=True)
-	async def mutechannelperms(self, ctx, role:discord.Role):
-		"""Make users unable to send messages. Args are role."""
-		await ctx.channel.set_permissions(role, attach_files=False, send_tts_messages=False, read_message_history=True, manage_messages=False, send_messages=False, read_messages=True, embed_links=False, manage_permissions=False)
-		await ctx.send("Permissions updated for {}".format(role))
-	# @commands.command()
-	# async def integrate(self, ctx):
-	# 	await ctx.guild.create_integration(type="YouTube", id=643)
-	# 	await ctx.send("Successfully created an integration for YouTube.")
 
 	@commands.command(help="Delete a text channel", usage="[channel]")
 	@commands.guild_only()
@@ -380,12 +282,10 @@ class Admin(commands.Cog):
 			if channel.name == "logs":
 				await channel.send(f"Channel {channelname} was deleted by {ctx.author}")
 
-	@commands.command(aliases=['cs'])
+	@commands.command(aliases=['cs'], description="Sends a nice fancy embed with some channel stats")
 	@commands.bot_has_guild_permissions(manage_channels=True)
 	async def channelstats(self, ctx):
-		"""
-		Sends a nice fancy embed with some channel stats
-		"""
+		
 		channel = ctx.channel
 		embed = discord.Embed(title=f"Stats for **{channel.name}**", description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'This channel is not in a category'}", color=random.choice(self.bot.color_list))
 		embed.add_field(name="Channel Guild", value=ctx.guild.name, inline=False)

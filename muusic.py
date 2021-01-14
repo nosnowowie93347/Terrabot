@@ -295,35 +295,6 @@ class Music(commands.Cog):
 
         ctx.voice_state.voice = await destination.connect()
 
-    @commands.command(name='summon')
-    @commands.has_permissions(manage_guild=True)
-    async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
-        """Summons the bot to a voice channel.
-
-        If no channel was specified, it joins your channel.
-        """
-
-        if not channel and not ctx.author.voice:
-            raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
-
-        destination = channel or ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
-            return
-
-        ctx.voice_state.voice = await destination.connect()
-
-    @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
-    async def _leave(self, ctx: commands.Context):
-        """Clears the queue and leaves the voice channel."""
-
-        if not ctx.voice_state.voice:
-            return await ctx.send('Not connected to any voice channel.')
-
-        await ctx.voice_state.stop()
-        del self.voice_states[ctx.guild.id]
-
     @commands.command(name='volume')
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """Sets the volume of the player."""
@@ -367,6 +338,7 @@ class Music(commands.Cog):
 
         if ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
+            del self.voice_states[ctx.guild.id]
             await ctx.message.add_reaction('⏹')
 
     @commands.command(name='skip')
@@ -439,21 +411,6 @@ class Music(commands.Cog):
 
         ctx.voice_state.songs.remove(index - 1)
         await ctx.message.add_reaction('✅')
-
-    @commands.command(name='loop')
-    async def _loop(self, ctx: commands.Context):
-        """Loops the currently playing song.
-
-        Invoke this command again to unloop the song.
-        """
-
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Nothing being played at the moment.')
-
-        # Inverse boolean value to loop and unloop.
-        ctx.voice_state.loop = not ctx.voice_state.loop
-        await ctx.message.add_reaction('✅')
-
     @commands.command(name='play')
     async def _play(self, ctx: commands.Context, *, search: str):
         """Plays a song.

@@ -7,11 +7,33 @@ emojilist = open("Emojis.txt", encoding='utf8').read().splitlines()
 class Emoji(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+	@commands.command()
+	async def emojify(self, ctx, *, text: str):
+		'''
+		Converts the alphabet and spaces into emoji
+		'''
+		author = ctx.message.author
+		emojified = '⬇ Copy and paste this: ⬇\n'
+		formatted = re.sub(r'[^A-Za-z ]+', "", text).lower()
+		if text == '':
+			await ctx.send('Remember to say what you want to convert!')
+		else:
+			for i in formatted:
+				if i == ' ':
+					emojified += '     '
+				else:
+					emojified += ':regional_indicator_{}: '.format(i)
+			if len(emojified) + 2 >= 2000:
+				await ctx.send('Your message in emojis exceeds 2000 characters!')
+			if len(emojified) <= 25:
+				await ctx.send('Your message could not be converted!')
+			else:
+				await ctx.send('`'+emojified+'`')
 
 	# Get emotes from all servers
-	@commands.command(aliases=["emoji", "emojis"])
+	@commands.command(aliases=["emoji", "emojis"], description="Displays all emotes avaiable on a server.")
 	async def emotes(self, ctx):
-		"""Displays all emotes avaiable on a server."""
+		
 		embed = discord.Embed(title="Emojis", description="Here are all the emojis available on the servers with Terrabot:", color=0x00ff00)  # setup embed
 		
 		for ej in ctx.message.guild.emojis:

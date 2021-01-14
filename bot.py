@@ -1,4 +1,4 @@
-import discord, math, datetime, time, pyfiglet, io, textwrap, contextlib, pendulum, dotenv, operator, re, traceback, aiohttp, platform, sqlite3, asyncio, psutil, time, requests, urllib.request, logging, json, typing, random, os, psutil, platform, time, sys, fnmatch, subprocess, json, struct
+import discord, math, datetime, time, pyfiglet, io, textwrap, contextlib, pendulum, dotenv, operator, re, traceback, aiohttp, sqlite3, asyncio, requests, urllib.request, logging, typing, random, os, psutil, platform, sys, fnmatch, subprocess, json, struct
 from discord import *
 from traceback import format_exception
 from PIL import Image
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logfile = 'discord.txt'
 intents = discord.Intents.all()
-bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 606284419447128064])
+bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735237182649794571])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
@@ -183,8 +183,68 @@ async def on_member_remove(member):
 def quote(query):
 		# Strips all spaces, tabs, returns and replaces with + signs, then urllib quotes
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
+@bot.listen()
+async def on_message(message):
+    if not message.author.bot:
+        print('function load')
+        with open('level.json','r') as f:
+            users = json.load(f)
+            print('file load')
+        await update_data(users, message.author,message.guild)
+        await add_experience(users, message.author, 100, message.guild)
+        await level_up(users, message.author,message.channel, message.guild)
 
-@bot.command()
+        with open('level.json','w') as f:
+            json.dump(users, f)
+
+
+async def update_data(users, user,server):
+    if not str(server.id) in users:
+        users[str(server.id)] = {}
+        if not str(user.id) in users[str(server.id)]:
+            users[str(server.id)][str(user.id)] = {}
+            users[str(server.id)][str(user.id)]['experience'] = 0
+            users[str(server.id)][str(user.id)]['level'] = 1
+    elif not str(user.id) in users[str(server.id)]:
+            users[str(server.id)][str(user.id)] = {}
+            users[str(server.id)][str(user.id)]['experience'] = 0
+            users[str(server.id)][str(user.id)]['level'] = 1
+
+async def add_experience(users, user, exp, server):
+  users[str(user.guild.id)][str(user.id)]['experience'] += exp
+async def level_up(users, user, channel, server):
+  experience = users[str(user.guild.id)][str(user.id)]['experience']
+  lvl_start = users[str(user.guild.id)][str(user.id)]['level']
+  lvl_end = int(experience ** (1/4))
+  if str(user.guild.id) != '757383943116030074':
+    if lvl_start < lvl_end:
+      await channel.send('{} has leveled up to Level {}'.format(user.display_name, lvl_end))
+      users[str(user.guild.id)][str(user.id)]['level'] = lvl_end
+
+
+@bot.command(aliases = ['rank','lvl'])
+async def level(ctx,member: discord.Member = None):
+
+    if not member:
+        user = ctx.message.author
+        with open('level.json','r') as f:
+            users = json.load(f)
+        lvl = users[str(ctx.guild.id)][str(user.id)]['level']
+        exp = users[str(ctx.guild.id)][str(user.id)]['experience']
+
+        embed = discord.Embed(title = 'Level {}'.format(lvl), description = f"{exp} XP " ,color = discord.Color.green())
+        embed.set_author(name = ctx.author, icon_url = ctx.author.avatar_url)
+        await ctx.send(embed = embed)
+    else:
+      with open('level.json','r') as f:
+          users = json.load(f)
+      lvl = users[str(ctx.guild.id)][str(member.id)]['level']
+      exp = users[str(ctx.guild.id)][str(member.id)]['experience']
+      embed = discord.Embed(title = 'Level {}'.format(lvl), description = f"{exp} XP" ,color = discord.Color.green())
+      embed.set_author(name = member, icon_url = member.avatar_url)
+
+      await ctx.send(embed = embed)
+@bot.command(hidden=True)
 @commands.is_owner()
 @commands.cooldown(1, 15, commands.BucketType.user)
 @commands.guild_only()
@@ -243,44 +303,29 @@ async def hostinfo(ctx):
 	embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
 
 	await ctx.send(embed=embed)
-@bot.command(name="eval", aliases=["exec"])
-@commands.is_owner()
-async def _eval(ctx, *, code):
-	code = clean_code(code)
+@bot.command(name="reddit", description="Gets a random post from reddit", usage="<subreddit>")
+async def reddit(ctx, *, subreddit):
+	import praw
 
-	local_variables = {
-		"discord": discord,
-		"commands": commands,
-		"bot": bot,
-		"ctx": ctx,
-		"channel": ctx.channel,
-		"author": ctx.author,
-		"guild": ctx.guild,
-		"message": ctx.message
-	}
+	reddit = praw.Reddit(client_id = "9bSwwrbBPedZxQ", client_secret = "DD4byMeUmG_zv7lfCQ_ZzIDJniGnVg", username = "Terrariamaster2002", password = "@dA7xTbSZ7Hq_3_", user_agent = "pythonpraw")
 
-	stdout = io.StringIO()
+	sub = reddit.subreddit(subreddit)
+	all_subs = []
 
-	try:
-		with contextlib.redirect_stdout(stdout):
-			exec(
-				f"async def func():\n{textwrap.indent(code, '    ')}", local_variables
-			)
+	top = sub.top(limit=50)
 
-			obj = await local_variables["func"]()
-			result = f"{stdout.getvalue()}\n-- {obj}\n"
-	except Exception as e:
-		result = "".join(format_exception(e, e, e.__traceback__))
+	for submission in top:
+		all_subs.append(submission)
 
-	pager = Pag(
-		timeout=100,
-		entries=[result[i: i + 2000] for i in range(0, len(result), 2000)],
-		length=1,
-		prefix="```py\n",
-		suffix="```"
-	)
+	random_sub = random.choice(all_subs)
+	name = random_sub.title
+	url = random_sub.url
 
-	await pager.start(ctx)
+	em = discord.Embed(title=name)
+	em.set_image(url=url)
+
+	await ctx.send(embed=em)
+
 @bot.command()
 @commands.cooldown(1, 20,commands.BucketType.guild)
 @bot_has_permissions(manage_messages=True)
@@ -290,41 +335,7 @@ async def purgeall(ctx):
 	await ctx.trigger_typing()
 	await ctx.channel.purge(limit=None, check=lambda message: not message.pinned)
 	await ctx.send("I have successfully cleared everything in this channel!")
-@bot.command()
-async def hello(ctx):
-	"""Says hello to a person"""
-	response = f"Hello {ctx.author.mention}"
-	response = str(response)
-	await ctx.send(response)
-	print (f"Said hello to {ctx.author}.")  
-@bot.command(pass_context=True)
-async def dicksize(ctx, member: discord.Member):
-	sizes = ['8D',
-				'8=D',
-				'8==D',
-				'8===D',
-				'8====D',  
-				'8=====D',
-				'8======D', 
-				'8=======D',
-				'8========D',
-				'8=========D',
-				'8==========D',
-				'8===========D',
-				'8============D',
-				'8=============D',
-				'8==============D',
-				'8===============D',
-				'8================D']
-	await ctx.send(f"{member.mention} has this dick size: {random.choice(sizes)}")
 
-@dicksize.error
-async def dicksize_error(ctx, error):
-			if isinstance(error, commands.MissingRequiredArgument):
-				userembed=discord.Embed(title="__**Command help!**__", color=0xffffff)
-				userembed.add_field(name="Command --> ``dicksize <user>``", value="Info --> `says how big of a dick a member has.`", inline=False)
-				await ctx.send(embed=userembed)
-				await ctx.send("You need to specify a member!")
 @bot.command(help="Displays what a user is listening to on Spotify", usage="[user]")
 async def spotify(ctx, user: discord.Member=None):
 	user = user or ctx.author
@@ -340,10 +351,7 @@ async def spotify(ctx, user: discord.Member=None):
 		  embed = discord.Embed(color=0xff0000)
 		  embed.title = f'{user.name} is not listening Spotify right now!'
 		  await ctx.send(embed=embed)
-@bot.command()
-async def goodmorning(ctx):
-	"""It's a good morning"""
-	await ctx.send(f"Good Morning, {ctx.author.mention}!")
+
 @bot.command(aliases=["makebig", "enlargen", "supersize"])
 async def embiggen(ctx, *, text):
 	"""Embiggens text. Yes that's a word, obviously"""
@@ -355,15 +363,6 @@ async def terrariaquotes(ctx):
 	terrariaquote = open("terrariaquotes.txt").read().splitlines()
 	terraria = random.choice(terrariaquote)
 	await ctx.send(terraria)
-@bot.command()
-async def highfive(ctx, member:discord.Member):
-	"""Some people just need a highfive..."""
-	await ctx.send(f":hand_splayed:" + f" " + f"You've been highfived, {member.mention}.")
-
-@bot.command(aliases=["xmas", "chrimbo", "crimbo"])
-async def christmas(ctx):
-	"""HOW MUCH LONGER TILL CHRISTMAS, MOMMY?!?!"""
-	await ctx.send("**{0}** day(s) left until Christmas day! :christmas_tree:".format(str(diff.days)))
 @bot.command(aliases=["ud", "urbandict", "define"])
 @commands.is_nsfw()
 async def urban(ctx, *msg):
@@ -424,21 +423,7 @@ async def guildinfo(ctx):
 	embed.add_field(name="Created at: ", value=guild.created_at)
 	await ctx.send(embed=embed)
 	await ctx.send(embed=embed2)
-@bot.command()
-async def oeis(ctx, *, number: str):
-	'''
-	Looks up a sequence of numbers
-	'''
-	req=requests.get('https://oeis.org/search?q={}&fmt=json'.format(number)).json()['results'][0]
-	numid = 'A'+str(req['number']).zfill(6)
-	embed = discord.Embed(title='**'+numid+'**', url='https://oeis.org/{}'.format(numid), description='**'+req['name']+'**', color=0xFF0000)
-	embed.add_field(name="Numbers:", value=str(req['data']), inline=False)
-	embed.set_image(url='https://oeis.org/{}/graph?png=1'.format(numid))
-	embed.set_thumbnail(url='https://oeis.org/oeis_logo.png')
-	embed.set_footer(text='OEIS', icon_url='https://oeis.org/oeis_logo.png')
-	embed.set_author(name='OEIS.org', url='https://oeis.org/', icon_url='https://oeis.org/oeis_logo.png')
-	embed.timestamp = datetime.datetime.utcnow()
-	await ctx.send('**Search result for:** ***{}...***'.format(number), embed=embed)
+
 @bot.command()
 async def online(ctx):
 	"""Get # of offline members"""
@@ -449,14 +434,7 @@ async def online(ctx):
 	onlineMembersInServer = list(filter(filterOnlyOnlineMembers, membersInServer))
 	onlineMembersCount = len(onlineMembersInServer)
 	await ctx.send("There are " + str(onlineMembersCount) + " Members online out of {}".format(len(ctx.guild.members)))
-@bot.command()
-async def kill(ctx, member:discord.Member):
-	'''
-	Kills the player, minecraft style
-	'''
-	causeofdeath = ["fell out of the world", "watched their innards become outards", "forgot to breath", "watched their legs appear where their head should be", "hit the ground too hard", "was shot by skeleton"]
-	await ctx.send("{}".format(member.mention))
-	await ctx.send(random.choice(causeofdeath))
+
 @bot.command(aliases=["nickchange", "changenick"])
 @has_permissions(manage_nicknames=True)
 async def changenickname(ctx, member : discord.Member, *, nickname):
@@ -495,16 +473,6 @@ async def backwards(ctx, *, message):
 	"""Sends a message backwards"""
 	embed = discord.Embed(title="Here you go!", description=message[::-1], color=0xff00ae)
 	await ctx.send(embed=embed)
-@bot.command()
-async def turret(ctx):
-	"""Now you're thinking with - wait... turrets?"""
-	turrets = open("turrets.txt").read().splitlines()
-	await ctx.send(random.choice(turrets))
-@bot.command()
-@has_permissions(embed_links=True)
-async def Reeeeee(ctx):
-	"""REEEEEEE!"""
-	await ctx.send("https://www.youtube.com/watch?v=m4-IWUfddOE")
 
 @bot.command()
 async def beer(ctx, user: discord.Member = None, *, reason: commands.clean_content = ""):
@@ -547,10 +515,7 @@ async def blackandwhite(ctx, user:discord.Member=None):
 	avatar = Image.open("data/blackandwhite.png").convert("L")
 	avatar.save("data/blackandwhite.png")
 	await ctx.send(file=discord.File("data/blackandwhite.png"))
-@bot.command()
-async def f(ctx):
-	"""Press F to pay your respects"""
-	await ctx.send(Language.get("fun.respects", ctx).format(ctx.author, random.randint(1, 10000)))
+
 @bot.command()
 async def avatar(ctx, *,  user : discord.User):
 	"""Gets a user's avatar"""
@@ -605,15 +570,13 @@ async def shibe(ctx):
 		logger.error(e)
 		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
 
-@bot.command(name="emojinames")
+@bot.command(name="emojinames", description="Shows the names of recent custom emoji used. Useful for mobile users.")
 @commands.guild_only()
 @commands.has_permissions(read_message_history=True)
 async def namesofemojis(ctx):
 	from typing import Set
 	import functools
-	"""Shows the names of recent custom emoji used.
-	Useful for mobile users.
-	"""
+	
 
 	def reducer(emoji: Set[str], message: discord.Message):
 		names = EMOJI_NAME_REGEX.findall(message.content)
@@ -648,22 +611,7 @@ async def meme(ctx):
 			res = await r.json()
 			embed.set_image(url=res['data']['children'] [random.randint(0, 25)]['data']['url'])
 			await ctx.send(embed=embed)
-@bot.command()
-async def choose(ctx, *, text: str):
-	"""Choose between options (seperated by commas)"""
-	# Remove spaces and white space, split into a list and choose a random element
-	text = text.strip()
-	temp = text.split(",")
-	await ctx.send("I choose... **{}** :thinking:".format(temp[random.randint(0, len(temp) - 1)]))
 
-@bot.command(aliases=["change_stream"])
-@checks.is_dev()
-async def stream(ctx, *, streamname:str):
-	"""Sets the streaming status with the specified name"""
-	
-	await bot.change_presence(activity=discord.Activity(name=streamname, type=discord.ActivityType.streaming, url="https://www.twitch.tv/ZeroEpoch1969"))
-	await ctx.send(Language.get("bot.now_streaming", ctx).format(streamname))
-	await channel_logger.log_to_channel(":information_source: `{}`/`{}` has changed the streaming status to `{}`".format(ctx.author.id, ctx.author, streamname))
 @bot.command()
 async def suggest(ctx, *, suggestion:str):
 	"""Sends a suggestion to the developers"""
@@ -681,10 +629,7 @@ async def suggest(ctx, *, suggestion:str):
 		if dev:
 			await dev.send("You have received a new suggestion! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 
-@bot.command(hidden=True)
-async def botserverids(ctx):
-	await ctx.send(bot.guilds)
-	await ctx.send(len(bot.guilds))
+
 @bot.command(aliases=["report", "notifydevs"])
 async def notifydev(ctx, *, message:str):
 	"""Sends a message to the developers"""
@@ -696,29 +641,6 @@ async def notifydev(ctx, *, message:str):
 	owner = await bot.fetch_user(466778567905116170)
 	await owner.send("You have received a new message! The user's ID is `{}` Server: {}".format(ctx.author.id, guild), embed=msg)
 	await ctx.send(Language.get("bot.dev_notify", ctx).format(message))
-@bot.command(hidden=True, enabled=False,aliases=["createguild", "create_guild"])
-@commands.is_owner()
-async def guildcreate(ctx, name):
-	"""create a guild"""
-	VoiceRegion = ctx.guild.region
-	with open('AwOo.png', 'rb') as f:
-		icon = f.read()
-	print("Here!")
-	newserver = await bot.create_guild(name=name, icon=icon)
-	await newserver.create_text_channel(name="whatever")
-	invite = await newserver.channels[0].create_invite()
-	await ctx.send(invite)
-	print("And Here!")
-@bot.command(aliases=["bunny", "bunnyrabbit"])
-async def rabbit(ctx):
-	"""Get a cute rabbit image"""
-	rabbitimage = open("rabbits.txt").read().splitlines()
-	image = random.choice(rabbitimage)
-	await ctx.send(image)
-@bot.command(name="rickroll", help="Rickroll your friends!")
-async def rickroll(ctx):
-	await ctx.send("https://youtu.be/dGeEuyG_DIc")
-
 
 if __name__ == '__main__':
 	for file in os.listdir(cwd):

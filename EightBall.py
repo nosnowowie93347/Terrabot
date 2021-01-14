@@ -7,7 +7,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.command()
+    @commands.command(description="Ask a question, and the eightball will answer it.")
     async def EightBall(self, ctx, *, question = None):
         if question == None:
             return await ctx.send("ask a question.")

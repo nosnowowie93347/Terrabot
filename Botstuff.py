@@ -14,9 +14,9 @@ class Botstuff(commands.Cog):
 		self.bot = bot
 		self.startTime = int(time.time())
 	
-	@commands.command()
+	@commands.command(description="Outputs the total count of lines of code in the currently installed repo.")
 	async def cloc(self, ctx):
-		"""Outputs the total count of lines of code in the currently installed repo."""
+		
 		# Script pulled and edited from https://github.com/kyco/python-count-lines-of-code/blob/python3/cloc.py
 		
 		path = os.getcwd()
@@ -71,10 +71,10 @@ class Botstuff(commands.Cog):
 						extensions.append(ext)
 						pass
 		return extensions
-	@commands.command()
+	@commands.command(description=" Check when a user joined the current server ")
 	@commands.guild_only()
 	async def joinedat(self, ctx, *, user: discord.Member = None):
-		""" Check when a user joined the current server """
+		
 		user = user or ctx.author
 
 		embed = discord.Embed(colour=user.top_role.colour.value)
@@ -84,15 +84,16 @@ class Botstuff(commands.Cog):
 	@commands.command(description="About the Bot")
 	async def about(self, ctx):
 		embed = discord.Embed(color=0x676767, description=str(len(self.bot.commands)) + " commands")
+		embed.add_field(name="Website", value="http://nosnowowie93347.github.io/")
 		embed.set_author(name="Terrabot", icon_url="https://cdn.discordapp.com/avatars/657372691749273612/67d2caa88aad928296c23b2aa964384d.webp?size=1024")
 		embed.set_footer(text="Terrabot | Created by Pinkalicious21902")
 		embed.add_field(name="What is Terrabot?", value="Terrabot is a general purpose bot built on the discord.py library. The bot began as a fun project and will continue to have updates pushed out as I learn more.")
 		embed.add_field(name="Need help on how to use it?", value="You can check the help command by doing \n\n``^help`` \n\n Updates will constantly be pushed out with more features and new commands.")
 		embed.add_field(name="Thanks to Sukuya for inspiration.", value=":smile:")
 		await ctx.send(embed=embed)
-	@commands.command(name="platform", description="Tells the platform the bot's running on")
-	async def platforms(self, ctx):
-		await ctx.send("The bot is currently running on: ```" + str(platform.platform()) + "```")
+	# @commands.command(name="platform", description="Tells the platform the bot's running on")
+	# async def platforms(self, ctx):
+	# 	await ctx.send("The bot is currently running on: ```" + str(platform.platform()) + "```")
 	@commands.command(description="Lists the servers Terrabot is in")
 	async def serverlist(self, ctx):
 		x = ', '.join([str(server) for server in self.bot.guilds])
@@ -115,29 +116,13 @@ class Botstuff(commands.Cog):
 		msg2 = ':hourglass: (~{}ms)'.format(ms)
 		await ctx.send(msg)
 		await ctx.send(msg2)
-	@commands.command(hidden=True)
-	async def idlebot(self, ctx):
-		"""Idles the bot"""
-		await self.bot.change_presence(activity=None, status=discord.Status.idle)
-	@commands.command(hidden=True)
-	async def donotdisturb(self, ctx):
-		'''sets bot status to DND'''
-		await self.bot.change_presence(activity=None, status=discord.Status.dnd)
-		await ctx.send('Successfully changed bot status')
-	@commands.command(aliases=["logout"], hidden=True)
+	@commands.command(aliases=["logout"], description="Shuts down the bot.")
 	@commands.is_owner()
 	async def shutdown(self, ctx):
-		"""Shuts down the bot."""
+		
 		await ctx.send("logging out...")
 		await self.bot.logout()
-	@commands.command(aliases=["changestatus"])
-	@checks.is_dev()
-	async def change_status(self, ctx, *, newstatus):
-		"""Changes the bot's status"""
-		message = newstatus
-		playingrn = message
-		await self.bot.change_presence(activity=discord.Game(name=playingrn), status=bot_status)
-		await ctx.send(f"Success! Status changed to {playingrn}")
+	
 	@commands.command(description="Unpins the message with the specified ID")
 	@has_permissions(manage_messages=True)
 	@bot_has_permissions(manage_messages=True)
@@ -152,24 +137,9 @@ class Botstuff(commands.Cog):
 			await ctx.send(Language.get("moderation.unpin_success", ctx))
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command(hidden=True, aliases=["listwarned", "warnedlist"])
-	async def listwarns(self, ctx):
-		"""List every warned user in the guild"""
-		role = discord.utils.get(ctx.guild.roles, name='Warned')
-		warnList = role.members
-
-		if not len(warnList):
-			await ctx.send("No one is currently Warned.")
-			return
-
-		# We have at least one member warned
-		msg = 'Currently Warned:\n\n'
-		msg += ', '.join([member.name for member in warnList])
-
-		await ctx.send(msg)
-	@commands.command()
+	@commands.command(description="Sends an invite link to the bot's server")
 	async def botserver(self, ctx):
-		"""Sends an invite link to the bot's server"""
+		
 		await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
 		await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
 	@commands.command(description="Sends the bot's OAuth2 link")

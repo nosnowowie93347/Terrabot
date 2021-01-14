@@ -71,16 +71,6 @@ class Cog3(commands.Cog):
 		comic = requests.get('https://xkcd.com/' + str(num) + '/info.0.json').json()
 		await ctx.send(comic['img'])
 		await ctx.send('_' + comic['alt'] + '_')
-	@commands.command()
-	async def test(self, ctx):
-		await ctx.send('This Bot is Working (Dispite what Ruby might tell you)')
-	@commands.command(aliases=["naptime", "sleepytime"])
-	async def sleep(self, ctx):
-		"""Makes the bot take a 5 second nap"""
-		await ctx.send(":sleeping:")
-		await asyncio.sleep(5)
-		await ctx.send('Done sleeping')
-		await ctx.send("Wow! That was quite the nap.")
-		
+	
 def setup(bot):
 	bot.add_cog(Cog3(bot))
