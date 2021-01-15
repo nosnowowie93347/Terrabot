@@ -1,4 +1,4 @@
-import discord, aiohttp, sys, subprocess, logging, typing, traceback, json, os, requests, datetime, time, operator, math
+import discord, io, textwrap, contextlib, aiohttp, sys, subprocess, logging, typing, traceback, json, os, requests, datetime, time, operator, math, asyncio
 from pathlib import Path
 from discord.ext import commands
 from utils.logger import log
@@ -92,7 +92,7 @@ class Ownercommands(commands.Cog):
 		local_variables = {
 			"discord": discord,
 			"commands": commands,
-			"bot": bot,
+			"bot": self.bot,
 			"ctx": ctx,
 			"channel": ctx.channel,
 			"author": ctx.author,

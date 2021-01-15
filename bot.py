@@ -124,17 +124,17 @@ async def on_ready():
 	print("Who's ready to have a good time?")
 	
 	print(len(bot.commands))
-	statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
-	running = True
-	while running == True:
-		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
-		await asyncio.sleep(30)
-		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+	await bot.change_presence(status=discord.Status.dnd, activity=discord.Game("i believe in ranboo supremacy"))
+	# statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
+	# running = True
+	# while running == True:
+	# 	await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+	# 	await asyncio.sleep(30)
+	# 	await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
 	currentMutes = await bot.mutes.get_all()
 	for mute in currentMutes:
 		bot.muted_users[mute["_id"]] = mute
 
-	print(bot.muted_users)
 
 # channel = msg_dump_channel.get_channel(797235482110328884)
 @bot.event
@@ -148,7 +148,6 @@ async def on_message(message):
 		embed.set_footer(text='Sent by {} | ID-{}'.format(message.author, message.author.id))
 		for channel in bot.get_all_channels():
 			if channel.name == "dms":
-				await channel.send("<@466778567905116170>")
 				await channel.send(embed=embed)
 
 	
@@ -185,7 +184,7 @@ def quote(query):
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
 @bot.listen()
 async def on_message(message):
-    if not message.author.bot:
+    if not message.author.bot and message.guild:
         print('function load')
         with open('level.json','r') as f:
             users = json.load(f)

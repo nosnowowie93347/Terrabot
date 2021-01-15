@@ -1,4 +1,4 @@
-import discord, random, speedtest, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
+import discord, random, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
 from discord import ext
 import humanize as h
 from random import choice

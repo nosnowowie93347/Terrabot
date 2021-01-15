@@ -5,6 +5,7 @@ pyquery
 colorlog
 wikipedia
 humanize
+motor
 python-dotenv
 giphypop
 cffi
