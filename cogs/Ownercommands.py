@@ -122,3 +122,18 @@ class Ownercommands(commands.Cog):
 		)
 
 		await pager.start(ctx)
+	@commands.command(name="toggle", description="Enable or disable a command")
+	@commands.is_owner()
+	async def toggle(self, ctx, *, command):
+		command =  self.bot.get_command(command)
+
+		if command is None:
+			await ctx.send("I can't find a command with that name!")
+
+		elif ctx.command == command:
+			await ctx.send("This command cannot be disabled")
+
+		else:
+			command.enabled = not command.enabled
+			variable = "enabled" if command.enabled else "disabled"
+			await ctx.send(f"I have {variable} {command.qualified_name} for you.")

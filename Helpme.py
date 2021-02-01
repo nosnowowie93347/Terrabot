@@ -73,11 +73,6 @@ class HelpMe(commands.Cog, name="Help command"):
             pages.append(commands_entry)
 
         await Pag(title=title, color=0xCE2029, entries=pages, length=1).start(ctx)
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print(f"{self.__class__.__name__} cog has been loaded\n-----")
-
     @commands.command(
         name="help", aliases=["h", "commands"], description="The help command!"
     )
