@@ -7,13 +7,13 @@ Hello internet! This is Terrabot, my discord bot I decided to make a long time a
 -And much more!
 
 Example config file:
-`insults = ["put", "insults", "here"]__
-max_nsfw_count = 7__
-command_prefixes = ('^', "t%", 't&')__
-owner_id = botownerid__
-dev_ids = [trusted user ids]__
-Lock_Status = 'no'__
-lock_status = Lock_Status__
-supporter_ids = [whatever user id u want]__
-connection_url = "mongodbconnectionurl"__
+`insults = ["put", "insults", "here"]  
+max_nsfw_count = 7  
+command_prefixes = ('^', "t%", 't&')  
+owner_id = botownerid  
+dev_ids = [trusted user ids]  
+Lock_Status = 'no'  
+lock_status = Lock_Status  
+supporter_ids = [whatever user id u want]  
+connection_url = "mongodbconnectionurl"  
 `
