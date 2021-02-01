@@ -26,3 +26,6 @@ supporter_ids = [whatever user id u want]
 connection_url = "mongodbconnectionurl"  
 
 `
+
+
+DONT FORGET TO CREATE A .ENV FILE WITH YOUR TOKEN
