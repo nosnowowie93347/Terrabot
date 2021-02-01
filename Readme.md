@@ -7,7 +7,7 @@ Hello internet! This is Terrabot, my discord bot I decided to make a long time a
 -And much more!
 
 Example config file:
-`insults = ["put", "insults", "here"]  /n
+`insults = ["put", "insults", "here"]  
 max_nsfw_count = 7  
 command_prefixes = ('^', "t%", 't&')  
 owner_id = botownerid  
