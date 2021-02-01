@@ -6,7 +6,8 @@ Hello internet! This is Terrabot, my discord bot I decided to make a long time a
 -Fun commands
 -And much more!
 
-Example config file:
+Example config file:  
+
 `insults = ["put", "insults", "here"]  
 
 max_nsfw_count = 7  
