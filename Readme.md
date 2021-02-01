@@ -8,7 +8,9 @@ Hello internet! This is Terrabot, my discord bot I decided to make a long time a
 -Fun commands  
 
 -And much more!  
-
+  
+  
+Make a config file in the utils folder  
 
 Example config file:  
 
