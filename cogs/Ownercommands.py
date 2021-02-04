@@ -32,7 +32,7 @@ class Ownercommands(commands.Cog):
 		except FileNotFoundError:
 			print(path)
 			await ctx.send("That file does not exist!")
-	@commands.command(hidden=False)
+	@commands.command(hidden=False, aliases=["reboot"])
 	@commands.is_owner()
 	async def restart(self, ctx):
 		"""Restarts the bot"""
