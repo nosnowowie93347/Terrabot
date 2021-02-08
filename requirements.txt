@@ -15,7 +15,7 @@ pynacl
 PyYAML
 sentry_sdk
 emoji
-aiohttp
+aiohttp==3.6.2
 python-nmap
 random-cat
 pythonwhois
