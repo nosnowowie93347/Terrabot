@@ -2,6 +2,10 @@ import math, discord, aiohttp, os, requests, sys
 from discord import ext
 from discord.ext import commands
 from discord.ext.commands import Bot, has_permissions
+
+def find_Area(radius):
+    return math.pi * radius * radius
+
 class Math(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -36,5 +40,10 @@ class Math(commands.Cog):
 	@commands.command(description="Find the cosine of a number", usage="<number>")
 	async def cos(self, ctx, a:int):
 		await ctx.send(f"The cosine of {a} is {math.cos(a)}")
+	@commands.command(name="circlearea")
+	async def area_of_circle(self, ctx, *, r: float):
+		area = find_Area(r)
+		await ctx.send(" Area Of a Circle with Given Radius = %.2f" %area)
+
 def setup(bot):
 	bot.add_cog(Math(bot))

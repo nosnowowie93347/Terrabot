@@ -181,6 +181,8 @@ class ErrorHandler(Cog):
 			)
 		elif isinstance(e, (errors.NoPrivateMessage)):
 			await ctx.send(e)
+		elif isinstance(e, (errors.MissingPermissions)):
+			await ctx.send("ERROR: YOU DO NOT HAVE PERMISSION TO USE THIS COMMAND.")
 
 	@staticmethod
 	async def handle_api_error(ctx: Context, e: ResponseCodeError) -> None:
@@ -193,7 +195,7 @@ class ErrorHandler(Cog):
 			log.debug(f"API responded with 400 for command {ctx.command}: %r.", content)
 			await ctx.send("According to the API, your request is malformed.")
 		elif 500 <= e.status < 600:
-			await ctx.send("Sorry, there seems to be an internal issue with the API.")
+			await ctx.send("Gosh dangit. Looks like the API made a fucky wucky and broke.")
 			log.warning(f"API responded with {e.status} for command {ctx.command}")
 		else:
 			await ctx.send(f"Got an unexpected status code from the API (`{e.status}`).")
