@@ -2,6 +2,7 @@ colorlog
 discord.py
 pyfiglet
 pyquery
+cowpy
 colorlog
 wikipedia
 humanize
