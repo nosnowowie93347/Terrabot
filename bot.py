@@ -589,6 +589,5 @@ if __name__ == '__main__':
 	for file in os.listdir(cogdir):
 		if file.endswith(".py") and not file.startswith("_") and not file.startswith("xphelp.py"):
 			bot.load_extension(f"cogs.{file[:-3]}")
-load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
+token = os.getenv('token')
 bot.run(token)
