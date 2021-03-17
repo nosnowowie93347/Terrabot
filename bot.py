@@ -1,30 +1,19 @@
-import discord, math, datetime, time, pyfiglet, io, textwrap, contextlib, pendulum, dotenv, operator, re, traceback, aiohttp, sqlite3, asyncio, requests, urllib.request, logging, typing, random, os, psutil, platform, sys, fnmatch, subprocess, json, struct
-from discord import *
-from traceback import format_exception
+import math, datetime, time, pendulum, aiohttp, sqlite3, asyncio, logging, os, platform, json
 from PIL import Image
-from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas,oneOf
 from pathlib import Path
-from random import choice, randint, randrange
 from discord.ext import commands
 import discord.utils
 import motor.motor_asyncio
-from pymongo import MongoClient
 import utils.json_loader
 from utils.tools import *
 from utils.mongo import Document
 from utils.channel_logger import Channel_Logger
-from discord.utils import get
 from utils.language import Language
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import Bot, MissingPermissions, has_permissions, bot_has_permissions
-from discord.ext.tasks import loop
-from asyncio import sleep
 from utils import config
-from utils.util import clean_code, Pag
-from utils import checks
-from pyfiglet import figlet_format, FontNotFound
-import datetime as dt
-from utils.logger import log
+from pyfiglet import figlet_format
+from discord import Spotify
 from dotenv import load_dotenv
 
 
@@ -78,6 +67,7 @@ bot.db = bot.mongo["pinkalicious"]
 bot.reaction_roles = Document(bot.db, "reaction_roles")
 bot.muted_users = {}
 bot.mutes = Document(bot.db, "mutes")
+bot.warns = Document(bot.db, "warns")
 bot.command_usage = Document(bot.db, "command_usage")
 bot.config = Document(bot.db, "config")
 bot.reaction_roles = Document(bot.db, "reaction_roles")
@@ -123,13 +113,12 @@ async def on_ready():
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	print(len(bot.commands))
-	await bot.change_presence(status=discord.Status.dnd, activity=discord.Game("i believe in ranboo supremacy"))
-	# statuses = ["Minecraft", "Tmodloader", "Convincing my master to be happy", "Billie Eilish", "Juice WRLD", "Banning Bowling Pins", "Helping sarah-chan steal my token", "scanning for rulebreakers", "Helping Pink fix me", "Daring raiders to test my skills", "I'm awesome!", "Thanks to Sukuya!"]
-	# running = True
-	# while running == True:
-	# 	await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
-	# 	await asyncio.sleep(30)
-	# 	await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
+	hel = ["Minecraft", "Tmodloader", "Juice WRLD", "Banning Bowling Pins", "scanning for rulebreakers", "I'm awesome!"]
+	running = True
+	while running == True:
+		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))
+		await asyncio.sleep(30)
+		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))
 	currentMutes = await bot.mutes.get_all()
 	for mute in currentMutes:
 		bot.muted_users[mute["_id"]] = mute
@@ -287,9 +276,9 @@ async def spotify(ctx, user: discord.Member=None):
 			await ctx.send(embed=em)
 			break
 	else:
-		  embed = discord.Embed(color=0xff0000)
-		  embed.title = f'{user.name} is not listening Spotify right now!'
-		  await ctx.send(embed=embed)
+		embed = discord.Embed(color=0xff0000)
+		embed.title = f'{user.name} is not listening Spotify right now!'
+		await ctx.send(embed=embed)
 
 @bot.command(aliases=["makebig", "enlargen", "supersize"])
 async def embiggen(ctx, *, text):
@@ -589,5 +578,6 @@ if __name__ == '__main__':
 	for file in os.listdir(cogdir):
 		if file.endswith(".py") and not file.startswith("_") and not file.startswith("xphelp.py"):
 			bot.load_extension(f"cogs.{file[:-3]}")
-token = os.getenv('token')
+load_dotenv()
+token = os.getenv('DISCORD_TOKEN')
 bot.run(token)
