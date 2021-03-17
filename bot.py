@@ -1,4 +1,4 @@
-import math, datetime, time, pendulum, aiohttp, sqlite3, asyncio, logging, os, platform, json
+import math, datetime, time, pendulum, aiohttp, sqlite3, asyncio, logging, os, platform, json, textwrap
 from PIL import Image
 from pathlib import Path
 from discord.ext import commands
@@ -578,6 +578,5 @@ if __name__ == '__main__':
 	for file in os.listdir(cogdir):
 		if file.endswith(".py") and not file.startswith("_") and not file.startswith("xphelp.py"):
 			bot.load_extension(f"cogs.{file[:-3]}")
-load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
+token = os.getenv('token')
 bot.run(token)
