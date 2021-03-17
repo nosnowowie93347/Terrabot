@@ -13,6 +13,7 @@ cffi
 dnspython
 pyparsing
 pynacl
+praw
 PyYAML
 sentry_sdk
 emoji
