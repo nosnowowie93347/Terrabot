@@ -464,7 +464,7 @@ async def rule34(ctx, *, tags:str):
 	"""A wonderfun NSFW command"""
 	await ctx.channel.trigger_typing()
 	try:
-		data = requests.get("http://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}".format(limit, tags), headers=header).json()
+		data = requests.get("http://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}".format(tags), headers=header).json()
 	except json.JSONDecodeError as f:
 		logger.error(f)
 		await ctx.send(Language.get("nsfw.no_results_found", ctx).format(tags))
@@ -481,8 +481,7 @@ async def rule34(ctx, *, tags:str):
 	for i in range(image_count):
 		image = data[random.randint(0, count)]
 		images.append("http://img.rule34.xxx/images/{}/{}".format(image["directory"], image["image"]))
-	await ctx.send(Language.get("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
-
+	await ctx.send(("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
 @bot.command(aliases=["cutedog", "randomdog"])
 async def shibe(ctx):
 	"""Sends a random shibe picture."""
