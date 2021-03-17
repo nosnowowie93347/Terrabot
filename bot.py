@@ -458,7 +458,7 @@ async def calculatepi(ctx, n:int):
 	if n > 15:
 		return await ctx.send("the maximum is 15 digits sadly.")
 	await ctx.send(roundpi(n))
-@bot.command(hidden=True, enabled=True)
+@bot.command(hidden=True, enabled=False)
 @commands.is_nsfw()
 async def rule34(ctx, *, tags:str):
 	"""A wonderfun NSFW command"""
