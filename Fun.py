@@ -158,6 +158,7 @@ class Fun(commands.Cog):
 			await ctx.send("This means the profile wasn't found...")
 
 	@commands.command(aliases=["wiki"])
+	@commands.is_nsfw()
 	async def wikipedia(self, ctx, *, query: str):
 		'''
 		Uses Wikipedia APIs to summarise search
