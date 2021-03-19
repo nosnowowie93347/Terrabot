@@ -197,6 +197,7 @@ async def check_permissions(ctx, member: discord.Member=None):
 	embed.add_field(name='\uFEFF', value=perms)
 	await ctx.send(content=None, embed=embed)
 @bot.command(name="wipe", aliases=["delete", "clean", "removespam"])
+@commands.cooldown(1, 20, commands.BucketType.user)
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
@@ -365,6 +366,7 @@ async def online(ctx):
 
 @bot.command(aliases=["nickchange", "changenick"])
 @has_permissions(manage_nicknames=True)
+@commands.cooldown(1, 20, commands.BucketType.user)
 async def changenickname(ctx, member : discord.Member, *, nickname):
 	"""Change a user's nickname"""
 	if member == ctx.guild.owner:
