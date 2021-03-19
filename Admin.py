@@ -80,7 +80,7 @@ class Admin(commands.Cog):
 				await channel.send(embed=embed)
 	@commands.command(name="kick", description="Kicks a user.", usage="<user> <reason>")
 	@commands.guild_only()
-	@commands.bot_has_permissions(manage_roles=True)
+	@commands.bot_has_permissions(kick_members=True)
 	async def kick(self, ctx, member : discord.Member, *, reason : str):
 		guild = ctx.guild
 		if member.id in self.bot.owner_ids or member == ctx.author:
@@ -116,7 +116,7 @@ class Admin(commands.Cog):
 		await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
 		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
 	@commands.command(usage="<userid>", description="Unbans a user")
-	@commands.has_permissions(ban_members=True)
+	@commands.has_permissions(manage_guild=True)
 	@commands.guild_only()
 	async def unban(self, ctx, memberid : discord.Object):
 		
@@ -274,6 +274,7 @@ class Admin(commands.Cog):
 
 	@commands.command(help="Delete a text channel", usage="[channel]")
 	@commands.guild_only()
+	@commands.cooldown(1, 10,commands.BucketType.user)
 	@commands.has_permissions(manage_channels=True)
 	async def deletetc(self, ctx, channelname:discord.TextChannel):
 		await channelname.delete()
@@ -283,7 +284,7 @@ class Admin(commands.Cog):
 				await channel.send(f"Channel {channelname} was deleted by {ctx.author}")
 
 	@commands.command(aliases=['cs'], description="Sends a nice fancy embed with some channel stats")
-	@commands.bot_has_guild_permissions(manage_channels=True)
+	#@commands.bot_has_guild_permissions(manage_channels=True)
 	async def channelstats(self, ctx):
 		
 		channel = ctx.channel
