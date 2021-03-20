@@ -123,10 +123,11 @@ class Fun(commands.Cog):
 
 		try:
 			# if not role in user.roles:
-			await user.send(message)
+			
 			if role in user.roles:
 				return await ctx.send("This user has the no dm role. This means they probably don't want DMs.")
 			await ctx.send(f"✉️ Sent a DM to **{member.name}**")
+			await user.send(message)
 			await user.send(f"Message sent by: {ctx.author}")
 		except discord.Forbidden:
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
