@@ -114,7 +114,7 @@ class Fun(commands.Cog):
 	
 	@commands.command(aliases=["directmessage", "pm"])
 	@commands.cooldown(1, 35, commands.BucketType.user)
-	async def dm(self, ctx, member:discord.User, *, message: str):
+	async def dm(self, ctx, member:discord.Member, *, message: str):
 		""" DM the user of your choice """
 		role = discord.utils.find(lambda r: r.name == 'nodm', ctx.guild.roles)
 		user = member
