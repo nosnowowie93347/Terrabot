@@ -233,6 +233,7 @@ async def hostinfo(ctx):
 
 	await ctx.send(embed=embed)
 @bot.command(name="reddit", description="Gets a random post from reddit", usage="<subreddit>")
+@commands.cooldown(1, 15, commands.BucketType.user)
 async def reddit(ctx, *, subreddit):
 	import praw
 
