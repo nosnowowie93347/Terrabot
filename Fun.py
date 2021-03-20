@@ -116,6 +116,7 @@ class Fun(commands.Cog):
 	@commands.cooldown(1, 35, commands.BucketType.user)
 	async def dm(self, ctx, member:discord.User, *, message: str):
 		""" DM the user of your choice """
+		role = discord.utils.find(lambda r: r.name == 'nodm', ctx.guild.roles)
 		user = member
 		if not user:
 			return await ctx.send(f"Could not find any UserID matching **{user_id}**")
@@ -123,8 +124,8 @@ class Fun(commands.Cog):
 		try:
 			# if not role in user.roles:
 			await user.send(message)
-			# if role in user.roles:
-			# 	return await ctx.send("This user has the no dm role. This means they probably don't want DMs.")
+			if role in user.roles:
+				return await ctx.send("This user has the no dm role. This means they probably don't want DMs.")
 			await ctx.send(f"✉️ Sent a DM to **{member.name}**")
 			await user.send(f"Message sent by: {ctx.author}")
 		except discord.Forbidden:
