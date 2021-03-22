@@ -133,33 +133,6 @@ class Admin(commands.Cog):
 		except discord.errors.Forbidden:
 			await ctx.send("I do not have the `Ban Members` permission.")
 	
-	@commands.command(usage="<user> <reason>", description="If for whatever reason you want to unwarn someone")
-	@bot_has_permissions(manage_roles=True)
-	@has_permissions(manage_roles=True)
-	@commands.guild_only()
-	async def unwarn(self, ctx, member:discord.Member=None, *, reason:str):
-		embed=discord.Embed(title="Unwarned User", description="Unwarned {} for {}".format(member, reason))
-		role = discord.utils.get(ctx.guild.roles, name="Warned")
-		await member.remove_roles(role)
-		await ctx.send(embed=embed)
-		if not member.bot:
-			await member.send(f"You were unwarned in {ctx.guild}.")
-	@commands.command(usage="<user> <reason>", description="Warn Someone.")
-	@bot_has_permissions(manage_roles=True)
-	@commands.guild_only()
-	async def warn(self, ctx, member:discord.Member, *, reason:str):
-		guild = ctx.guild
-		embed = discord.Embed(title="Warned User", color=0xff00f6,description=f'{member.mention} was warned by {ctx.author.mention}')
-		role = discord.utils.get(ctx.guild.roles, name='Warned')
-		if not role in guild.roles:
-			return await ctx.send("Uhh. You need to create the Warned role first!")
-		await member.add_roles(role)
-		await ctx.send(embed=embed)
-		if not member.bot:
-			await member.send(embed=embed)
-		for channel in guild.channels:
-			if channel.name == "logs":
-				await channel.send(embed=embed)
 	@commands.command()
 	@commands.guild_only()
 	@commands.bot_has_permissions(manage_roles=True)
