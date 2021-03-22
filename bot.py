@@ -499,7 +499,13 @@ async def shibe(ctx):
 	except aiohttp.ClientError as e:
 		logger.error(e)
 		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
-
+@bot.command()
+@commands.has_permissions(manage_channels=True)
+@commands.bot_has_permissions(manage_channels=True)
+@commands.cooldown(1, 20,commands.BucketType.user)
+async def setdelay(ctx, seconds: int):
+	await ctx.channel.edit(slowmode_delay=seconds)
+	await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
 @bot.command(name="emojinames", description="Shows the names of recent custom emoji used. Useful for mobile users.")
 @commands.guild_only()
 @commands.has_permissions(read_message_history=True)
