@@ -12,6 +12,8 @@ python-dotenv
 giphypop
 cffi
 dnspython
+scikit-image
+opencv-python
 pyparsing
 pynacl
 h2==3.2.0
