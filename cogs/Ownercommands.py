@@ -42,7 +42,7 @@ class Ownercommands(commands.Cog):
 		  await aiosession.close()
 		except:
 		   pass
-		await self.bot.logout()
+		await self.bot.close()
 		subprocess.call([sys.executable, "bot.py"])
 	@commands.command(
 		name="blacklist", description="Blacklist a user from the bot", usage="<user>"
