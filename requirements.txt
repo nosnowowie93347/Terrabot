@@ -13,7 +13,7 @@ giphypop
 cffi
 dnspython
 scikit-image
-opencv-python
+opencv-python-headless
 pyparsing
 pynacl
 h2==3.2.0
