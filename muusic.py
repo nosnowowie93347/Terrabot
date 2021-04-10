@@ -180,6 +180,7 @@ class VoiceState:
         self._ctx = ctx
 
         self.current = None
+	self.exists = True
         self.voice = None
         self.next = asyncio.Event()
         self.songs = SongQueue()
@@ -227,6 +228,7 @@ class VoiceState:
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
+		    self.exists = False
                     return
 
             self.current.source.volume = self._volume
@@ -262,7 +264,7 @@ class Music(commands.Cog):
 
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
-        if not state:
+        if not state or not state.exists
             state = VoiceState(self.bot, ctx)
             self.voice_states[ctx.guild.id] = state
 
