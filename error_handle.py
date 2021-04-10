@@ -181,6 +181,8 @@ class ErrorHandler(Cog):
 			)
 		elif isinstance(e, (errors.NoPrivateMessage)):
 			await ctx.send(e)
+		elif isinstance(e, (errors.PrivateMessageOnly)):
+			await ctx.send(e)
 		elif isinstance(e, (errors.MissingPermissions)):
 			await ctx.send("ERROR: YOU DO NOT HAVE PERMISSION TO USE THIS COMMAND.")
 
