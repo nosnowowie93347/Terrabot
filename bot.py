@@ -113,7 +113,7 @@ async def on_ready():
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	print(len(bot.commands))
-	hel = ["Minecraft", "Tmodloader", "Juice WRLD", "Banning Bowling Pins", "scanning for rulebreakers", "I'm awesome!"]
+	hel = ["Minecraft", "Bugging Pink", "Defending friends", "Tmodloader", "Juice WRLD", "Banning Bowling Pins", "scanning for rulebreakers", "I'm awesome!"]
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))
@@ -173,7 +173,6 @@ def quote(query):
 
 
 @bot.command(hidden=True)
-@commands.is_owner()
 @commands.cooldown(1, 15, commands.BucketType.user)
 @commands.guild_only()
 async def spamtwo(ctx, *, message):
@@ -197,7 +196,7 @@ async def check_permissions(ctx, member: discord.Member=None):
 	embed.add_field(name='\uFEFF', value=perms)
 	await ctx.send(content=None, embed=embed)
 @bot.command(name="wipe", aliases=["delete", "clean", "removespam"])
-@commands.cooldown(1, 20, commands.BucketType.user)
+@commands.cooldown(1, 30, commands.BucketType.user)
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
