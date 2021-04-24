@@ -1,4 +1,3 @@
-colorlog
 discord.py
 pyfiglet
 pyquery
@@ -21,7 +20,6 @@ PyYAML
 sentry_sdk
 emoji
 aiohttp==3.6.2
-python-nmap
 random-cat
 pythonwhois
 youtube-dl
