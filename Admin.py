@@ -108,6 +108,8 @@ class Admin(commands.Cog):
 		name=role
 		if role in member.roles:
 			return await ctx.send("Cannot add this role to this user as they already have it! Nice try tho.")
+		if role.position >= ctx.author.top_role.position:
+			return await ctx.send("Nice try. You can't add a role that's higher than your own. Get an admin to do it")
 		if role.position == ctx.me.top_role.position:
 			return await ctx.send(Language.get("moderation.no_editrole_highest_role", ctx))
 		if role.position > ctx.me.top_role.position:
