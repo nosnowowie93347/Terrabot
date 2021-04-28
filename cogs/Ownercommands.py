@@ -48,7 +48,7 @@ class Ownercommands(commands.Cog):
 		name="blacklist", description="Blacklist a user from the bot", usage="<user>"
 	)
 	@commands.is_owner()
-	async def blacklist(self, ctx, user: discord.Member):
+	async def blacklist(self, ctx, user: discord.User):
 		if user.id in self.bot.owner_ids:
 			await ctx.send("Cant blacklist an owner")
 			return
