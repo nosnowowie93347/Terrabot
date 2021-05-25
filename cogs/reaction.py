@@ -44,7 +44,7 @@ class Reactions(commands.Cog, name="ReactionRoles"):
 
 		for item in reaction_roles:
 			role = guild.get_role(item["role"])
-			desc += f"{item['_id']}: {role.id}\n"
+			desc += f"{item['_id']}: {role.mention}\n"
 			await message.add_reaction(item["_id"])
 
 		embed.description = desc
