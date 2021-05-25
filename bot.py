@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logfile = 'discord.txt'
 intents = discord.Intents.all()
-bot = discord.ext.commands.Bot(command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735237182649794571])
+bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735237182649794571])
 channel_logger = Channel_Logger(bot)
 handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
