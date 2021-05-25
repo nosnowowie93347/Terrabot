@@ -137,11 +137,7 @@ class Botstuff(commands.Cog):
 			await ctx.send(Language.get("moderation.unpin_success", ctx))
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command(description="Sends an invite link to the bot's server")
-	async def botserver(self, ctx):
-		
-		await ctx.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
-		await ctx.author.send(Language.get("bot.invite", ctx).format("https://discord.gg/MJsmbD2", self.bot.command_prefix))
+	
 	@commands.command(description="Sends the bot's OAuth2 link")
 	@commands.guild_only()
 	async def inviteme(self, ctx):
