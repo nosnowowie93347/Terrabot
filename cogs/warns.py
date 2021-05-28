@@ -71,6 +71,27 @@ class Warns(commands.Cog):
 			length=1
 		).start(ctx)
 
+	@commands.command(aliases=["delwarn", "dw"])
+	@commands.guild_only()
+	async def deletewarn(self, ctx, member: discord.Member, warn: int = None):
+		"""Delete a warn / all warns from a given member"""
+		filter_dict = {"user_id": member.id, "guild_id": member.guild.id}
+		if warn:
+			filter_dict["number"] = warn
 
+		was_deleted = await self.bot.warns.delete_by_custom(filter_dict)
+		if was_deleted and was_deleted.acknowledged:
+			if warn:
+				return await ctx.send(
+					f"I deleted warn number `{warn}` for `{member.display_name}`"
+				)
+
+			return await ctx.send(
+				f"I deleted `{was_deleted.deleted_count}` warns for `{member.display_name}`"
+			)
+
+		await ctx.send(
+			f"I could not find any warns for `{member.display_name}` to delete matching your input"
+		)
 def setup(bot):
 	bot.add_cog(Warns(bot))
