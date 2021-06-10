@@ -148,7 +148,7 @@ async def on_message(message):
 	if message.content.startswith(f"<@!{bot.user.id}>") and len(message.content) == len(
 		f"<@!{bot.user.id}>"
 	):
-		data = await bot.config.get_by_id(message.guild.id)
+		data = await bot.config.find_by_id(message.guild.id)
 		if not data or "prefix" not in data:
 			prefix = config.command_prefixes
 		else:
