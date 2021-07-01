@@ -15,7 +15,7 @@ scikit-image
 opencv-python-headless
 pyparsing
 pynacl
-h2==3.2.0
+h2==4.0.0
 PyYAML
 sentry_sdk
 emoji
