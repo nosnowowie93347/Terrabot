@@ -1,0 +1,12 @@
+version: 2
+updates:
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "aiohttp"
+      - dependency-name: "googletrans"
+      - dependency-name: "opencv-python-headless"
+      - dependency-name: "pynacl"
