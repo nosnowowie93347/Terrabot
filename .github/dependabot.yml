@@ -10,3 +10,4 @@ updates:
       - dependency-name: "googletrans"
       - dependency-name: "opencv-python-headless"
       - dependency-name: "pynacl"
+      - dependency-name: "h2"
