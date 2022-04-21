@@ -38,15 +38,7 @@ class Admin(commands.Cog):
 			await ctx.send(f"Successfully pinned message with id {messageid}")
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	@commands.command(description="Lists banned members")
-	@commands.guild_only()
-	async def getbans(self, ctx):
-		
-		# from utils import config
-		x = await ctx.guild.bans()
-		x = '\n'.join([str(y.user) for y in x])
-		thing3 = "List of Banned Members\n" + x
-		await ctx.send(thing3)
+	
 	@commands.command(usage="<user> <reason>", description="A nice ban command to use on rulebreakers.", brief="When you're just not having it")
 	@has_permissions(ban_members=True)
 	@commands.bot_has_permissions(ban_members=True)
@@ -191,25 +183,7 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
-	@commands.guild_only()
-	@commands.command()
-	@bot_has_permissions(manage_roles=True)
-	@has_permissions(manage_roles=True)
-	async def renamerole(self, ctx, role:discord.Role, *, newname:str):
-		"""Renames a role with the specified name, be sure to put double quotes (\") around the name and the new name"""
-		if role is None:
-			await ctx.send(Language.get("moderation.role_not_found", ctx).format(role))
-			return
-		try:
-			await role.edit(reason=Language.get("moderation.renamerole_reason", ctx).format(ctx.author), name=newname)
-			await ctx.send(Language.get("moderation.renamerole_success", ctx).format(role, newname))
-		except discord.errors.Forbidden:
-			if role.position == ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_renamerole_highest_role", ctx))
-			elif role.position > ctx.me.top_role.position:
-				await ctx.send(Language.get("moderation.no_renamerole_higher_role", ctx))
-			else:
-				await ctx.send(Language.get("moderation.no_manage_role_perms", ctx))
+	
 	@commands.command()
 	@commands.guild_only()
 	@bot_has_permissions(manage_roles=True)
