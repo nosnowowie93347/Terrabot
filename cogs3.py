@@ -1,4 +1,4 @@
-import discord, random
+import discord, random, requests
 from discord import ext
 from discord.ext import commands
 from random import choice, randint
