@@ -30,38 +30,12 @@ class Cog3(commands.Cog):
 		await ctx.send(output)
 	@commands.command()
 	@commands.guild_only()
-	async def echotts(self, ctx, *, message):
-		"""Makes the bot talk, with TTS."""
+	async def echo(self, ctx, *, message):
+		"""Makes the bot talk."""
 		say = message
 		await ctx.message.delete()
-		return await ctx.send(say, tts=True)
-	@commands.command(
-		name="echo",
-		description="A simple command that repeats the users input back to them.",
-	)
-	@commands.guild_only()
-	async def echo(self, ctx):
-		await ctx.message.delete()
-		embed = discord.Embed(
-			title="Please tell me what you want me to repeat!",
-			description="||This request will timeout after 1 minute.||",
-		)
-		sent = await ctx.send(embed=embed)
+		return await ctx.send(say)
 
-		try:
-			msg = await self.bot.wait_for(
-				"message",
-				timeout=60,
-				check=lambda message: message.author == ctx.author
-				and message.channel == ctx.channel,
-			)
-			if msg:
-				await sent.delete()
-				await msg.delete()
-				await ctx.send(msg.content)
-		except asyncio.TimeoutError:
-			await sent.delete()
-			await ctx.send("Cancelling", delete_after=10)
 	@commands.command()
 	@commands.guild_only()
 	async def roles(self, ctx):
