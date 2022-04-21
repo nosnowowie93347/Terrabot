@@ -194,17 +194,7 @@ class Fun(commands.Cog):
 							 icon_url='https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png')
 			embed.timestamp = lastedited
 			await ctx.send('**Search result for:** ***"{}"***:'.format(query), embed=embed)
-	@commands.command()
-	async def rolecall(self, ctx, *, role:discord.Role):
-		"""Number of online members in a role"""
-		role_embed = discord.Embed(color=role.color)
-		role_embed.set_author(name='{}'.format(role.name))
-		# We have a role
-		members = [x for x in ctx.guild.members if role in x.roles]
-		memberCount = len(members)
-		memberOnline = len([x for x in members if x.status != discord.Status.offline])
-		role_embed.add_field(name="Members", value='{:,} of {:,} online.'.format(memberOnline, memberCount), inline=True)
-		await ctx.send(embed=role_embed)
+	
 	@commands.command()
 	async def cat(self, ctx):
 		"""Like the shibe command, but with cats."""
