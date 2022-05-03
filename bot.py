@@ -13,7 +13,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot, MissingPermissions, has_permissions, bot_has_permissions
 from utils import config
 from pyfiglet import figlet_format
-from discord import Spotify
+from discord import Spotify, DMChannel, File, Embed
 from dotenv import load_dotenv
 
 
@@ -127,18 +127,27 @@ async def on_ready():
 # channel = msg_dump_channel.get_channel(797235482110328884)
 @bot.event
 async def on_message(message):
-	if message.guild is None and not message.author.bot:
-		embed = discord.Embed(
-			title = 'NEW MESSAGE!',
-			description = '{}'.format(message.content),
-			color = discord.Color.from_rgb(r=159, g=255, b=255)
-			)
-		embed.set_footer(text='Sent by {} | ID-{}'.format(message.author, message.author.id))
-		for channel in bot.get_all_channels():
-			if channel.name == "dms":
-				await channel.send(embed=embed)
+	if not message.author.bot:
+			if isinstance(message.channel, DMChannel):
+				if len(message.content) < 50:
+					await message.channel.send("Your message should be at least 50 characters in length.")
 
-	
+				else:
+					embed = Embed(title="Modmail",
+								  colour=message.author.colour,
+								  timestamp=datetime.datetime.utcnow())
+
+					embed.set_thumbnail(url=message.author.avatar_url)
+
+					fields = [("Member", message.author.display_name, False),
+							  ("Message", message.content, False)]
+
+					for name, value, inline in fields:
+						embed.add_field(name=name, value=value, inline=inline)
+					
+					mod = bot.get_cog("AutoMod")
+					await mod.log_channel.send(embed=embed)
+					await message.channel.send("Message relayed to moderators.")
 	# if message.guild is None and not message.author.bot:
 	# 	# if the channel is public at all, make sure to sanitize this first
 	# 	await channel.send(message.content)
@@ -583,7 +592,7 @@ if __name__ == '__main__':
 			bot.load_extension(file[:-3])
 
 	for file in os.listdir(cogdir):
-		if file.endswith(".py") and not file.startswith("_") and not file.startswith("xphelp.py"):
+		if file.endswith(".py") and not file.startswith("_") and not file.startswith("xphelp.py") and not file.startswith("db.py"):
 			bot.load_extension(f"cogs.{file[:-3]}")
 token = os.getenv('token')
 bot.run(token)
