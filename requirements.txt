@@ -1,4 +1,5 @@
 discord.py
+better-profanity
 pyfiglet
 pyquery
 cowpy
