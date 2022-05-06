@@ -12,6 +12,7 @@ python-dotenv
 giphypop
 cffi
 dnspython
+python-minifier
 scikit-image
 opencv-python-headless
 pyparsing
