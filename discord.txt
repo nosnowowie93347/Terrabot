@@ -1,0 +1,2 @@
+2022-05-05 14:36:34,409:INFO:__main__: Deleted 100 message(s)
+2022-05-05 14:37:14,953:INFO:__main__: Deleted 12 message(s)

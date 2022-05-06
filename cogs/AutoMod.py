@@ -129,20 +129,10 @@ class AutoMod(Cog):
 		self.log_channel = self.bot.get_channel(832961664433389568)
 	@Cog.listener()
 	async def on_message(self, message):
-		def _check(m):
-			return (m.author == message.author
-					and len(m.mentions)
-					and (datetime.utcnow()-m.created_at).seconds < 60)
+		
 
 		if not message.author.bot:
-			if len(list(filter(lambda m: _check(m), self.bot.cached_messages))) >= 3:
-				await message.channel.send("Don't spam mentions!", delete_after=10)
-				unmutes = await self.mute_members(message, message.author, None, reason="Mention spam")
-
-				await sleep(300)
-				await self.unmute_members(message.guild, message.author)
-
-			elif profanity.contains_profanity(message.content):
+			if profanity.contains_profanity(message.content):
 				await message.delete()
 				await message.channel.send("You can't use that word here.", delete_after=10)
 				unmutes = await self.mute_members(message, message.author, None, reason="Blacklisted word")

@@ -29,7 +29,7 @@ async def get_prefix(bot, message):
 		return commands.when_mentioned_or(config.command_prefixes)(bot, message)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logfile = 'discord.txt'
+logfile = 'discord.log'
 intents = discord.Intents.all()
 bot = discord.ext.commands.Bot(help_command=None, command_prefix=get_prefix, intents=intents, case_insensitive=True, description="Hello my name is Terrabot. I'm made by Pinkalicious21902", owner_ids=[466778567905116170, 735237182649794571])
 channel_logger = Channel_Logger(bot)
@@ -157,6 +157,7 @@ async def on_message(message):
 	if message.content.startswith(f"<@!{bot.user.id}>") and len(message.content) == len(
 		f"<@!{bot.user.id}>"
 	):
+		print("here!")
 		data = await bot.config.find_by_id(message.guild.id)
 		if not data or "prefix" not in data:
 			prefix = config.command_prefixes
