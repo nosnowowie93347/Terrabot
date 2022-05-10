@@ -14,6 +14,7 @@ cffi
 dnspython
 matplotlib
 python-minifier
+html2text
 opencv-python-headless
 pyparsing
 pynacl
