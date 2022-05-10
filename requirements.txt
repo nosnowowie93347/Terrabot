@@ -6,6 +6,7 @@ cowpy
 colorlog
 wikipedia
 humanize
+discord-ext-menus
 praw
 motor
 python-dotenv
