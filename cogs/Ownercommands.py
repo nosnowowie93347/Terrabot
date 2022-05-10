@@ -22,16 +22,7 @@ def setup(bot):
 class Ownercommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-	@commands.command(aliases=["attachfile"])
-	@commands.is_owner()
-	async def uploadfile(self, ctx, *, path:str):
-		"""Uploads any file on the system. What is this hackery?"""
-		await ctx.channel.trigger_typing()
-		try:
-			await ctx.send(file=discord.File(path))
-		except FileNotFoundError:
-			print(path)
-			await ctx.send("That file does not exist!")
+	
 	@commands.command(hidden=False, aliases=["reboot"])
 	@commands.is_owner()
 	async def restart(self, ctx):
@@ -50,19 +41,21 @@ class Ownercommands(commands.Cog):
 	@commands.is_owner()
 	async def blacklist(self, ctx, user: discord.User):
 		if user.id in self.bot.owner_ids:
-			await ctx.send("Cant blacklist an owner")
+			await ctx.reply("Cant blacklist an owner")
 			return
 		if user.id in self.bot.blacklisted_users:
-			return await ctx.send("Cannot blacklist someone twice! :person_facepalming:")
+			return await ctx.reply("Cannot blacklist someone twice! :person_facepalming:")
 		if ctx.message.author.id == user.id:
-			await ctx.send("Hey, you cannot blacklist yourself!")
+			await ctx.reply("Hey, you cannot blacklist yourself!")
 			return
 
 		self.bot.blacklisted_users.append(user.id)
 		data = utils.json_loader.read_json("blacklist")
 		data["blacklistedUsers"].append(user.id)
 		utils.json_loader.write_json(data, "blacklist")
-		await ctx.send(f"Hey, I have blacklisted {user.name} for you.")
+		embed=discord.Embed(title="MOD ACTION - BLACKLIST", color=0xfd0dc9)
+		embed.add_field(name="Blacklisted User:", value=user.name, inline=False)
+		await ctx.send(embed=embed)
 		print(self.bot.blacklisted_users)
 
 	@commands.command(
@@ -79,7 +72,9 @@ class Ownercommands(commands.Cog):
 		data = utils.json_loader.read_json("blacklist")
 		data["blacklistedUsers"].remove(user.id)
 		utils.json_loader.write_json(data, "blacklist")
-		await ctx.send(f"Hey, I have unblacklisted {user.name} for you.")
+		embed=discord.Embed(title="MOD ACTION - UNBLACKLIST", color=0xff0fcb)
+		embed.add_field(name="User unblacklisted:", value=user.name, inline=False)
+		await ctx.send(embed=embed)
 	@commands.command()
 	async def get_blacklists(self, ctx):
 		data = utils.json_loader.read_json("blacklist")

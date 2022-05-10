@@ -6,7 +6,6 @@ from utils.tools import *
 from utils.logger import log
 from utils import checks, config
 from utils.language import Language
-#NiU3MzcvNikxNz05MiczNiFv.XfwOBw.675H5b4RzcSYf ksUIC)K5WzwaF8
 
 from discord import ext
 from random import randint, choice
