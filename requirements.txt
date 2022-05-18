@@ -9,6 +9,7 @@ humanize
 discord-ext-menus
 praw
 motor
+tabulate
 python-dotenv
 giphypop
 cffi
