@@ -131,6 +131,8 @@ async def on_message(message):
 			if isinstance(message.channel, DMChannel):
 				if len(message.content) < 50:
 					await message.channel.send("Your message should be at least 50 characters in length.")
+				if len(message.content) > 1000:
+					await message.reply("This is too long! Try shortening it to less than 1000 characters")
 
 				else:
 					embed = Embed(title="Modmail",
@@ -145,8 +147,7 @@ async def on_message(message):
 					for name, value, inline in fields:
 						embed.add_field(name=name, value=value, inline=inline)
 					
-					mod = bot.get_cog("AutoMod")
-					await mod.log_channel.send(embed=embed)
+					await bot.get_channel(832961664433389568).send(embed=embed)
 					await message.channel.send("Message relayed to moderators.")
 	# if message.guild is None and not message.author.bot:
 	# 	# if the channel is public at all, make sure to sanitize this first
