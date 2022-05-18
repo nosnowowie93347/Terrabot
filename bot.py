@@ -113,7 +113,7 @@ async def on_ready():
 	print("I'm made by Pinkalicious21902")
 	print("Who's ready to have a good time?")
 	print(len(bot.commands))
-	hel = ["Minecraft", "Bugging Pink", "Defending friends", "Tmodloader", "Juice WRLD", "Banning Bowling Pins", "scanning for rulebreakers", "I'm awesome!"]
+	hel = ["Minecraft", "Bugging Pink", "Fallout: New Vegas", "The Elder Scrolls V: Skyrim", "The Elder Scrolls III: Morrowind", "Defending friends", "Tmodloader", "Juice WRLD", "Banning Bowling Pins", "scanning for rulebreakers", "Halo 4", "Doki Doki Literature Club", "I'm awesome!", "Fallout 4", "Tale of Two Wastelands"]
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))

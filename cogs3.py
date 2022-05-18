@@ -1,4 +1,5 @@
-import discord, random, requests
+import discord, random, requests, io, json
+from bs4 import BeautifulSoup
 from discord import ext
 from discord.ext import commands
 from random import choice, randint
@@ -57,15 +58,28 @@ class Cog3(commands.Cog):
 	async def roll(self, ctx):
 		"""Roll a Frikin Die"""
 		await ctx.send('You rolled a ' + str(randint(1,20)))
-	@commands.command(aliases=["comic"])
+	@commands.bot_has_permissions(attach_files=True)
+	@commands.command()
 	async def xkcd(self, ctx):
-		"""Get ready to laugh... or somethin"""
-		await ctx.send('get ready to laugh... or something')
-		latest = requests.get('https://xkcd.com/info.0.json').json()
-		num = random.randint(1, latest['num'])
-		comic = requests.get('https://xkcd.com/' + str(num) + '/info.0.json').json()
-		await ctx.send(comic['img'])
-		await ctx.send('_' + comic['alt'] + '_')
+		"""
+		XKCD
+		https://xkcd.com/
+		"""
+
+		url = "https://c.xkcd.com/random/comic/"
+		phrase = r"Image URL \(for hotlinking\/embedding\)\:.*"
+
+		async with ctx.typing():
+			async with self.session.get(url) as response:
+				soup = BeautifulSoup(await response.text(), "html.parser")
+
+			img_url_nav_string = soup.find(text=re.compile(phrase))
+			img_url = img_url_nav_string.find_next_sibling("a").text
+
+			async with self.session.get(img_url) as response:
+				img = io.BytesIO(await response.read())
+
+			await ctx.send(file=discord.File(img, "xkcd.png"))
 	
 def setup(bot):
 	bot.add_cog(Cog3(bot))
