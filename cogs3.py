@@ -1,4 +1,4 @@
-import discord, random, requests, io, json
+import discord, random, requests, io, json, aiohttp, re
 from bs4 import BeautifulSoup
 from discord import ext
 from discord.ext import commands
@@ -8,6 +8,7 @@ import platform, asyncio
 class Cog3(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		self.session = aiohttp.ClientSession()
 
 
 	@commands.command(description="Make fancy text!")
