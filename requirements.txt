@@ -1,3 +1,4 @@
+wordcloud
 discord.py
 better-profanity
 pyfiglet
