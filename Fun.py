@@ -28,15 +28,18 @@ class Fun(commands.Cog):
 		self.bot = bot
 
 	@commands.command()
+	@commands.guild_only()
 	async def pun(self, ctx):
 		"""Grab a EGG-celent pun..."""
 		await ctx.send(random.choice(punlist))
 	@commands.command(aliases=["quoteoftheday", "inspireme"])
+	@commands.guild_only()
 	async def qotd(self, ctx):
 		"""Quotes to get you through the day"""
 		Quotes = open("Quotes.txt", encoding='utf8').read().splitlines()
 		await ctx.send(random.choice(Quotes))
 	@commands.command()
+	@commands.guild_only()
 	async def rps(self, ctx, choice: str):
 		"""Play rock-paper-scissors"""
 		try:
@@ -74,6 +77,7 @@ class Fun(commands.Cog):
 		except Exception as e:
 			await ctx.send(e)
 	@commands.command(brief="Generates a random password string for you")
+	@commands.guild_only()
 	async def password(self, ctx, nbytes: int = 18):
 		if nbytes not in range(3, 1401):
 			return await ctx.send("I only accept any numbers between 3-1400")
@@ -81,17 +85,20 @@ class Fun(commands.Cog):
 			await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
 		await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(nbytes)}")
 	@commands.command()
+	@commands.guild_only()
 	async def insult(self, ctx, member:discord.Member):
 		"""Says something mean about you."""
 		await ctx.send(member.mention + " " + random.choice(config.insults))
 
 	@commands.command()
+	@commands.guild_only()
 	async def coinflip(self, ctx):
 		"""Flip a Frikin Coin"""
 		await ctx.send(random.choice(coinsides))
 	@commands.command(hidden=True, aliases=["changeavatar", "newavatar"])
 	@commands.cooldown(1, 654, commands.BucketType.guild)
 	@commands.is_owner()
+	@commands.guild_only()
 	async def change_avatar(self, ctx, url: str = None):
 		""" Change avatar. """
 		if url is None and len(ctx.message.attachments) == 1:
@@ -113,6 +120,7 @@ class Fun(commands.Cog):
 			await ctx.send("You need to either provide an image URL or upload one with the command")
 	
 	@commands.command(aliases=["directmessage", "pm"])
+	@commands.guild_only()
 	@commands.cooldown(1, 35, commands.BucketType.user)
 	async def dm(self, ctx, member:discord.Member, *, message: str):
 		""" DM the user of your choice """
@@ -133,6 +141,7 @@ class Fun(commands.Cog):
 			await ctx.send("This user might be having DMs blocked or it's a bot account...")
 
 	@commands.command(aliases=["mcprofile", "mcinfo"])
+	@commands.guild_only()
 	async def minecraft(self, ctx, username):
 		'''
 		Shows MC account info, skin and username history
@@ -161,6 +170,7 @@ class Fun(commands.Cog):
 
 	@commands.command(aliases=["wiki"])
 	@commands.is_nsfw()
+	@commands.guild_only()
 	async def wikipedia(self, ctx, *, query: str):
 		'''
 		Uses Wikipedia APIs to summarise search
@@ -196,6 +206,7 @@ class Fun(commands.Cog):
 			await ctx.send('**Search result for:** ***"{}"***:'.format(query), embed=embed)
 	
 	@commands.command()
+	@commands.guild_only()
 	async def cat(self, ctx):
 		"""Like the shibe command, but with cats."""
 		cats = open("cats.txt").read().splitlines()
@@ -203,6 +214,7 @@ class Fun(commands.Cog):
 		
 		await ctx.send(cat2)
 	@commands.command(description="What time is it?")
+	@commands.guild_only()
 	async def clock(self, ctx):
 		now = datetime.datetime.now()
 		current_time = now.strftime("%H:%M:%S")

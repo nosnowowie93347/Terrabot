@@ -32,6 +32,7 @@ class Botstuff(commands.Cog):
 		self.startTime = int(time.time())
 	
 	@commands.command(description="Outputs the total count of lines of code in the currently installed repo.")
+	@commands.guild_only()
 	async def cloc(self, ctx):
 		
 		# Script pulled and edited from https://github.com/kyco/python-count-lines-of-code/blob/python3/cloc.py
@@ -99,6 +100,7 @@ class Botstuff(commands.Cog):
 		embed.description = f'**{user}** joined **{ctx.guild.name}**\n{default.date(user.joined_at)}'
 		await ctx.send(embed=embed)
 	@commands.command(description="About the Bot")
+	@commands.guild_only()
 	async def about(self, ctx):
 		embed = discord.Embed(color=0x676767, description=str(len(self.bot.commands)) + " commands")
 		embed.add_field(name="Website", value="http://nosnowowie93347.github.io/")
@@ -109,9 +111,11 @@ class Botstuff(commands.Cog):
 		embed.add_field(name="Thanks to Sukuya for inspiration.", value=":smile:")
 		await ctx.send(embed=embed)
 	@commands.command(name="platform", description="Tells the platform the bot's running on")
+	@commands.guild_only()
 	async def platforms(self, ctx):
 		await ctx.send("The bot is currently running on: ```" + str(platform.platform()) + "```")
 	@commands.command(description="Lists the servers Terrabot is in")
+	@commands.guild_only()
 	async def serverlist(self, ctx):
 		x = ', '.join([str(server) for server in self.bot.guilds])
 		y = len(self.bot.guilds)
@@ -123,6 +127,7 @@ class Botstuff(commands.Cog):
 			thing2 = "Currently active on " + str(y) + " servers:" + "```json\n" + x + "```"
 			await ctx.send(thing2)
 	@commands.command(aliases=["pinf", "pig", "png", "pign", "pjgn", "ipng", "pgn", "pnig"])
+	@commands.guild_only()
 	async def ping(self, ctx: commands.Context):
 		"""
 		A rich embed ping command with timings.
@@ -225,6 +230,7 @@ class Botstuff(commands.Cog):
 		await self.bot.logout()
 	
 	@commands.command(description="Unpins the message with the specified ID")
+	@commands.guild_only()
 	@has_permissions(manage_messages=True)
 	@bot_has_permissions(manage_messages=True)
 	async def unpin(self, ctx, id:int):

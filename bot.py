@@ -130,9 +130,9 @@ async def on_message(message):
 	if not message.author.bot:
 			if isinstance(message.channel, DMChannel):
 				if len(message.content) < 50:
-					await message.channel.send("Your message should be at least 50 characters in length.")
+					return await message.channel.send("Your message should be at least 50 characters in length.")
 				if len(message.content) > 1000:
-					await message.reply("This is too long! Try shortening it to less than 1000 characters")
+					return await message.reply("This is too long! Try shortening it to less than 1000 characters")
 
 				else:
 					embed = Embed(title="Modmail",
@@ -183,7 +183,7 @@ def quote(query):
 		return query.replace("+","%2B").replace("\t","+").replace("\r","+").replace("\n","+").replace(" ","+")
 
 
-@bot.command(hidden=True)
+@bot.command(hidden=True, enabled=False)
 @commands.cooldown(1, 15, commands.BucketType.user)
 @commands.guild_only()
 async def spamtwo(ctx, *, message):
@@ -193,6 +193,7 @@ async def spamtwo(ctx, *, message):
 		x += 1
 		await ctx.send(message)
 @bot.command(name='perms', aliases=['perms_for', 'permissions', 'userperms'])
+@commands.guild_only()
 async def check_permissions(ctx, member: discord.Member=None):
 	"""A simple command which checks a members Guild Permissions.
 	If member is not provided, the author will be checked."""
@@ -219,6 +220,7 @@ async def purge(ctx, number: int):
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
 	await ctx.send("Deleted {} messages, my master.".format(len(deleted)), delete_after=5)
 @bot.command(name="hostinfo")
+@commands.guild_only()
 async def hostinfo(ctx):
 	"""
 	A useful command that displays bot statistics.
@@ -243,6 +245,7 @@ async def hostinfo(ctx):
 
 	await ctx.send(embed=embed)
 @bot.command(name="reddit", description="Gets a random post from reddit", usage="<subreddit>")
+@commands.guild_only()
 @commands.cooldown(1, 15, commands.BucketType.user)
 async def reddit(ctx, *, subreddit):
 	import praw
@@ -267,6 +270,7 @@ async def reddit(ctx, *, subreddit):
 	await ctx.send(embed=em)
 
 @bot.command()
+@commands.guild_only()
 @commands.cooldown(1, 20,commands.BucketType.guild)
 @bot_has_permissions(manage_messages=True)
 @has_permissions(manage_messages=True)
@@ -277,6 +281,8 @@ async def purgeall(ctx):
 	await ctx.send("I have successfully cleared everything in this channel!")
 
 @bot.command(help="Displays what a user is listening to on Spotify", usage="[user]")
+@commands.guild_only()
+
 async def spotify(ctx, user: discord.Member=None):
 	user = user or ctx.author
 	for activity in user.activities:
@@ -293,11 +299,13 @@ async def spotify(ctx, user: discord.Member=None):
 		await ctx.send(embed=embed)
 
 @bot.command(aliases=["makebig", "enlargen", "supersize"])
+@commands.guild_only()
 async def embiggen(ctx, *, text):
 	"""Embiggens text. Yes that's a word, obviously"""
 	await ctx.send("```fix\n" + figlet_format(text, font="big") + "```")
 
 @bot.command()
+@commands.guild_only()
 async def terrariaquotes(ctx):
 	"""Various messages from the game Terraria"""
 	terrariaquote = open("terrariaquotes.txt").read().splitlines()
@@ -305,6 +313,7 @@ async def terrariaquotes(ctx):
 	await ctx.send(terraria)
 @bot.command(aliases=["ud", "urbandict", "define"])
 @commands.is_nsfw()
+@commands.guild_only()
 async def urban(ctx, *msg):
 	"""Define stuff with Urban Dict"""
 	print("hi")
@@ -331,6 +340,7 @@ async def urban(ctx, *msg):
 	await ctx.send(embed=embed)
 
 @bot.command(aliases=["aboutguild", "aboutserver", "serverinfo"])
+@commands.guild_only()
 async def guildinfo(ctx):
 	"""About the guild"""
 	guild = ctx.guild
@@ -365,6 +375,7 @@ async def guildinfo(ctx):
 	await ctx.send(embed=embed2)
 
 @bot.command()
+@commands.guild_only()
 async def online(ctx):
 	"""Get # of offline members"""
 	# Set the filter to be a non-offline member, and the member not being a bot.
@@ -385,6 +396,7 @@ async def changenickname(ctx, member : discord.Member, *, nickname):
 	await member.edit(nick=nickname)
 	await ctx.send(f"Success! {member}'s Nickname changed to {nickname}")
 @bot.command()
+@commands.guild_only()
 async def userinfo(ctx, member:discord.Member):
 	"""Info about user"""
 	embed = discord.Embed(title="User Info", color=0xff00ae)
@@ -416,6 +428,7 @@ async def backwards(ctx, *, message):
 	await ctx.send(embed=embed)
 
 @bot.command()
+@commands.guild_only()
 async def beer(ctx, user: discord.Member = None, *, reason: commands.clean_content = ""):
 		""" Give someone a beer! 🍻 """
 		if not user or user.id == ctx.author.id:
@@ -447,6 +460,7 @@ async def beer(ctx, user: discord.Member = None, *, reason: commands.clean_conte
 			beer_offer = beer_offer + f"\n\n**Reason:** {reason}" if reason else beer_offer
 			await msg.edit(content=beer_offer)
 @bot.command(aliases=["b&w"])
+@commands.guild_only()
 async def blackandwhite(ctx, user:discord.Member=None):
 	"""Turns your avatar or the specified user's avatar black and white"""
 	await ctx.channel.trigger_typing()
@@ -458,12 +472,14 @@ async def blackandwhite(ctx, user:discord.Member=None):
 	await ctx.send(file=discord.File("data/blackandwhite.png"))
 
 @bot.command()
+@commands.guild_only()
 async def avatar(ctx, *,  user : discord.User):
 	"""Gets a user's avatar"""
 	userAvatarUrl = user.avatar_url
 	await ctx.send(userAvatarUrl)
 
 @bot.command(name="pi")
+@commands.guild_only()
 async def calculatepi(ctx, n:int):
 	"""Calculate pi to a certain # of digits"""
 	def roundpi(n):
@@ -471,8 +487,9 @@ async def calculatepi(ctx, n:int):
 	if n > 15:
 		return await ctx.send("the maximum is 15 digits sadly.")
 	await ctx.send(roundpi(n))
-@bot.command(hidden=True, enabled=False)
+@bot.command(hidden=True)
 @commands.is_nsfw()
+@commands.guild_only()
 async def rule34(ctx, *, tags:str):
 	"""A wonderfun NSFW command"""
 	await ctx.channel.trigger_typing()
@@ -496,6 +513,7 @@ async def rule34(ctx, *, tags:str):
 		images.append("http://img.rule34.xxx/images/{}/{}".format(image["directory"], image["image"]))
 	await ctx.send(("nsfw.results", ctx).format(image_count, count, tags, "\n".join(images)))
 @bot.command(aliases=["cutedog", "randomdog"])
+@commands.guild_only()
 async def shibe(ctx):
 	"""Sends a random shibe picture."""
 	try:
@@ -510,6 +528,7 @@ async def shibe(ctx):
 		logger.error(e)
 		await ctx.send(f"{ctx.tick(False)} Failed to grab a shibe. Try again later.")
 @bot.command()
+@commands.guild_only()
 @commands.has_permissions(manage_channels=True)
 @commands.bot_has_permissions(manage_channels=True)
 @commands.cooldown(1, 20,commands.BucketType.user)
@@ -543,12 +562,14 @@ async def quoteaf(ctx):
 	await ctx.channel.trigger_typing()
 	await ctx.send(file=discord.File("assets/imgs/quotes/{}.png".format(random.randint(1, len([file for file in os.listdir("assets/imgs/quotes")])))))      
 @bot.command()
+@commands.guild_only()
 async def ron(ctx):
 	"""Get a Ron Swanson quote"""
 	req = requests.get("https://ron-swanson-quotes.herokuapp.com/v2/quotes")
 	quote = req.json()
 	await ctx.send(quote[0])
 @bot.command(aliases=["memes", "memey", "memer"])
+@commands.guild_only()
 async def meme(ctx):
 	"""Have a meme, friend!"""
 	embed = discord.Embed(title="Meme", description="Here comes a meme!!")
@@ -577,6 +598,7 @@ async def suggest(ctx, *, suggestion:str):
 
 
 @bot.command(aliases=["report", "notifydevs"])
+@commands.guild_only()
 async def notifydev(ctx, *, message:str):
 	"""Sends a message to the developers"""
 	if isinstance(ctx.channel, discord.DMChannel):
