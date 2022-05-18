@@ -1,5 +1,8 @@
-import discord, platform, requests, json, random, fnmatch, time, asyncio, os, datetime
-from discord import ext
+import discord, platform, requests, json, random, fnmatch, time, asyncio, os, datetime, tabulate
+from discord import ext, Colour
+from time import monotonic
+from discord.ext.commands.converter import ColourConverter, PartialEmojiConverter
+from discord.ext.commands.errors import BadColourArgument, PartialEmojiConversionFailure
 from discord.ext import commands
 from utils.language import Language
 from utils.mysql import *
@@ -9,6 +12,20 @@ from utils import checks, default
 from discord.ext.commands import Bot, has_permissions, bot_has_permissions, MissingPermissions
 
 bot_status = discord.Status.online
+def box(text: str, lang: str = "") -> str:
+	"""Get the given text in a code block.
+	Parameters
+	----------
+	text : str
+		The text to be marked up.
+	lang : `str`, optional
+		The syntax highlighting language for the codeblock.
+	Returns
+	-------
+	str
+		The marked up text.
+	"""
+	return f"```{lang}\n{text}\n```"
 class Botstuff(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -105,17 +122,101 @@ class Botstuff(commands.Cog):
 		elif y < 40:
 			thing2 = "Currently active on " + str(y) + " servers:" + "```json\n" + x + "```"
 			await ctx.send(thing2)
-	@commands.command(description="Gets bot latency")
-	async def ping(self, ctx):
-		print(self.bot.latency)
-		before_typing = time.monotonic()
-		await ctx.trigger_typing()
-		after_typing = time.monotonic()
-		ms = int((after_typing - before_typing) * 1000)
-		msg = '*{}*, ***PONGY PONG!*** :ping_pong:'.format(ctx.author.mention)
-		msg2 = ':hourglass: (~{}ms)'.format(ms)
-		await ctx.send(msg)
-		await ctx.send(msg2)
+	@commands.command(aliases=["pinf", "pig", "png", "pign", "pjgn", "ipng", "pgn", "pnig"])
+	async def ping(self, ctx: commands.Context):
+		"""
+		A rich embed ping command with timings.
+		This will show the time to send a message, and the WS latency to Discord.
+		If I can't send embeds or they are disabled here, I will send a normal message instead.
+		The embed has more detail and is preferred.
+		"""
+		try:
+			ws_latency = round(self.bot.latency * 1000)
+		except OverflowError:  # ping float is infinity, ie last ping to discord failed
+			await ctx.send(
+				"I'm alive and working normally, but I've had connection issues in the last few "
+				"seconds so precise ping times are unavailable. Try again in a minute."
+			)
+			return
+
+		title = (
+			"\N{TABLE TENNIS PADDLE AND BALL}  Pong!"
+			
+		)
+
+
+		if ctx.guild:
+			
+			use_embed = ctx.channel.permissions_for(ctx.me).embed_links  # type:ignore
+		embed: discord.Embed | None = None
+
+		if use_embed:
+			embed = discord.Embed(title=title)
+			embed.add_field(name="Discord WS", value=box(f"{ws_latency} ms", "py"))
+			
+			start = monotonic()
+			message: discord.Message = await ctx.send(embed=embed)
+		else:
+			msg = f"**{title}**\nDiscord WS: {ws_latency} ms"
+			start = monotonic()
+			message = await ctx.send(msg)
+		end = monotonic()
+
+		# im sure there's better way to do these long ifs, haven't looked properly yet
+
+		m_latency = round((end - start) * 1000)
+
+		ws_latency_text, m_latency_text = self._get_latency_text(
+			ws_latency, m_latency, use_embed
+		)
+
+		if use_embed and embed is not None:
+			colour = Colour.random()
+			extra = box(f"{ws_latency} ms", "py")
+			embed.set_field_at(0, name="Discord WS", value=f"{ws_latency_text}{extra}")
+			extra = box(f"{m_latency} ms", "py")
+			embed.add_field(name="Message Send", value=f"{m_latency_text}{extra}")
+			embed.colour = colour
+			await message.edit(embed=embed)
+		else:
+			data = [
+				["Discord WS", "Message Send"],
+				[ws_latency_text, m_latency_text],
+				[f"{ws_latency} ms", f"{m_latency} ms"],
+			]
+			table = box(tabulate.tabulate(data, tablefmt="plain"), "py")  # cspell: disable-line
+			msg = f"**{title}**{table}"
+			await message.edit(content=msg)
+
+	# im sure there's better way to do these two methods but i cba to find one
+
+
+	def _get_latency_text(
+		self, ws_latency: int, m_latency: int, emojis: bool
+	) -> tuple[str, str]:
+		if ws_latency < 50:
+			ws_latency_text = ":green_square: Excellent" if emojis else "Excellent"
+		elif ws_latency < 150:
+			ws_latency_text = ":green_square: Good" if emojis else "Good"
+		elif ws_latency < 250:
+			ws_latency_text = ":orange_square: Alright" if emojis else "Alright"
+		elif ws_latency < 500:
+			ws_latency_text = ":red_square: Bad" if emojis else "Bad"
+		else:
+			ws_latency_text = ":red_square: Very Bad" if emojis else "Very Bad"
+
+		if m_latency < 75:
+			m_latency_text = ":green_square: Excellent" if emojis else "Excellent"
+		elif m_latency < 225:
+			m_latency_text = ":green_square: Good" if emojis else "Good"
+		elif m_latency < 350:
+			m_latency_text = ":orange_square: Alright" if emojis else "Alright"
+		elif m_latency < 600:
+			m_latency_text = ":red_square: Bad" if emojis else "Bad"
+		else:
+			m_latency_text = ":red_square: Very Bad" if emojis else "Very Bad"
+
+		return ws_latency_text, m_latency_text
 	@commands.command(aliases=["logout"], description="Shuts down the bot.")
 	@commands.is_owner()
 	async def shutdown(self, ctx):
