@@ -612,7 +612,7 @@ async def notifydev(ctx, *, message:str):
 
 if __name__ == '__main__':
 	for file in os.listdir(cwd):
-		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py") and not file.startswith("xphelp.py") and not file.startswith("embedutils.py"):
+		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py") and not file.startswith("common_variables.py") and not file.startswith("embeds.py") and not file.startswith("menus.py") and not file.startswith("utilities.py") and not file.startswith("xphelp.py") and not file.startswith("embedutils.py"):
 			bot.load_extension(file[:-3])
 
 	for file in os.listdir(cogdir):

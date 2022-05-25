@@ -239,6 +239,32 @@ DEFAULT_CONTROLS: Mapping[str, _ControlCallable] = MappingProxyType(
         "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
     }
 )
+def error(text: str) -> str:
+    """Get text prefixed with an error emoji.
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+    Returns
+    -------
+    str
+        The new message.
+    """
+    return f"\N{NO ENTRY SIGN} {text}"
+
+
+def warning(text: str) -> str:
+    """Get text prefixed with a warning emoji.
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+    Returns
+    -------
+    str
+        The new message.
+    """
+    return f"\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {text}"
 def pagify(
     text: str,
     delims: Sequence[str] = ["\n"],

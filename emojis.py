@@ -1,12 +1,44 @@
-import discord, random, asyncio, math
+import discord, random, asyncio, math, aiohttp, json
 from random import choice, randint, randrange
 from discord.ext import commands
+from cogs.utils.test import error
 emojilist = open("Emojis.txt", encoding='utf8').read().splitlines()
 
 
 class Emoji(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		self.session = aiohttp.ClientSession(json_serialize=json.dumps)
+	@commands.command(name="createemoji")
+	async def emoji_add(self, ctx, name: str, url: str, *roles: discord.Role):
+		"""Create custom emoji
+		Use double quotes if role name has spaces
+		Examples:
+			`[p]emoji add Example https://example.com/image.png`
+			`[p]emoji add RoleBased https://example.com/image.png EmojiRole "Test image"`
+		"""
+		try:
+			async with self.session.get(url) as r:
+				data = await r.read()
+		except Exception as e:
+			await ctx.send(error(("Unable to get emoji from provided url: {}").format(e)))
+			return
+		try:
+			await ctx.guild.create_custom_emoji(
+				name=name,
+				image=data,
+				roles=roles,
+				reason= ("Restricted to roles: {}").format(", ".join(role.name for role in roles))
+					if roles
+					else None,
+				)
+
+		except discord.InvalidArgument:
+			await ctx.send(error(("This image type is unsupported, or link is incorrect")))
+		except discord.HTTPException as e:
+			await ctx.send(error(("An error occured on adding an emoji: {}").format(e)))
+		else:
+			await ctx.send("Success.")
 	@commands.command()
 	async def emojify(self, ctx, *, text: str):
 		'''

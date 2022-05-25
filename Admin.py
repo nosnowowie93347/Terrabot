@@ -3,10 +3,11 @@ from io import BytesIO
 from utils.mysql import *
 from utils.channel_logger import Channel_Logger
 from utils.tools import *
+from menus import ActivityPager, BaseMenu, ChannelsMenu, ChannelsPager, EmojiPager, PagePager
 from utils.logger import log
 from utils import checks, config
 from utils.language import Language
-
+from cogs.utils.test import pagify
 from discord import ext
 from random import randint, choice
 from discord.ext import commands
@@ -25,7 +26,7 @@ class Admin(commands.Cog):
 	@commands.has_permissions(manage_messages=True)
 	@commands.bot_has_permissions(manage_messages=True)
 	async def pin(self, ctx, messageid:int):
-		
+
 		try:
 			await ctx.message.delete()
 			message = await ctx.channel.fetch_message(messageid)
@@ -37,15 +38,15 @@ class Admin(commands.Cog):
 			await ctx.send(f"Successfully pinned message with id {messageid}")
 		except discord.errors.Forbidden:
 			await ctx.send(Language.get("moderation.no_manage_messages_perms", ctx))
-	
+
 	@commands.command(usage="<user> <reason>", description="A nice ban command to use on rulebreakers.", brief="When you're just not having it")
 	@has_permissions(ban_members=True)
 	@commands.bot_has_permissions(ban_members=True)
 	async def ban(self, ctx, member : discord.Member, *,  reason : str):
-		
+
 		guild = ctx.guild
 		if member.id == config.owner_id:
-			return await ctx.send("How dare you try to ban Pink!")	
+			return await ctx.send("How dare you try to ban Pink!")
 		banembed=discord.Embed(title=f"{member} banned successfully", description=f"{member} banned for {reason}")
 		dmembed = discord.Embed(title="Banned", description="You were banned from {} for {}".format(ctx.guild, reason))
 		await ctx.send(embed=banembed)
@@ -109,12 +110,12 @@ class Admin(commands.Cog):
 			return await ctx.send(Language.get("moderation.no_editrole_higher_role", ctx))
 
 		await user.add_roles(role, reason=Language.get("moderation.addrole_reason", ctx).format(role, ctx.author))
-		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))	
+		await ctx.send(Language.get("moderation.addrole_success", ctx).format(name, user))
 	@commands.command(usage="<userid>", description="Unbans a user")
 	@commands.has_permissions(manage_guild=True)
 	@commands.guild_only()
 	async def unban(self, ctx, memberid : discord.Object):
-		
+
 		member = memberid
 		try:
 			await ctx.guild.unban(member)
@@ -127,7 +128,7 @@ class Admin(commands.Cog):
 					await channel.send(embed=embed)
 		except discord.errors.Forbidden:
 			await ctx.send("I do not have the `Ban Members` permission.")
-	
+
 	@commands.command()
 	@commands.guild_only()
 	@commands.bot_has_permissions(manage_roles=True)
@@ -157,7 +158,7 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(embed=embed)
-	
+
 
 	@commands.command()
 	@commands.guild_only()
@@ -182,7 +183,25 @@ class Admin(commands.Cog):
 		for channel in guild.channels:
 			if channel.name == "logs":
 				await channel.send(Language.get("moderation.massban_success", ctx).format(success, len(ids)))
-	
+	@commands.command()
+	@commands.guild_only()
+	@commands.has_permissions(embed_links=True)
+	@commands.has_permissions(manage_messages=True)
+	@commands.bot_has_permissions(embed_links=True)
+	@commands.bot_has_permissions(ban_members=True)
+	async def bans(self, ctx: commands.Context, *, server: commands.GuildConverter = None):
+		"""Get bans from server by id"""
+		if server is None or not await self.bot.is_owner(ctx.author):
+			server = ctx.guild
+		if not server.me.guild_permissions.ban_members:
+			await ctx.send('I need permission "Ban Members" to access banned members on server')
+			return
+		banlist = await server.bans()
+		if banlist:
+			banlisttext = "\n".join(f"{x.user} ({x.user.id})" for x in banlist)
+			await BaseMenu(PagePager(list(pagify(banlisttext)))).start(ctx)
+		else:
+			await ctx.send(_("Banlist is empty!"))
 	@commands.command()
 	@commands.guild_only()
 	@bot_has_permissions(manage_roles=True)

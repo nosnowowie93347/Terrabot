@@ -84,7 +84,7 @@ class ErrorHandler(Cog):
 			await ctx.send("Oops! This command doesn't exist. If you think it should, dm the devs with ur suggestion.")
 			return
 		elif isinstance(e, errors.NotOwner):
-			await ctx.send("ERROR: " + e)
+			await ctx.send(f'Error: {e}')
 			return
 		elif isinstance(e, errors.UserInputError):
 			await self.handle_user_input_error(ctx, e)
