@@ -117,7 +117,7 @@ async def on_ready():
 	running = True
 	while running == True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))
-		await asyncio.sleep(30)
+		await asyncio.sleep(26)
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(hel)))
 	currentMutes = await bot.mutes.get_all()
 	for mute in currentMutes:
@@ -208,14 +208,16 @@ async def check_permissions(ctx, member: discord.Member=None):
 	embed.add_field(name='\uFEFF', value=perms)
 	await ctx.send(content=None, embed=embed)
 @bot.command(name="wipe", aliases=["delete", "clean", "removespam"])
-@commands.cooldown(1, 30, commands.BucketType.user)
+@commands.cooldown(1, 27, commands.BucketType.user)
 @commands.has_permissions(manage_messages=True)
+@commands.has_permissions(read_message_history=True)
+@commands.bot_has_permissions(read_message_history=True)
 async def purge(ctx, number: int):
 	"""Deletes a certain number of messages"""
 	await ctx.trigger_typing()
-	if number < 1 or number > 500:
-		return await ctx.send("Please choose a number between 1 and 500")
-	deleted = await ctx.channel.purge(limit=number)
+	if number < 1 or number > 300:
+		return await ctx.send("Please choose a number between 1 and 300")
+	deleted = await ctx.channel.purge(limit=number, check=lambda message: not message.pinned)
 	print('Deleted {} message(s)'.format(len(deleted)))
 	logger.info('Deleted {} message(s)'.format(len(deleted)))
 	await ctx.send("Deleted {} messages, my master.".format(len(deleted)), delete_after=5)
@@ -612,7 +614,7 @@ async def notifydev(ctx, *, message:str):
 
 if __name__ == '__main__':
 	for file in os.listdir(cwd):
-		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py") and not file.startswith("common_variables.py") and not file.startswith("embeds.py") and not file.startswith("menus.py") and not file.startswith("utilities.py") and not file.startswith("xphelp.py") and not file.startswith("embedutils.py"):
+		if file.endswith(".py") and not file.startswith("_") and not file.startswith("bot.py") and not file.startswith("common_variables.py") and not file.startswith("embeds.py") and not file.startswith("menus.py") and not file.startswith("utilities.py") and not file.startswith("xphelp.py") and not file.startswith("embedutils.py") and not file.startswith("akimenu.py"):
 			bot.load_extension(file[:-3])
 
 	for file in os.listdir(cogdir):

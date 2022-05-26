@@ -2,6 +2,7 @@ import unicodedata
 from typing import Union
 
 import discord
+from discord import Colour
 
 from common_variables import ACTIVITY_TYPES, APP_ICON_URL, NON_ESCAPABLE_CHARACTERS
 from utilities import get_twemoji
@@ -15,7 +16,7 @@ async def emoji_embed(ctx, emoji: Union[discord.Emoji, discord.PartialEmoji]) ->
             map(lambda c: unicodedata.name(c, _("[Unable to resolve unicode name]")), emoji)
         )
         or chat.escape(emoji.name, formatting=True),
-        color=await ctx.embed_color(),
+        color=Colour.random()
     )
     if isinstance(emoji, str):
         # em.add_field(name=_("Unicode emoji"), value="✅")

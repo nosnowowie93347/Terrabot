@@ -1,4 +1,6 @@
-import discord, random, base64, aiohttp, cat, hashlib, json, time, datetime, urllib, math, requests, asyncio, re, secrets, urllib, aiohttp, time, sys, importlib, os
+import discord, random, base64, aiohttp, cat, hashlib, json, akinator, datetime, urllib, math, requests, asyncio, re, secrets, urllib, time, sys, importlib, os
+from akimenu import channel_is_nsfw, get_menu
+from akinator.async_aki import Akinator
 from discord import ext
 import humanize as h
 from random import choice
@@ -26,6 +28,7 @@ class Fun(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.session = aiohttp.ClientSession()
 
 	@commands.command()
 	@commands.guild_only()
@@ -76,6 +79,45 @@ class Fun(commands.Cog):
 						await ctx.send("I choose **{}**. You win!".format(botChoice))
 		except Exception as e:
 			await ctx.send(e)
+	@commands.max_concurrency(1, commands.BucketType.channel)
+	@commands.guild_only()
+	@commands.bot_has_permissions(embed_links=True, add_reactions=True)
+	@commands.has_permissions(embed_links=True, add_reactions=True)
+	@commands.command(aliases=["akinator"])
+	async def aki(
+		self, ctx: commands.Context, language: str.lower = "en", use_buttons: bool = True
+	):
+		"""
+		Start a game of Akinator!
+		Controls:
+		> ✅ : yes
+		> ❎ : no
+		> ❔ : i don't know
+		> 📉 : probably
+		> 📈 : probably not
+		> 🔙 : back
+		> 🏆 : win
+		> 🗑️ : cancel
+		"""
+		await ctx.trigger_typing()
+		aki = Akinator()
+		child_mode = not channel_is_nsfw(ctx.channel)
+		try:
+			await aki.start_game(
+				language=language.replace(" ", "_"),
+				child_mode=child_mode,
+				client_session=self.session,
+			)
+		except akinator.InvalidLanguageError:
+			await ctx.send(
+				"Invalid language. Refer here to view valid languages.\n<https://github.com/NinjaSnail1080/akinator.py#functions>"
+			)
+		except Exception:
+			await ctx.send("I encountered an error while connecting to the Akinator servers.")
+		else:
+			aki_color = discord.Color(0xE8BC90)
+			menu = get_menu(buttons=use_buttons)
+			await menu(aki, aki_color).start(ctx)
 	@commands.command(brief="Generates a random password string for you")
 	@commands.guild_only()
 	async def password(self, ctx, nbytes: int = 18):
