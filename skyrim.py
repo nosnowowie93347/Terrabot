@@ -4,13 +4,14 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 
 
-
 class Skyrim(commands.Cog):
     """
     Says a random line from Skyrim.
     """
+
     def __init__(self, bot):
         self.bot = bot
+
     @commands.command()
     async def guard(self, ctx):
         """
@@ -35,5 +36,7 @@ class Skyrim(commands.Cog):
         await ctx.send(
             "Do you get to the Cloud District very often? Oh, what am I saying, of course you don't."
         )
+
+
 def setup(bot):
     bot.add_cog(Skyrim(bot))

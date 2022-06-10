@@ -1,13 +1,16 @@
 import discord, os, random, traceback, typing, asyncio, logging, emojis
 from discord.ext import commands
+
+
 class Reload(commands.Cog, name="Reload"):
     def __init__(self, bot):
         self.bot = bot
-        self.logger = logging.getLogger(__name__)    
-    
-   
+        self.logger = logging.getLogger(__name__)
+
     @commands.command(
-        name="reload", description="Reload all/one of the bots cogs!", usage="[cog]",
+        name="reload",
+        description="Reload all/one of the bots cogs!",
+        usage="[cog]",
     )
     @commands.is_owner()
     async def reload(self, ctx, cog=None):
@@ -28,7 +31,8 @@ class Reload(commands.Cog, name="Reload"):
                             description += f"Reloaded: `{ext}`\n"
                         except Exception as e:
                             embed.add_field(
-                                name=f"Failed to reload: `{ext}`", value=e,
+                                name=f"Failed to reload: `{ext}`",
+                                value=e,
                             )
                     await asyncio.sleep(0.5)
                 embed.description = description
@@ -56,10 +60,12 @@ class Reload(commands.Cog, name="Reload"):
                     except Exception:
                         desired_trace = traceback.format_exc()
                         embed.add_field(
-                            name=f"Failed to reload: `{ext}`", value=desired_trace,
+                            name=f"Failed to reload: `{ext}`",
+                            value=desired_trace,
                         )
                 await asyncio.sleep(0.5)
             await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Reload(bot))

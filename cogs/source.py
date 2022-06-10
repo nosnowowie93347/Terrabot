@@ -7,7 +7,13 @@ from discord.ext import commands
 
 from utils import config
 
-SourceType = Union[commands.HelpCommand, commands.Command, commands.Cog, str, commands.ExtensionNotLoaded]
+SourceType = Union[
+    commands.HelpCommand,
+    commands.Command,
+    commands.Cog,
+    str,
+    commands.ExtensionNotLoaded,
+]
 
 
 class SourceConverter(commands.Converter):
@@ -48,11 +54,15 @@ class BotSource(commands.Cog):
         self.bot = bot
 
     @commands.command(name="source", aliases=("src",))
-    async def source_command(self, ctx: commands.Context, *, source_item: SourceConverter = None) -> None:
+    async def source_command(
+        self, ctx: commands.Context, *, source_item: SourceConverter = None
+    ) -> None:
         """Display information and a GitHub link to the source code of a command, tag, or cog."""
         if not source_item:
             embed = Embed(title="Bot's GitHub Repository")
-            embed.add_field(name="Repository", value=f"[Go to GitHub]({config.github_bot_repo})")
+            embed.add_field(
+                name="Repository", value=f"[Go to GitHub]({config.github_bot_repo})"
+            )
             embed.set_thumbnail(url="https://avatars2.githubusercontent.com/u/65568190")
             await ctx.send(embed=embed)
             return
@@ -60,7 +70,9 @@ class BotSource(commands.Cog):
         embed = await self.build_embed(source_item)
         await ctx.send(embed=embed)
 
-    def get_source_link(self, source_item: SourceType) -> Tuple[str, str, Optional[int]]:
+    def get_source_link(
+        self, source_item: SourceType
+    ) -> Tuple[str, str, Optional[int]]:
         """
         Build GitHub link of source item, return this link, file location and first line number.
         Raise BadArgument if `source_item` is a dynamically-created object (e.g. via internal eval).
@@ -68,19 +80,23 @@ class BotSource(commands.Cog):
         if isinstance(source_item, commands.Command):
             src = source_item.callback.__code__
             filename = src.co_filename
-        
+
         else:
             src = type(source_item)
             try:
                 filename = inspect.getsourcefile(src)
             except TypeError:
-                raise commands.BadArgument("Cannot get source for a dynamically-created object.")
+                raise commands.BadArgument(
+                    "Cannot get source for a dynamically-created object."
+                )
 
         if not isinstance(source_item, str):
             try:
                 lines, first_line_no = inspect.getsourcelines(src)
             except OSError:
-                raise commands.BadArgument("Cannot get source for a dynamically-created object.")
+                raise commands.BadArgument(
+                    "Cannot get source for a dynamically-created object."
+                )
 
             lines_extension = f"#L{first_line_no}-L{first_line_no+len(lines)-1}"
         else:

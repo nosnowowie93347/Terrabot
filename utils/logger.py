@@ -9,11 +9,13 @@ import codecs
 
 debugging = False
 
+
 class TimedCompressedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     # NOT ALL THE CODE IN THIS CLASS IS MINE
     """
     Extended version of TimedRotatingFileHandler that compress logs on rollover.
     """
+
     def doRollover(self):
         """
         do a rollover; in this case, a date/time stamp is appended to the filename
@@ -32,11 +34,11 @@ class TimedCompressedRotatingFileHandler(logging.handlers.TimedRotatingFileHandl
         if os.path.exists(dfn):
             os.remove(dfn)
         os.rename(self.baseFilename, dfn)
-        #print "%s -> %s" % (self.baseFilename, dfn)
+        # print "%s -> %s" % (self.baseFilename, dfn)
         if self.encoding:
-            self.stream = codecs.open(self.baseFilename, 'w', self.encoding)
+            self.stream = codecs.open(self.baseFilename, "w", self.encoding)
         else:
-            self.stream = open(self.baseFilename, 'w')
+            self.stream = open(self.baseFilename, "w")
         self.rolloverAt = self.rolloverAt + self.interval
         if os.path.exists(dfn + ".zip"):
             os.remove(dfn + ".zip")
@@ -45,30 +47,33 @@ class TimedCompressedRotatingFileHandler(logging.handlers.TimedRotatingFileHandl
         file.close()
         os.remove(dfn)
 
+
 class log:
     def init():
         if len(logging.getLogger("").handlers) > 1:
             return
 
         shandler = logging.StreamHandler(stream=sys.stdout)
-        shandler.setFormatter(colorlog.LevelFormatter(
-            fmt = {
-                "DEBUG": "{log_color}[{levelname}] {message}",
-                "INFO": "{log_color}[{levelname}] {message}",
-                "WARNING": "{log_color}[{levelname}] {message}",
-                "ERROR": "{log_color}[{levelname}] {message}",
-                "CRITICAL": "{log_color}[{levelname}] {message}"
-            },
-            log_colors = {
-                "DEBUG": "cyan",
-                "INFO": "white",
-                "WARNING": "yellow",
-                "ERROR": "red",
-                "CRITICAL": "bold_red"
-        },
-            style = "{",
-            datefmt = ""
-        ))
+        shandler.setFormatter(
+            colorlog.LevelFormatter(
+                fmt={
+                    "DEBUG": "{log_color}[{levelname}] {message}",
+                    "INFO": "{log_color}[{levelname}] {message}",
+                    "WARNING": "{log_color}[{levelname}] {message}",
+                    "ERROR": "{log_color}[{levelname}] {message}",
+                    "CRITICAL": "{log_color}[{levelname}] {message}",
+                },
+                log_colors={
+                    "DEBUG": "cyan",
+                    "INFO": "white",
+                    "WARNING": "yellow",
+                    "ERROR": "red",
+                    "CRITICAL": "bold_red",
+                },
+                style="{",
+                datefmt="",
+            )
+        )
         shandler.setLevel(logging.DEBUG)
         logging.getLogger(__package__).addHandler(shandler)
         logging.getLogger(__package__).setLevel(logging.DEBUG)
@@ -76,10 +81,16 @@ class log:
     def setupRotator(date_format, time_format):
         if not os.path.exists("logs"):
             os.mkdir("logs")
-        rotator = TimedCompressedRotatingFileHandler("logs/latest.log", "d", 1, encoding="UTF-8")
-        rotator.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s", "{} {}".format(date_format, time_format)))
+        rotator = TimedCompressedRotatingFileHandler(
+            "logs/latest.log", "d", 1, encoding="UTF-8"
+        )
+        rotator.setFormatter(
+            logging.Formatter(
+                "%(asctime)s [%(levelname)s] %(message)s",
+                "{} {}".format(date_format, time_format),
+            )
+        )
         logging.getLogger(__package__).addHandler(rotator)
-
 
     def enableDebugging():
         global debugging

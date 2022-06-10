@@ -11,6 +11,8 @@ class Pag(Paginator):
             await self.page.clear_reactions()
         except discord.HTTPException:
             pass
+
+
 async def GetMessage(
     bot, ctx, contentOne="Default Message", contentTwo="\uFEFF", timeout=100
 ):
@@ -44,6 +46,7 @@ async def GetMessage(
             return msg.content
     except asyncio.TimeoutError:
         return False
+
 
 def clean_code(content):
     if content.startswith("```") and content.endswith("```"):

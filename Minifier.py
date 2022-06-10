@@ -8,13 +8,13 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 import python_minifier as minifier
 
+
 class Minifier(commands.Cog):
     """Minify your code!"""
 
-
     def __init__(self, bot):
         self.bot = bot
-        
+
     @commands.has_permissions(attach_files=True)
     @commands.command(usage="<file>")
     async def minify(self, ctx):
@@ -31,11 +31,15 @@ class Minifier(commands.Cog):
         try:
             file = await file.read()
         except UnicodeDecodeError:
-            return await ctx.reply("Something went wrong when trying to decode this file.")
+            return await ctx.reply(
+                "Something went wrong when trying to decode this file."
+            )
         converted = io.BytesIO(minifier.minify(file).encode(encoding="utf-8"))
         return await ctx.send(
             content="Please see the attached file below, with your minified code.",
             file=discord.File(converted, filename=file_name),
         )
+
+
 def setup(bot):
     bot.add_cog(Minifier(bot))

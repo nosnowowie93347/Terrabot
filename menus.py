@@ -82,7 +82,9 @@ class BaseMenu(menus.MenuPages, inherit_buttons=False):
 
 
 class ChannelsMenu(menus.MenuPages, inherit_buttons=False):
-    def __init__(self, sources: dict, channel_type: str, total_channels: int, timeout: int = 30):
+    def __init__(
+        self, sources: dict, channel_type: str, total_channels: int, timeout: int = 30
+    ):
         super().__init__(
             sources[next(iter(sources))],
             timeout=timeout,
@@ -100,15 +102,21 @@ class ChannelsMenu(menus.MenuPages, inherit_buttons=False):
     def should_add_reactions(self):
         return True
 
-    @menus.button("\N{BOOKMARK TABS}", position=menus.First(0), skip_if=check_channels("category"))
+    @menus.button(
+        "\N{BOOKMARK TABS}", position=menus.First(0), skip_if=check_channels("category")
+    )
     async def switch_category(self, payload):
         await self.set_source("category")
 
-    @menus.button("\N{SPEECH BALLOON}", position=menus.First(1), skip_if=check_channels("text"))
+    @menus.button(
+        "\N{SPEECH BALLOON}", position=menus.First(1), skip_if=check_channels("text")
+    )
     async def switch_text(self, payload):
         await self.set_source("text")
 
-    @menus.button("\N{SPEAKER}", position=menus.First(2), skip_if=check_channels("voice"))
+    @menus.button(
+        "\N{SPEAKER}", position=menus.First(2), skip_if=check_channels("voice")
+    )
     async def switch_voice(self, payload):
         await self.set_source("voice")
 
@@ -196,7 +204,9 @@ class EmojiPager(menus.ListPageSource):
 
     async def format_page(self, menu: BaseMenu, page):
         e = await emoji_embed(menu.ctx, page)
-        e.set_footer(text=("Page {}/{}").format(menu.current_page + 1, self.get_max_pages()))
+        e.set_footer(
+            text=("Page {}/{}").format(menu.current_page + 1, self.get_max_pages())
+        )
         return e
 
 

@@ -17,10 +17,10 @@ class MassUnban(commands.Cog):
     @commands.guild_only()
     @commands.command()
     @commands.has_permissions(manage_guild=True)
-    async def massunban(self, ctx, *, ban_reason = None):
+    async def massunban(self, ctx, *, ban_reason=None):
         """
         Mass unban everyone, or specific people.
-        
+
         `ban_reason` is what the bot looks for in the original ban reason to qualify a user for an unban. It is case-insensitive.
         """
         try:
@@ -49,23 +49,33 @@ class MassUnban(commands.Cog):
                 if pred.result is True:
                     async with ctx.typing():
                         for ban_entry in banlist:
-                            await ctx.guild.unban(ban_entry.user, reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})")
+                            await ctx.guild.unban(
+                                ban_entry.user,
+                                reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})",
+                            )
                             await asyncio.sleep(0.5)
                             unban_count += 1
                 else:
                     return await ctx.send("Alright, I'm not unbanning everyone.")
             except asyncio.TimeoutError:
-                return await ctx.send("Response timed out. Please run this command again if you wish to try again.")
+                return await ctx.send(
+                    "Response timed out. Please run this command again if you wish to try again."
+                )
         else:
             async with ctx.typing():
                 for ban_entry in banlist:
                     if not ban_entry.reason:
                         continue
                     if ban_reason.lower() in ban_entry.reason.lower():
-                        await ctx.guild.unban(ban_entry.user, reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})")
+                        await ctx.guild.unban(
+                            ban_entry.user,
+                            reason=f"Mass Unban requested by {str(ctx.author)} ({ctx.author.id})",
+                        )
                         await asyncio.sleep(0.5)
                         unban_count += 1
 
         await ctx.send(f"Done. Unbanned {unban_count} users.")
+
+
 def setup(bot):
     bot.add_cog(MassUnban(bot))

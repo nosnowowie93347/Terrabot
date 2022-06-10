@@ -10,7 +10,7 @@ psat_memes = [
     "http://i.imgur.com/XB2nBmz.png",
     "http://i.imgur.com/7sCwNXl.jpg",
     "http://i.imgur.com/caw6Pao.png",
-    "http://i.imgur.com/GwV0JYL.png"
+    "http://i.imgur.com/GwV0JYL.png",
 ]
 
 # Response for the 8ball command
@@ -34,7 +34,7 @@ magic_conch_shell = [
     "My reply is no",
     "My sources say no",
     "Outlook not so good",
-    "Very doubtful"
+    "Very doubtful",
 ]
 
 # Insults for the insult command
@@ -42,7 +42,7 @@ insults = [
     "is a fucking pedophile",
     "is a nigger",
     "is so insecure about his penis size because it is smaller than a babies",
-    "is just a fucking sterotypical 12 year old saying shit like \"I fucked your mom\" and other shit",
+    'is just a fucking sterotypical 12 year old saying shit like "I fucked your mom" and other shit',
     "is a fucking disguisting, disgraceful, ignorant, pathetic, and discriminative weeaboo!",
     "is a child molester",
     "has a kink with 80 year old men",
@@ -61,7 +61,7 @@ insults = [
     "lost his virginity to his grandpa",
     "supports abortion",
     "is a cuntrag",
-    "is on the sex offender list"
+    "is on the sex offender list",
 ]
 
 # Drunk lines for the actdrunk command
@@ -74,7 +74,7 @@ drunkaf = [
     "i have somethin to tell you: fedc",
     "weeeeeeew",
     "\*falls*",
-    "lol wana fuk some suc tonight #5SdE2@"
+    "lol wana fuk some suc tonight #5SdE2@",
 ]
 
 # Image urls for the honk command
@@ -87,7 +87,7 @@ honkhonkfgt = [
     "https://i.imgur.com/NvUiLGG.gif",
     "https://i.imgur.com/QDyvO4x.jpg",
     "https://i.imgur.com/HtrRYSS.png",
-    "https://i.imgur.com/bvrFQnX.jpg"
+    "https://i.imgur.com/bvrFQnX.jpg",
 ]
 
 # Fight command results
@@ -105,7 +105,7 @@ fight_results = [
     "but it only scratched %user%!",
     "and %user% was killed by it.",
     "but %attacker% activated %user%'s trap card!",
-    "and %user% was killed!"
+    "and %user% was killed!",
 ]
 
 # SFW neko types for the neko command
@@ -129,7 +129,7 @@ sfw_neko_types = [
     "kiss",
     "cuddle",
     "fox_girl",
-    "hug"
+    "hug",
 ]
 
 # NSFW neko types for the neko command
@@ -172,8 +172,7 @@ nsfw_neko_types = [
     "femdom",
     "spank",
     "erok",
-    "boobs"
-    "Random_hentai_gif",
+    "boobs" "Random_hentai_gif",
     "smallboobs",
-    "ero"
+    "ero",
 ]

@@ -12,6 +12,7 @@ def format_user(user: discord.abc.User) -> str:
     """Return a string for `user` which has their mention and ID."""
     return f"{user.mention} (`{user.id}`)"
 
+
 log = logging.getLogger(__name__)
 
 LOG_MESSAGE = (
@@ -40,9 +41,12 @@ TOKEN_EPOCH = 1_293_840_000
 # Each part only matches base64 URL-safe characters.
 # Padding has never been observed, but the padding character '=' is matched just in case.
 TOKEN_RE = re.compile(r"([\w\-=]+)\.([\w\-=]+)\.([\w\-=]+)", re.ASCII)
+
+
 def pad_base64(data: str) -> str:
     """Return base64 `data` with padding characters to ensure its length is a multiple of 4."""
     return data + "=" * (-len(data) % 4)
+
 
 class Token(t.NamedTuple):
     """A Discord Bot token."""
@@ -57,8 +61,6 @@ class TokenRemover(Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-
-   
 
     @Cog.listener()
     async def on_message(self, msg: Message) -> None:
@@ -84,22 +86,29 @@ class TokenRemover(Cog):
 
     async def take_action(self, msg: Message, found_token: Token) -> None:
         """Remove the `msg` containing the `found_token` and send a mod log message."""
-       
+
         try:
             await msg.delete()
         except NotFound:
-            log.debug(f"Failed to remove token in message {msg.id}: message already deleted.")
+            log.debug(
+                f"Failed to remove token in message {msg.id}: message already deleted."
+            )
             return
 
-        await msg.channel.send(DELETION_MESSAGE_TEMPLATE.format(mention=msg.author.mention))
+        await msg.channel.send(
+            DELETION_MESSAGE_TEMPLATE.format(mention=msg.author.mention)
+        )
 
         log_message = self.format_log_message(msg, found_token)
-        userid_message, mention_everyone = self.format_userid_log_message(msg, found_token)
+        userid_message, mention_everyone = self.format_userid_log_message(
+            msg, found_token
+        )
         log.debug(log_message)
 
-
     @classmethod
-    def format_userid_log_message(cls, msg: Message, token: Token) -> t.Tuple[str, bool]:
+    def format_userid_log_message(
+        cls, msg: Message, token: Token
+    ) -> t.Tuple[str, bool]:
         """
         Format the portion of the log message that includes details about the detected user ID.
         If the user is resolved to a member, the format includes the user ID, name, and the
@@ -111,11 +120,14 @@ class TokenRemover(Cog):
         user = msg.guild.get_member(user_id)
 
         if user:
-            return KNOWN_USER_LOG_MESSAGE.format(
-                user_id=user_id,
-                user_name=str(user),
-                kind="BOT" if user.bot else "USER",
-            ), not user.bot
+            return (
+                KNOWN_USER_LOG_MESSAGE.format(
+                    user_id=user_id,
+                    user_name=str(user),
+                    kind="BOT" if user.bot else "USER",
+                ),
+                not user.bot,
+            )
         else:
             return UNKNOWN_USER_LOG_MESSAGE.format(user_id=user_id), False
 
@@ -127,7 +139,7 @@ class TokenRemover(Cog):
             channel=msg.channel.mention,
             user_id=token.user_id,
             timestamp=token.timestamp,
-            hmac='x' * len(token.hmac),
+            hmac="x" * len(token.hmac),
         )
 
     @classmethod
@@ -155,7 +167,7 @@ class TokenRemover(Cog):
 
         try:
             decoded_bytes = base64.urlsafe_b64decode(b64_content)
-            string = decoded_bytes.decode('utf-8')
+            string = decoded_bytes.decode("utf-8")
             if not (string.isascii() and string.isdigit()):
                 # This case triggers if there are fancy unicode digits in the base64 encoding,
                 # that means it's not a valid user id.
@@ -185,7 +197,9 @@ class TokenRemover(Cog):
         if timestamp + TOKEN_EPOCH >= DISCORD_EPOCH:
             return True
         else:
-            log.debug(f"Invalid token timestamp '{b64_content}': smaller than Discord epoch")
+            log.debug(
+                f"Invalid token timestamp '{b64_content}': smaller than Discord epoch"
+            )
             return False
 
     @staticmethod

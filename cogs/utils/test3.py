@@ -33,6 +33,7 @@ import pkg_resources
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 
+
 class RichIndefiniteBarColumn(ProgressColumn):
     def render(self, task):
         return ProgressBar(

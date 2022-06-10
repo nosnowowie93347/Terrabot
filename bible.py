@@ -34,7 +34,9 @@ class Bible(commands.Cog):
                 h3.name = "b"
             fields.append(
                 EmbedField(
-                    name, f"[{h2t(str(value))}]({self.BASE_URL+ref.get('href')})"[:1000], False
+                    name,
+                    f"[{h2t(str(value))}]({self.BASE_URL+ref.get('href')})"[:1000],
+                    False,
                 )
             )
 
@@ -57,7 +59,12 @@ class Bible(commands.Cog):
             sup.decompose()
 
         # Remove other hidden junk
-        for div_class in ("footnotes", "crossrefs", "passage-other-trans", "full-chap-link"):
+        for div_class in (
+            "footnotes",
+            "crossrefs",
+            "passage-other-trans",
+            "full-chap-link",
+        ):
             if elements := text.find_all(class_=div_class):
                 for ele in elements:
                     if isinstance(ele, bs4.Tag):
@@ -136,7 +143,9 @@ class Bible(commands.Cog):
                         "2) Use the format of `book chapter:verse-range`"
                     )
 
-                menu = menus.MenuPages(Source(pages, per_page=1), clear_reactions_after=True)
+                menu = menus.MenuPages(
+                    Source(pages, per_page=1), clear_reactions_after=True
+                )
                 await menu.start(ctx)
 
     async def red_delete_data_for_user(self, *, requester, user_id: int) -> None:
@@ -146,5 +155,7 @@ class Bible(commands.Cog):
 class Source(menus.ListPageSource):
     async def format_page(self, menu, embeds):
         return embeds
+
+
 def setup(bot):
     bot.add_cog(Bible(bot))

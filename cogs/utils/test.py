@@ -1,6 +1,17 @@
 import asyncio, contextlib, functools
 from types import MappingProxyType
-from typing import Callable, Iterable, List, Mapping, Optional, TypeVar, Union, SupportsInt, Sequence, Iterator
+from typing import (
+    Callable,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    TypeVar,
+    Union,
+    SupportsInt,
+    Sequence,
+    Iterator,
+)
 
 import discord
 
@@ -10,7 +21,10 @@ from .test2 import ReactionPredicate
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
-_ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, float, str], _T]
+_ControlCallable = Callable[
+    [commands.Context, _PageList, discord.Message, int, float, str], _T
+]
+
 
 def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) -> str:
     """Get text with all mass mentions or markdown escaped.
@@ -33,6 +47,8 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     if formatting:
         text = discord.utils.escape_markdown(text)
     return text
+
+
 async def menu(
     ctx: commands.Context,
     pages: _PageList,
@@ -111,7 +127,9 @@ async def menu(
             return
 
     try:
-        predicates = ReactionPredicate.with_emojis(tuple(controls.keys()), message, ctx.author)
+        predicates = ReactionPredicate.with_emojis(
+            tuple(controls.keys()), message, ctx.author
+        )
         tasks = [
             asyncio.create_task(ctx.bot.wait_for("reaction_add", check=predicates)),
             asyncio.create_task(ctx.bot.wait_for("reaction_remove", check=predicates)),
@@ -150,6 +168,8 @@ async def menu(
         return await controls[react.emoji](
             ctx, pages, controls, message, page, timeout, react.emoji
         )
+
+
 async def next_page(
     ctx: commands.Context,
     pages: list,
@@ -188,6 +208,8 @@ async def prev_page(
     else:
         page = page - 1
     return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
+
+
 async def close_menu(
     ctx: commands.Context,
     pages: list,
@@ -203,6 +225,8 @@ async def close_menu(
     """
     with contextlib.suppress(discord.NotFound):
         await message.delete()
+
+
 def start_adding_reactions(
     message: discord.Message, emojis: Iterable[_ReactableEmoji]
 ) -> asyncio.Task:
@@ -232,6 +256,8 @@ def start_adding_reactions(
                 await message.add_reaction(emoji)
 
     return asyncio.create_task(task())
+
+
 DEFAULT_CONTROLS: Mapping[str, _ControlCallable] = MappingProxyType(
     {
         "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
@@ -239,6 +265,8 @@ DEFAULT_CONTROLS: Mapping[str, _ControlCallable] = MappingProxyType(
         "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
     }
 )
+
+
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
     Parameters
@@ -265,6 +293,8 @@ def warning(text: str) -> str:
         The new message.
     """
     return f"\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {text}"
+
+
 def pagify(
     text: str,
     delims: Sequence[str] = ["\n"],

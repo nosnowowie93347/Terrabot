@@ -1,6 +1,4 @@
-
 from common_variables import TWEMOJI_URL
-
 
 
 async def get_twemoji(emoji: str):
@@ -12,3 +10,20 @@ async def get_twemoji(emoji: str):
         emoji_unicode = list(filter(lambda c: c != "fe0f", emoji_unicode))
     emoji_unicode = "-".join(emoji_unicode)
     return f"{TWEMOJI_URL}/{emoji_unicode}.png"
+
+
+def inline(text: str) -> str:
+    """Get the given text as inline code.
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    Returns
+    -------
+    str
+        The marked up text.
+    """
+    if "`" in text:
+        return f"``{text}``"
+    else:
+        return f"`{text}`"

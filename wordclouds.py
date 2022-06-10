@@ -85,7 +85,7 @@ class WordClouds(commands.Cog):
             excluded = None
 
         mask_name = None
-        
+
         kwargs = {
             "mask": mask,
             "color_func": coloring,
@@ -135,7 +135,7 @@ class WordClouds(commands.Cog):
         if user is not None:
             msg += "/" + user.display_name
         msg += "** using the last {} messages.".format(limit)
-        await ctx.send(msg,file=discord.File(image))
+        await ctx.send(msg, file=discord.File(image))
 
     @staticmethod
     def generate(text, **kwargs):
@@ -147,5 +147,7 @@ class WordClouds(commands.Cog):
         wc.to_file(file)
         file.seek(0)
         return file
+
+
 def setup(bot):
     bot.add_cog(WordClouds(bot))

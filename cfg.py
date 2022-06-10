@@ -34,5 +34,7 @@ class Config(commands.Cog):
     async def deleteprefix(self, ctx):
         await self.bot.config.unset({"_id": ctx.guild.id, "prefix": 1})
         await ctx.send("This guilds prefix has been set back to the default")
+
+
 def setup(bot):
     bot.add_cog(Config(bot))

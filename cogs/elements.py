@@ -11,6 +11,7 @@ from .utils.test import DEFAULT_CONTROLS, menu
 from .data import IMAGES, LATTICES, UNITS
 from discord.ext import commands
 
+
 class ElementConverter(Converter):
     """Converts a given argument to an element object"""
 
@@ -33,7 +34,9 @@ class ElementConverter(Converter):
 class MeasurementConverter(Converter):
     """Converts a given measurement type into usable strings"""
 
-    async def convert(self, ctx: commands.Context, argument: str) -> List[Tuple[str, str, str]]:
+    async def convert(
+        self, ctx: commands.Context, argument: str
+    ) -> List[Tuple[str, str, str]]:
         result = []
         if argument.lower() in UNITS:
             result.append(
@@ -88,25 +91,33 @@ class Elements(commands.Cog):
     def get_xray_wavelength(element: ELEMENTS) -> str:
         try:
             ka = 1239.84 / (
-                13.6057 * ((element.atomic_number - 1) ** 2) * ((1 / 1 ** 2) - (1 / 2 ** 2))
+                13.6057
+                * ((element.atomic_number - 1) ** 2)
+                * ((1 / 1**2) - (1 / 2**2))
             )
         except Exception:
             ka = ""
         try:
             kb = 1239.84 / (
-                13.6057 * ((element.atomic_number - 1) ** 2) * ((1 / 1 ** 2) - (1 / 3 ** 2))
+                13.6057
+                * ((element.atomic_number - 1) ** 2)
+                * ((1 / 1**2) - (1 / 3**2))
             )
         except Exception:
             kb = ""
         try:
             la = 1239.84 / (
-                13.6057 * ((element.atomic_number - 7.4) ** 2) * ((1 / 1 ** 2) - (1 / 2 ** 3))
+                13.6057
+                * ((element.atomic_number - 7.4) ** 2)
+                * ((1 / 1**2) - (1 / 2**3))
             )
         except Exception:
             la = ""
         try:
             lb = 1239.84 / (
-                13.6057 * ((element.atomic_number - 7.4) ** 2) * ((1 / 1 ** 2) - (1 / 2 ** 4))
+                13.6057
+                * ((element.atomic_number - 7.4) ** 2)
+                * ((1 / 1**2) - (1 / 2**4))
             )
         except Exception:
             lb = ""
@@ -149,7 +160,9 @@ class Elements(commands.Cog):
 
     @commands.command()
     @commands.bot_has_permissions(embed_links=True)
-    async def elements(self, ctx: commands.Context, *elements: ElementConverter) -> None:
+    async def elements(
+        self, ctx: commands.Context, *elements: ElementConverter
+    ) -> None:
         """
         Display information about multiple elements
         `elements` can be the name, symbol or atomic number of the element
@@ -157,7 +170,9 @@ class Elements(commands.Cog):
         """
         if not elements:
             elements = [ELEMENTS(e) for e in range(1, 119)]
-        await menu(ctx, [await self.element_embed(e) for e in elements], DEFAULT_CONTROLS)
+        await menu(
+            ctx, [await self.element_embed(e) for e in elements], DEFAULT_CONTROLS
+        )
 
     @commands.command()
     @commands.bot_has_permissions(embed_links=True)
@@ -196,12 +211,14 @@ class Elements(commands.Cog):
             x = getattr(element, attr, "")
             if x:
                 embed.add_field(name=name[0], value=f"{x} {name[1]}")
-        embed.add_field(name="X-ray Fluorescence", value=self.get_xray_wavelength(element))
-        discovery = (
-            f"{element.discoverers} ({element.discovery_year}) in {element.discovery_location}"
+        embed.add_field(
+            name="X-ray Fluorescence", value=self.get_xray_wavelength(element)
         )
+        discovery = f"{element.discoverers} ({element.discovery_year}) in {element.discovery_location}"
         embed.add_field(name="Discovery", value=discovery)
 
         return embed
+
+
 def setup(bot):
     bot.add_cog(Elements(bot))

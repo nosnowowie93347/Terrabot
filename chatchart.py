@@ -19,7 +19,7 @@ class Chatchart(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-    
+
     @staticmethod
     def calculate_member_perc(history: List[discord.Message]) -> dict:
         """Calculate the member count from the message history"""
@@ -27,9 +27,15 @@ class Chatchart(commands.Cog):
         for msg in history:
             # Name formatting
             if len(msg.author.display_name) >= 20:
-                short_name = "{}...".format(msg.author.display_name[:20]).replace("$", "\\$")
+                short_name = "{}...".format(msg.author.display_name[:20]).replace(
+                    "$", "\\$"
+                )
             else:
-                short_name = msg.author.display_name.replace("$", "\\$").replace("_", "\\_ ").replace("*", "\\*")
+                short_name = (
+                    msg.author.display_name.replace("$", "\\$")
+                    .replace("_", "\\_ ")
+                    .replace("*", "\\*")
+                )
             whole_name = "{}#{}".format(short_name, msg.author.discriminator)
             if msg.author.bot:
                 pass
@@ -46,7 +52,9 @@ class Chatchart(commands.Cog):
     def calculate_top(msg_data: dict) -> Tuple[list, int]:
         """Calculate the top 20 from the message data package"""
         for usr in msg_data["users"]:
-            pd = float(msg_data["users"][usr]["msgcount"]) / float(msg_data["total_count"])
+            pd = float(msg_data["users"][usr]["msgcount"]) / float(
+                msg_data["total_count"]
+            )
             msg_data["users"][usr]["percent"] = pd * 100
         top_twenty = heapq.nlargest(
             20,
@@ -62,7 +70,9 @@ class Chatchart(commands.Cog):
         return top_twenty, others
 
     @staticmethod
-    async def create_chart(top, others, channel_or_guild: Union[discord.Guild, discord.TextChannel]):
+    async def create_chart(
+        top, others, channel_or_guild: Union[discord.Guild, discord.TextChannel]
+    ):
         plt.clf()
         sizes = [x[1] for x in top]
         labels = ["{} {:g}%".format(x[0], round(x[1], 1)) for x in top]
@@ -123,7 +133,7 @@ class Chatchart(commands.Cog):
         self,
         channel: discord.TextChannel,
         animation_message: discord.Message,
-        messages: int
+        messages: int,
     ) -> List[discord.Message]:
         """Fetch the history of a channel while displaying an status message with it"""
         animation_message_deleted = False
@@ -152,7 +162,9 @@ class Chatchart(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.max_concurrency(1, commands.BucketType.guild)
     @commands.bot_has_permissions(attach_files=True)
-    async def chatchart(self, ctx, channel: Optional[discord.TextChannel] = None, messages:int = 5000):
+    async def chatchart(
+        self, ctx, channel: Optional[discord.TextChannel] = None, messages: int = 5000
+    ):
         """
         Generates a pie chart, representing the last 5000 messages in the specified channel.
         """
@@ -164,7 +176,7 @@ class Chatchart(commands.Cog):
             return await ctx.send("You're not allowed to access that channel.")
         if channel.permissions_for(ctx.guild.me).read_messages is False:
             return await ctx.send("I cannot read the history of that channel.")
-        
+
         if messages < 5:
             return await ctx.send("Don't be silly.")
         embed = discord.Embed(
@@ -173,7 +185,9 @@ class Chatchart(commands.Cog):
         )
         loading_message = await ctx.send(embed=embed)
         try:
-            history = await self.fetch_channel_history(channel, loading_message, messages)
+            history = await self.fetch_channel_history(
+                channel, loading_message, messages
+            )
         except discord.errors.Forbidden:
             try:
                 await loading_message.delete()
@@ -188,7 +202,9 @@ class Chatchart(commands.Cog):
                 await loading_message.delete()
             except discord.NotFound:
                 pass
-            return await ctx.send(f"Only bots have sent messages in {channel.mention} or I can't read message history.")
+            return await ctx.send(
+                f"Only bots have sent messages in {channel.mention} or I can't read message history."
+            )
 
         top_twenty, others = self.calculate_top(msg_data)
         chart = await self.create_chart(top_twenty, others, channel)
@@ -216,7 +232,7 @@ class Chatchart(commands.Cog):
         channel_list = []
         for channel in ctx.guild.text_channels:
             channel: discord.TextChannel
-            
+
             if channel.permissions_for(ctx.message.author).read_messages is False:
                 continue
             if channel.permissions_for(ctx.guild.me).read_messages is False:
@@ -224,7 +240,9 @@ class Chatchart(commands.Cog):
             channel_list.append(channel)
 
         if len(channel_list) == 0:
-            return await ctx.send("There are no channels to read... This should theoretically never happen.")
+            return await ctx.send(
+                "There are no channels to read... This should theoretically never happen."
+            )
 
         embed = discord.Embed(
             description="Fetching messages from the entire server this **will** take a while.",
@@ -239,7 +257,9 @@ class Chatchart(commands.Cog):
             )
             loading_message = await ctx.send(embed=embed)
             try:
-                history = await self.fetch_channel_history(channel, loading_message, messages)
+                history = await self.fetch_channel_history(
+                    channel, loading_message, messages
+                )
                 global_history += history
                 await loading_message.delete()
             except discord.errors.Forbidden:
@@ -251,7 +271,7 @@ class Chatchart(commands.Cog):
                 try:
                     await loading_message.delete()
                 except discord.NotFound:
-                    continue 
+                    continue
 
         msg_data = self.calculate_member_perc(global_history)
         # If no members are found.
@@ -260,7 +280,9 @@ class Chatchart(commands.Cog):
                 await global_fetch_message.delete()
             except discord.NotFound:
                 pass
-            return await ctx.send(f"Only bots have sent messages in this server... Wauw...")
+            return await ctx.send(
+                f"Only bots have sent messages in this server... Wauw..."
+            )
 
         top_twenty, others = self.calculate_top(msg_data)
         chart = await self.create_chart(top_twenty, others, ctx.guild)
@@ -270,5 +292,7 @@ class Chatchart(commands.Cog):
         except discord.NotFound:
             pass
         await ctx.send(file=discord.File(chart, "chart.png"))
+
+
 def setup(bot):
     bot.add_cog(Chatchart(bot))

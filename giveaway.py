@@ -31,18 +31,17 @@ class Giveaway(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
-        name="giveaway",
-        description="Create a full giveaway!"
-    )
+    @commands.command(name="giveaway", description="Create a full giveaway!")
     @commands.guild_only()
     async def giveaway(self, ctx):
-        await ctx.send("Lets start this giveaway, answer the questions I ask and we shall proceed.")
+        await ctx.send(
+            "Lets start this giveaway, answer the questions I ask and we shall proceed."
+        )
 
         questionList = [
             ["What channel should it be in?", "Mention the channel"],
             ["How long should this giveaway last?", "`d|h|m|s`"],
-            ["What are you giving away?", "I.E. Your soul hehe"]
+            ["What are you giving away?", "I.E. Your soul hehe"],
         ]
         answers = {}
 
@@ -57,7 +56,11 @@ class Giveaway(commands.Cog):
 
         embed = discord.Embed(name="Giveaway content")
         for key, value in answers.items():
-            embed.add_field(name=f"Question: `{questionList[key][0]}`", value=f"Answer: `{value}`", inline=False)
+            embed.add_field(
+                name=f"Question: `{questionList[key][0]}`",
+                value=f"Answer: `{value}`",
+                inline=False,
+            )
 
         m = await ctx.send("Are these all valid?", embed=embed)
         await m.add_reaction("✅")
@@ -68,7 +71,7 @@ class Giveaway(commands.Cog):
                 "reaction_add",
                 timeout=60,
                 check=lambda reaction, user: user == ctx.author
-                and reaction.message.channel == ctx.channel
+                and reaction.message.channel == ctx.channel,
             )
         except asyncio.TimeoutError:
             await ctx.send("Confirmation Failure. Please try again.")
@@ -84,10 +87,11 @@ class Giveaway(commands.Cog):
         time = convert(answers[1])
 
         giveawayEmbed = discord.Embed(
-            title="🎉 __**Giveaway**__ 🎉",
-            description=answers[2]
+            title="🎉 __**Giveaway**__ 🎉", description=answers[2]
         )
-        giveawayEmbed.set_footer(text=f"This giveaway ends {time} seconds from this message.")
+        giveawayEmbed.set_footer(
+            text=f"This giveaway ends {time} seconds from this message."
+        )
         giveawayMessage = await channel.send(embed=giveawayEmbed)
         await giveawayMessage.add_reaction("🎉")
 
@@ -104,7 +108,9 @@ class Giveaway(commands.Cog):
 
         winner = random.choice(users)
 
-        await channel.send(f"**Congrats {winner.mention}!**\nPlease contact {ctx.author.mention} about your prize.")
+        await channel.send(
+            f"**Congrats {winner.mention}!**\nPlease contact {ctx.author.mention} about your prize."
+        )
 
 
 def setup(bot):

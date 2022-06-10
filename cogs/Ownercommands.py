@@ -7,128 +7,145 @@ from traceback import format_exception
 from utils.util import Pag, clean_code
 import discord.utils
 from discord.ext import commands
-from discord.ext.commands import Bot, MissingPermissions, has_permissions, bot_has_permissions
-logger = logging.getLogger('discord')
+from discord.ext.commands import (
+    Bot,
+    MissingPermissions,
+    has_permissions,
+    bot_has_permissions,
+)
+
+logger = logging.getLogger("discord")
 logger.setLevel(logging.DEBUG)
-logfile = 'discord.log'
-handler = logging.FileHandler(filename=logfile, encoding='utf-8', mode='w')
+logfile = "discord.log"
+handler = logging.FileHandler(filename=logfile, encoding="utf-8", mode="w")
 blacklisted_users = []
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
+
 def setup(bot):
-	bot.add_cog(Ownercommands(bot))
+    bot.add_cog(Ownercommands(bot))
+
 
 class Ownercommands(commands.Cog):
-	def __init__(self, bot):
-		self.bot = bot
-	
-	@commands.command(hidden=False, aliases=["reboot"])
-	@commands.is_owner()
-	async def restart(self, ctx):
-		"""Restarts the bot"""
-		await ctx.send("Restarting...")
-		log.warning("{} has restarted the bot!".format(ctx.author))
-		try:
-		  await aiosession.close()
-		except:
-		   pass
-		await self.bot.close()
-		subprocess.call([sys.executable, "bot.py"])
-	@commands.command(
-		name="blacklist", description="Blacklist a user from the bot", usage="<user>"
-	)
-	@commands.is_owner()
-	async def blacklist(self, ctx, user: discord.User):
-		if user.id in self.bot.owner_ids:
-			await ctx.reply("Cant blacklist an owner")
-			return
-		if user.id in self.bot.blacklisted_users:
-			return await ctx.reply("Cannot blacklist someone twice! :person_facepalming:")
-		if ctx.message.author.id == user.id:
-			await ctx.reply("Hey, you cannot blacklist yourself!")
-			return
+    def __init__(self, bot):
+        self.bot = bot
 
-		self.bot.blacklisted_users.append(user.id)
-		data = utils.json_loader.read_json("blacklist")
-		data["blacklistedUsers"].append(user.id)
-		utils.json_loader.write_json(data, "blacklist")
-		embed=discord.Embed(title="MOD ACTION - BLACKLIST", color=0xfd0dc9)
-		embed.add_field(name="Blacklisted User:", value=user.name, inline=False)
-		await ctx.send(embed=embed)
-		print(self.bot.blacklisted_users)
+    @commands.command(hidden=False, aliases=["reboot"])
+    @commands.is_owner()
+    async def restart(self, ctx):
+        """Restarts the bot"""
+        await ctx.send("Restarting...")
+        log.warning("{} has restarted the bot!".format(ctx.author))
+        try:
+            await aiosession.close()
+        except:
+            pass
+        await self.bot.close()
+        subprocess.call([sys.executable, "bot.py"])
 
-	@commands.command(
-		name="unblacklist",
-		description="Unblacklist a user from the bot",
-		usage="<user>",
-	)
-	@commands.is_owner()
-	async def unblacklist(self, ctx, user: discord.Member):
-		"""
-		Unblacklist someone from the bot
-		"""
-		self.bot.blacklisted_users.remove(user.id)
-		data = utils.json_loader.read_json("blacklist")
-		data["blacklistedUsers"].remove(user.id)
-		utils.json_loader.write_json(data, "blacklist")
-		embed=discord.Embed(title="MOD ACTION - UNBLACKLIST", color=0xff0fcb)
-		embed.add_field(name="User unblacklisted:", value=user.name, inline=False)
-		await ctx.send(embed=embed)
-	@commands.command()
-	async def get_blacklists(self, ctx):
-		data = utils.json_loader.read_json("blacklist")
-		await ctx.send(data)
-	@commands.command(name="eval", aliases=["exec"], description="Evaluates Python code")
-	@commands.is_owner()
-	async def _eval(self, ctx, *, code):
-		code = clean_code(code)
+    @commands.command(
+        name="blacklist", description="Blacklist a user from the bot", usage="<user>"
+    )
+    @commands.is_owner()
+    async def blacklist(self, ctx, user: discord.User):
+        if user.id in self.bot.owner_ids:
+            await ctx.reply("Cant blacklist an owner")
+            return
+        if user.id in self.bot.blacklisted_users:
+            return await ctx.reply(
+                "Cannot blacklist someone twice! :person_facepalming:"
+            )
+        if ctx.message.author.id == user.id:
+            await ctx.reply("Hey, you cannot blacklist yourself!")
+            return
 
-		local_variables = {
-			"discord": discord,
-			"commands": commands,
-			"bot": self.bot,
-			"ctx": ctx,
-			"channel": ctx.channel,
-			"author": ctx.author,
-			"guild": ctx.guild,
-			"message": ctx.message
-		}
+        self.bot.blacklisted_users.append(user.id)
+        data = utils.json_loader.read_json("blacklist")
+        data["blacklistedUsers"].append(user.id)
+        utils.json_loader.write_json(data, "blacklist")
+        embed = discord.Embed(title="MOD ACTION - BLACKLIST", color=0xFD0DC9)
+        embed.add_field(name="Blacklisted User:", value=user.name, inline=False)
+        await ctx.send(embed=embed)
+        print(self.bot.blacklisted_users)
 
-		stdout = io.StringIO()
+    @commands.command(
+        name="unblacklist",
+        description="Unblacklist a user from the bot",
+        usage="<user>",
+    )
+    @commands.is_owner()
+    async def unblacklist(self, ctx, user: discord.Member):
+        """
+        Unblacklist someone from the bot
+        """
+        self.bot.blacklisted_users.remove(user.id)
+        data = utils.json_loader.read_json("blacklist")
+        data["blacklistedUsers"].remove(user.id)
+        utils.json_loader.write_json(data, "blacklist")
+        embed = discord.Embed(title="MOD ACTION - UNBLACKLIST", color=0xFF0FCB)
+        embed.add_field(name="User unblacklisted:", value=user.name, inline=False)
+        await ctx.send(embed=embed)
 
-		try:
-			with contextlib.redirect_stdout(stdout):
-				exec(
-					f"async def func():\n{textwrap.indent(code, '    ')}", local_variables
-				)
+    @commands.command()
+    async def get_blacklists(self, ctx):
+        data = utils.json_loader.read_json("blacklist")
+        await ctx.send(data)
 
-				obj = await local_variables["func"]()
-				result = f"{stdout.getvalue()}\n-- {obj}\n"
-		except Exception as e:
-			result = "".join(format_exception(e, e, e.__traceback__))
+    @commands.command(
+        name="eval", aliases=["exec"], description="Evaluates Python code"
+    )
+    @commands.is_owner()
+    async def _eval(self, ctx, *, code):
+        code = clean_code(code)
 
-		pager = Pag(
-			timeout=100,
-			entries=[result[i: i + 2000] for i in range(0, len(result), 2000)],
-			length=1,
-			prefix="```py\n",
-			suffix="```"
-		)
+        local_variables = {
+            "discord": discord,
+            "commands": commands,
+            "bot": self.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+        }
 
-		await pager.start(ctx)
-	@commands.command(name="toggle", description="Enable or disable a command")
-	@commands.is_owner()
-	async def toggle(self, ctx, *, command):
-		command =  self.bot.get_command(command)
+        stdout = io.StringIO()
 
-		if command is None:
-			await ctx.send("I can't find a command with that name!")
+        try:
+            with contextlib.redirect_stdout(stdout):
+                exec(
+                    f"async def func():\n{textwrap.indent(code, '    ')}",
+                    local_variables,
+                )
 
-		elif ctx.command == command:
-			await ctx.send("This command cannot be disabled")
+                obj = await local_variables["func"]()
+                result = f"{stdout.getvalue()}\n-- {obj}\n"
+        except Exception as e:
+            result = "".join(format_exception(e, e, e.__traceback__))
 
-		else:
-			command.enabled = not command.enabled
-			variable = "enabled" if command.enabled else "disabled"
-			await ctx.send(f"I have {variable} {command.qualified_name} for you.")
+        pager = Pag(
+            timeout=100,
+            entries=[result[i : i + 2000] for i in range(0, len(result), 2000)],
+            length=1,
+            prefix="```py\n",
+            suffix="```",
+        )
+
+        await pager.start(ctx)
+
+    @commands.command(name="toggle", description="Enable or disable a command")
+    @commands.is_owner()
+    async def toggle(self, ctx, *, command):
+        command = self.bot.get_command(command)
+
+        if command is None:
+            await ctx.send("I can't find a command with that name!")
+
+        elif ctx.command == command:
+            await ctx.send("This command cannot be disabled")
+
+        else:
+            command.enabled = not command.enabled
+            variable = "enabled" if command.enabled else "disabled"
+            await ctx.send(f"I have {variable} {command.qualified_name} for you.")

@@ -3,34 +3,34 @@ from discord.ext import commands
 
 
 class EmojiInfo(commands.Cog):
-  def __init__(self, bot):
-    self.bot = bot
-  
-  @commands.Cog.listener()
-  async def on_ready(self):
-    print(f"{self.__class__.__name__} Cog has been loaded\n----")
+    def __init__(self, bot):
+        self.bot = bot
 
-  @commands.command(name='emojiinfo', aliases=["ei"])
-  async def emoji_info(self, ctx, emoji: discord.Emoji = None):
-    if not emoji:
-      await ctx.invoke(self.bot.get_command("help"), entity="emojiinfo")
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(f"{self.__class__.__name__} Cog has been loaded\n----")
 
-    try:
-      emoji = await emoji.guild.fetch_emoji(emoji.id)
-    except discord.NotFound:
-      return await ctx.reply("I couldn't find this emoji in the givin guild.")
-    
-    is_managed = "Yes" if emoji.managed else "No"
-    is_animated = "Yes" if emoji.animated else "No"
-    requires_colons = "Yes" if emoji.require_colons else "No"
-    creation_time = emoji.created_at.strftime("%I:%M %p %B %d, %Y")
-    can_use_emoji = (
-        "Everyone"
-        if not emoji.roles
-        else " ".join(role.name for role in emoji.roles)
-    )
+    @commands.command(name="emojiinfo", aliases=["ei"])
+    async def emoji_info(self, ctx, emoji: discord.Emoji = None):
+        if not emoji:
+            await ctx.invoke(self.bot.get_command("help"), entity="emojiinfo")
 
-    description = f"""
+        try:
+            emoji = await emoji.guild.fetch_emoji(emoji.id)
+        except discord.NotFound:
+            return await ctx.reply("I couldn't find this emoji in the givin guild.")
+
+        is_managed = "Yes" if emoji.managed else "No"
+        is_animated = "Yes" if emoji.animated else "No"
+        requires_colons = "Yes" if emoji.require_colons else "No"
+        creation_time = emoji.created_at.strftime("%I:%M %p %B %d, %Y")
+        can_use_emoji = (
+            "Everyone"
+            if not emoji.roles
+            else " ".join(role.name for role in emoji.roles)
+        )
+
+        description = f"""
     **General:**
     **- Name:** {emoji.name}
     **- Id:** {emoji.id}
@@ -47,13 +47,13 @@ class EmojiInfo(commands.Cog):
     **- Guild Id:** {emoji.guild.id}
     """
 
-    embed = discord.Embed(
-        title=f"**Emoji Information for:** `{emoji.name}`",
-        description=description,
-        colour=0xADD8E6,
-    )
-    embed.set_thumbnail(url=emoji.url)
-    await ctx.send(embed=embed)
+        embed = discord.Embed(
+            title=f"**Emoji Information for:** `{emoji.name}`",
+            description=description,
+            colour=0xADD8E6,
+        )
+        embed.set_thumbnail(url=emoji.url)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

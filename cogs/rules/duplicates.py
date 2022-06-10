@@ -10,18 +10,15 @@ async def apply(
     relevant_messages = tuple(
         msg
         for msg in recent_messages
-        if (
-            msg.author == last_message.author
-            and msg.content == last_message.content
-        )
+        if (msg.author == last_message.author and msg.content == last_message.content)
     )
 
     total_duplicated = len(relevant_messages)
 
-    if total_duplicated > config['max']:
+    if total_duplicated > config["max"]:
         return (
             f"sent {total_duplicated} duplicated messages in {config['interval']}s",
             (last_message.author,),
-            relevant_messages
+            relevant_messages,
         )
     return None

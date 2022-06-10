@@ -4,6 +4,8 @@ discord.py
 better-profanity
 pyfiglet
 pyquery
+pycipher
+dateparser
 cowpy
 colorlog
 wikipedia

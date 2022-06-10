@@ -1,8 +1,8 @@
-  
 # Requires pip install buttons
 from discord.ext import commands
 import logging
 from utils.util2 import Pag
+
 
 class HelpMe(commands.Cog, name="Help command"):
     def __init__(self, bot):
@@ -73,6 +73,7 @@ class HelpMe(commands.Cog, name="Help command"):
             pages.append(commands_entry)
 
         await Pag(title=title, color=0xCE2029, entries=pages, length=1).start(ctx)
+
     @commands.command(
         name="help", aliases=["h", "commands"], description="The help command!"
     )

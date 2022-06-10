@@ -29,7 +29,10 @@ async def GetMessage(
     or
      - False (bool) : If a timeout occurs
     """
-    embed = discord.Embed(title=f"{contentOne}", description=f"{contentTwo}",)
+    embed = discord.Embed(
+        title=f"{contentOne}",
+        description=f"{contentTwo}",
+    )
     sent = await ctx.send(embed=embed)
     try:
         msg = await bot.wait_for(

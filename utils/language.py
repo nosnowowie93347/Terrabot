@@ -5,6 +5,7 @@ file_path = "data/languages.json"
 
 language_settings = {}
 
+
 class Languages:
     with open("assets/languages/english.json", encoding="UTF-8") as file:
         english = json.load(file)
@@ -17,13 +18,22 @@ class Languages:
     with open("assets/languages/french.json", encoding="UTF-8") as file:
         french = json.load(file)
 
+
 class Language:
     def __init__(self):
         with open(file_path, "r") as file:
             guilds = json.load(file)
         global language_settings
         language_settings = guilds
-    codes = {"en":Languages.english, "es":Languages.spanish, "he":Languages.hebrew, "fi":Languages.finnish, "fr":Languages.french}
+
+    codes = {
+        "en": Languages.english,
+        "es": Languages.spanish,
+        "he": Languages.hebrew,
+        "fi": Languages.finnish,
+        "fr": Languages.french,
+    }
+
     @staticmethod
     def get(line, ctx):
         try:
@@ -50,6 +60,7 @@ class Language:
                     return traceback.format_exc()
         except KeyError:
             return
+
     @staticmethod
     def set_language(guild, language):
         with open(file_path, "r") as file:

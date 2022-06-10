@@ -8,21 +8,28 @@ from common_variables import ACTIVITY_TYPES, APP_ICON_URL, NON_ESCAPABLE_CHARACT
 from utilities import get_twemoji
 
 
-async def emoji_embed(ctx, emoji: Union[discord.Emoji, discord.PartialEmoji]) -> discord.Embed:
+async def emoji_embed(
+    ctx, emoji: Union[discord.Emoji, discord.PartialEmoji]
+) -> discord.Embed:
     """Make embed with info about emoji"""
     em = discord.Embed(
         title=isinstance(emoji, str)
         and "\n".join(
-            map(lambda c: unicodedata.name(c, _("[Unable to resolve unicode name]")), emoji)
+            map(
+                lambda c: unicodedata.name(c, _("[Unable to resolve unicode name]")),
+                emoji,
+            )
         )
         or chat.escape(emoji.name, formatting=True),
-        color=Colour.random()
+        color=Colour.random(),
     )
     if isinstance(emoji, str):
         # em.add_field(name=_("Unicode emoji"), value="✅")
         em.add_field(
             name=_("Unicode character"),
-            value="\n".join(f"\\{c}" if c not in NON_ESCAPABLE_CHARACTERS else c for c in emoji),
+            value="\n".join(
+                f"\\{c}" if c not in NON_ESCAPABLE_CHARACTERS else c for c in emoji
+            ),
         )
         em.add_field(
             name=_("Unicode category"),
@@ -36,7 +43,9 @@ async def emoji_embed(ctx, emoji: Union[discord.Emoji, discord.PartialEmoji]) ->
     if isinstance(emoji, discord.Emoji):
         em.add_field(
             name=_("Exists since"),
-            value=get_markdown_timestamp(emoji.created_at, TimestampStyle.datetime_long),
+            value=get_markdown_timestamp(
+                emoji.created_at, TimestampStyle.datetime_long
+            ),
         )
         em.add_field(name=_('":" required'), value=bool_emojify(emoji.require_colons))
         em.add_field(name=_("Managed"), value=bool_emojify(emoji.managed))
@@ -46,15 +55,21 @@ async def emoji_embed(ctx, emoji: Union[discord.Emoji, discord.PartialEmoji]) ->
         if emoji.roles:
             em.add_field(
                 name=_("Roles"),
-                value=chat.escape("\n".join(x.name for x in emoji.roles), formatting=True),
+                value=chat.escape(
+                    "\n".join(x.name for x in emoji.roles), formatting=True
+                ),
                 inline=False,
             )
     elif isinstance(emoji, discord.PartialEmoji):
         em.add_field(
             name=_("Exists since"),
-            value=get_markdown_timestamp(emoji.created_at, TimestampStyle.datetime_long),
+            value=get_markdown_timestamp(
+                emoji.created_at, TimestampStyle.datetime_long
+            ),
         )
-        em.add_field(name=_("Custom emoji"), value=bool_emojify(emoji.is_custom_emoji()))
+        em.add_field(
+            name=_("Custom emoji"), value=bool_emojify(emoji.is_custom_emoji())
+        )
         # em.add_field(
         #     name=_("Unicode emoji"), value=bool_emojify(emoji.is_unicode_emoji())
         # )
@@ -160,7 +175,9 @@ async def activity_embed(ctx, activity: discord.Activity) -> discord.Embed:
     elif isinstance(activity, discord.Spotify):
         em = discord.Embed(
             title=activity.title,
-            description=_("by {}\non {}").format(", ".join(activity.artists), activity.album),
+            description=_("by {}\non {}").format(
+                ", ".join(activity.artists), activity.album
+            ),
             color=activity.color,
             timestamp=activity.created_at,
             url=f"https://open.spotify.com/track/{activity.track_id}",
@@ -169,7 +186,9 @@ async def activity_embed(ctx, activity: discord.Activity) -> discord.Embed:
             name=_("Started at"),
             value=get_markdown_timestamp(activity.start, TimestampStyle.time_long),
         )
-        em.add_field(name=_("Duration"), value=str(activity.duration)[:-3])  # 0:03:33.877[000]
+        em.add_field(
+            name=_("Duration"), value=str(activity.duration)[:-3]
+        )  # 0:03:33.877[000]
         em.add_field(
             name=_("Will end at"),
             value=get_markdown_timestamp(activity.end, TimestampStyle.time_long),
@@ -177,5 +196,7 @@ async def activity_embed(ctx, activity: discord.Activity) -> discord.Embed:
         em.set_image(url=activity.album_cover_url)
         em.set_footer(text=_("Listening since"))
     else:
-        em = discord.Embed(title=_("Unsupported activity type: {}").format(type(activity)))
+        em = discord.Embed(
+            title=_("Unsupported activity type: {}").format(type(activity))
+        )
     return em
