@@ -8,3 +8,4 @@ ffprobe.exe
 .idea
 __pycache__/
 .env
+discord.log
