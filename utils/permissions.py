@@ -1,6 +1,6 @@
 import discord
 
-from utils2 import default
+from utils import default
 from discord.ext import commands
 owners = [466778567905116170]
 def is_owner(ctx):
