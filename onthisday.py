@@ -88,10 +88,13 @@ class OnThisDay(commands.Cog):
         self.bot = bot
         self.session = aiohttp.ClientSession()
 
-    
-
     async def run_otd(
-        self, ctx: commands.Context, month_number, date_number, year, _random: bool = False
+        self,
+        ctx: commands.Context,
+        month_number,
+        date_number,
+        year,
+        _random: bool = False,
     ):
         """Oh my, is this scruffy code... but it WORKS!"""
         try:
@@ -123,23 +126,28 @@ class OnThisDay(commands.Cog):
                     message + DEFAULT_DESCRIPTION + columns(list(data.keys()))
                 )
                 try:
-                    message = await self.bot.wait_for("message", check=check(ctx), timeout=50)
+                    message = await self.bot.wait_for(
+                        "message", check=check(ctx), timeout=50
+                    )
                 except asyncio.TimeoutError:
                     return await ctx.send("You took too long to respond.")
                 container = tuple(data.keys())
                 if (result := message.content.lstrip("0")) not in container:
-                    return await ctx.send(f"{inline(result)} was not a valid year for this day.")
+                    return await ctx.send(
+                        f"{inline(result)} was not a valid year for this day."
+                    )
             event = data[result]
             years_ago = int(year) - int("".join(filter(str.isdigit, result)))
             embed = discord.Embed(
                 title=f"On this day, {years_ago} years ago...",
                 description=highlight_numerical_data(event["content"]),
-                
             )
             embed.set_footer(text="Year: " + result)
             embed.add_field(
                 name="Specific Wikipedia Links",
-                value="\n".join(f"- [{w['title']}]({w['wikipedia']})" for w in event["wikipedia"]),
+                value="\n".join(
+                    f"- [{w['title']}]({w['wikipedia']})" for w in event["wikipedia"]
+                ),
             )
             _d = {
                 f"Other important events that occured in the year {result}...": "https://en.wikipedia.org/wiki/"

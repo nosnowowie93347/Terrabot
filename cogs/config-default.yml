@@ -12,7 +12,7 @@ style:
         yellow: 0xffd241
 filter:
     # What do we filter?
-    filter_zalgo:          false
+    filter_zalgo:          true
     filter_invites:        true
     filter_domains:        true
     filter_everyone_ping:  true
@@ -21,9 +21,9 @@ filter:
 
     # Notify user on filter?
     # Notifications are not expected for "watchlist" type filters
-    notify_user_zalgo:          false
+    notify_user_zalgo:          true
     notify_user_invites:        true
-    notify_user_domains:        false
+    notify_user_domains:        true
     notify_user_everyone_ping:  true
 
     # Filter configuration
