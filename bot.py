@@ -241,7 +241,7 @@ async def on_message(message):
         whurl = ""
         # Return if match
         for wh in whooklist:
-            if self.bot.user == wh.user:
+            if bot.user == wh.user:
                 whurl = wh.url
         # Make new webhook if one didn't exist
         if whurl == "":
