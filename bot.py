@@ -215,48 +215,8 @@ async def on_message(message):
         else:
             prefix = data["prefix"]
         await message.channel.send(f"My prefix here is `{prefix}`", delete_after=15)
-    spotifyembedEnabled = True
-    if spotifyembedEnabled is not True:
-        return
-    # Ignore if we find [p]spotifyembed in the trigger message
-    spembedCommandIgnore = r"^\S{1,9}(spotifyembed|spembed|spe)(?=\s|$)"
-    spembedCommands = re.findall(spembedCommandIgnore, message.clean_content)
-    if len(spembedCommands) > 0:
-        return
-    # Ignore if we find no spotify links in the trigger message
-    spembedFinder = r"https\:\/\/open\.spotify\.com\/\w{4,12}\/\w{14,26}(?=\?|$|\s)"
-    spembedMatches = re.findall(spembedFinder, message.clean_content)
-    if len(spembedMatches) <= 0:
-        return
 
-    sendMsg = "Here you are: "
 
-    for match in spembedMatches:
-        spembedSplit = match.split(".com/")
-        sendMsg += spembedSplit[0] + ".com/embed/" + spembedSplit[1] + "\n"
-
-    # Find a webhook that the bot made
-    try:
-        whooklist = await message.channel.webhooks()
-        whurl = ""
-        # Return if match
-        for wh in whooklist:
-            if bot.user == wh.user:
-                whurl = wh.url
-        # Make new webhook if one didn't exist
-        if whurl == "":
-            newHook = await message.channel.create_webhook(name="Webhook")
-            whurl = newHook.url
-
-        async with aiohttp.ClientSession() as session:
-            webhook = Webhook.from_url(whurl, adapter=AsyncWebhookAdapter(session))
-            await webhook.send(
-                sendMsg,
-                username=message.author.display_name,
-                avatar_url=message.author.avatar_url,
-            )
-    except discord.errors.Forbidden:
-        return await message.channel.send(sendMsg)
     await bot.process_commands(message)
 
 
